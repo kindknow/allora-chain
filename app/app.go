@@ -25,21 +25,23 @@ import (
 
 	storetypes "cosmossdk.io/store/types"
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
+	"cosmossdk.io/x/feegrant"
+	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
 	emissionsKeeper "github.com/allora-network/allora-chain/x/emissions/keeper"
 	mintkeeper "github.com/allora-network/allora-chain/x/mint/keeper"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -115,6 +117,7 @@ type AlloraApp struct {
 	ParamsKeeper          paramskeeper.Keeper
 	UpgradeKeeper         *upgradekeeper.Keeper
 	SlashingKeeper        slashingkeeper.Keeper
+	FeeGrantKeeper        feegrantkeeper.Keeper
 
 	// IBC
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
@@ -129,6 +132,9 @@ type AlloraApp struct {
 	ScopedIBCTransferKeeper   capabilitykeeper.ScopedKeeper
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
+
+	// Fee Market
+	FeeMarketKeeper *feemarketkeeper.Keeper
 
 	// simulation manager
 	sm *module.SimulationManager
@@ -218,6 +224,8 @@ func NewAlloraApp(
 		&app.ParamsKeeper,
 		&app.AuthzKeeper,
 		&app.CircuitBreakerKeeper,
+		&app.FeeGrantKeeper,
+		&app.FeeMarketKeeper,
 	); err != nil {
 		return nil, err
 	}
@@ -227,6 +235,9 @@ func NewAlloraApp(
 
 	// Register legacy modules
 	app.registerLegacyModules()
+
+	// Register Fee Market
+	app.registerFeeMarketModule()
 
 	// register streaming services
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
