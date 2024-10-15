@@ -79,6 +79,8 @@ modules:
         - account: interchainaccounts
         - account: gov
           permissions: [burner]
+        - account: feemarket-fee-collector
+        - account: feemarket
   - name: gov
     config:
       "@type": cosmos.gov.module.v1.Module
