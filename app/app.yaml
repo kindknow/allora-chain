@@ -123,3 +123,6 @@ modules:
   - name: slashing
     config:
       "@type": cosmos.slashing.module.v1.Module
+  - name: feegrant
+    config:
+      "@type": cosmos.feegrant.module.v1.Module
