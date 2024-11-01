@@ -49,7 +49,10 @@ func (s *MsgServerTestSuite) commonStakingSetup(
 
 	reputerInitialBalanceCoins := sdk.NewCoins(sdk.NewCoin(params.DefaultBondDenom, reputerInitialBalance))
 
-	err := s.bankKeeper.MintCoins(ctx, types.AlloraStakingAccountName, reputerInitialBalanceCoins)
+	err := s.emissionsKeeper.AddToTopicCreatorWhitelist(ctx, reputer)
+	require.NoError(err)
+
+	err = s.bankKeeper.MintCoins(ctx, types.AlloraStakingAccountName, reputerInitialBalanceCoins)
 	require.NoError(err, "Minting coins should not return an error")
 	err = s.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.AlloraStakingAccountName, reputerAddr, reputerInitialBalanceCoins)
 	require.NoError(err, "Sending coins should not return an error")

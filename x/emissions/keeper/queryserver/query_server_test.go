@@ -145,6 +145,12 @@ func (s *QueryServerTestSuite) SetupTest() {
 	for _, addr := range addrsStr {
 		err := s.emissionsKeeper.AddWhitelistAdmin(ctx, addr)
 		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToGlobalWhitelist(ctx, addr)
+		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToTopicCreatorWhitelist(ctx, addr)
+		s.Require().NoError(err)
 	}
 }
 

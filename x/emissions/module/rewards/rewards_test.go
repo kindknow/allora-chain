@@ -155,6 +155,12 @@ func (s *RewardsTestSuite) SetupTest() {
 	for _, addr := range s.addrsStr {
 		err := s.emissionsKeeper.AddWhitelistAdmin(ctx, addr)
 		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToTopicCreatorWhitelist(ctx, addr)
+		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToGlobalWhitelist(ctx, addr)
+		s.Require().NoError(err)
 	}
 	// topic id must not start at 0
 	id, err := s.emissionsKeeper.IncrementTopicId(s.ctx)

@@ -377,7 +377,20 @@ func (s *KeeperTestSuite) TestIsEnabledTopicWorker() {
 	testAddr := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
 	topicId := uint64(1)
 
+	err := keeper.RemoveFromTopicWorkerWhitelist(ctx, topicId, testAddr)
+	s.Require().NoError(err)
+
+	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
 	enabled, err := keeper.IsEnabledTopicWorker(ctx, topicId, testAddr)
+	s.Require().NoError(err)
+	s.Require().True(enabled)
+
+	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	enabled, err = keeper.IsEnabledTopicWorker(ctx, topicId, testAddr)
 	s.Require().NoError(err)
 	s.Require().False(enabled)
 
@@ -395,7 +408,20 @@ func (s *KeeperTestSuite) TestIsEnabledTopicReputer() {
 	testAddr := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
 	topicId := uint64(1)
 
+	err := keeper.RemoveFromTopicReputerWhitelist(ctx, topicId, testAddr)
+	s.Require().NoError(err)
+
+	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
 	enabled, err := keeper.IsEnabledTopicReputer(ctx, topicId, testAddr)
+	s.Require().NoError(err)
+	s.Require().True(enabled)
+
+	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	enabled, err = keeper.IsEnabledTopicReputer(ctx, topicId, testAddr)
 	s.Require().NoError(err)
 	s.Require().False(enabled)
 
@@ -445,9 +471,15 @@ func (s *KeeperTestSuite) TestCanUpdateTopicWhitelist() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 	testAddr := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
-	topicId := uint64(1)
+	topicId := s.CreateOneTopic(60)
+	topic, err := keeper.GetTopic(ctx, topicId)
+	s.Require().NoError(err)
 
-	can, err := keeper.CanUpdateTopicWhitelist(ctx, topicId, testAddr)
+	can, err := keeper.CanUpdateTopicWhitelist(ctx, topicId, topic.Creator)
+	s.Require().NoError(err)
+	s.Require().True(can)
+
+	can, err = keeper.CanUpdateTopicWhitelist(ctx, topicId, testAddr)
 	s.Require().NoError(err)
 	s.Require().False(can)
 
@@ -479,17 +511,36 @@ func (s *KeeperTestSuite) TestCanCreateTopicWithWhitelist() {
 func (s *KeeperTestSuite) TestCanSubmitWorkerPayloadWithWhitelist() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
-	testAddr := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
+	enabledTopicWorker := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
+	enabledGlobalActor := "allo14s7gd09y7mkje8547ukm0c8gjnd3hak7v3fwz6"
+	neitherAddr := "allo1w6uwgrv77szudkve7g84uazuhyw6j4q9hdqelv"
 	topicId := uint64(1)
 
-	can, err := keeper.CanSubmitWorkerPayload(ctx, topicId, testAddr)
+	err := keeper.EnableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	can, err := keeper.CanSubmitWorkerPayload(ctx, topicId, neitherAddr)
 	s.Require().NoError(err)
 	s.Require().False(can)
 
-	err = keeper.AddToTopicWorkerWhitelist(ctx, topicId, testAddr)
+	err = keeper.AddToTopicWorkerWhitelist(ctx, topicId, enabledTopicWorker)
 	s.Require().NoError(err)
 
-	can, err = keeper.CanSubmitWorkerPayload(ctx, topicId, testAddr)
+	can, err = keeper.CanSubmitWorkerPayload(ctx, topicId, enabledTopicWorker)
+	s.Require().NoError(err)
+	s.Require().True(can)
+
+	err = keeper.AddToGlobalWhitelist(ctx, enabledGlobalActor)
+	s.Require().NoError(err)
+
+	can, err = keeper.CanSubmitWorkerPayload(ctx, topicId, enabledGlobalActor)
+	s.Require().NoError(err)
+	s.Require().True(can)
+
+	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	can, err = keeper.CanSubmitWorkerPayload(ctx, topicId, neitherAddr)
 	s.Require().NoError(err)
 	s.Require().True(can)
 }
@@ -497,17 +548,36 @@ func (s *KeeperTestSuite) TestCanSubmitWorkerPayloadWithWhitelist() {
 func (s *KeeperTestSuite) TestCanSubmitReputerPayloadWithWhitelist() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
-	testAddr := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
+	enabledTopicReputer := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
+	enabledGlobalActor := "allo14s7gd09y7mkje8547ukm0c8gjnd3hak7v3fwz6"
+	neitherAddr := "allo1w6uwgrv77szudkve7g84uazuhyw6j4q9hdqelv"
 	topicId := uint64(1)
 
-	can, err := keeper.CanSubmitReputerPayload(ctx, topicId, testAddr)
+	err := keeper.EnableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	can, err := keeper.CanSubmitReputerPayload(ctx, topicId, neitherAddr)
 	s.Require().NoError(err)
 	s.Require().False(can)
 
-	err = keeper.AddToTopicReputerWhitelist(ctx, topicId, testAddr)
+	err = keeper.AddToTopicReputerWhitelist(ctx, topicId, enabledTopicReputer)
 	s.Require().NoError(err)
 
-	can, err = keeper.CanSubmitReputerPayload(ctx, topicId, testAddr)
+	can, err = keeper.CanSubmitReputerPayload(ctx, topicId, enabledTopicReputer)
+	s.Require().NoError(err)
+	s.Require().True(can)
+
+	err = keeper.AddToGlobalWhitelist(ctx, enabledGlobalActor)
+	s.Require().NoError(err)
+
+	can, err = keeper.CanSubmitReputerPayload(ctx, topicId, enabledGlobalActor)
+	s.Require().NoError(err)
+	s.Require().True(can)
+
+	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	can, err = keeper.CanSubmitReputerPayload(ctx, topicId, neitherAddr)
 	s.Require().NoError(err)
 	s.Require().True(can)
 }

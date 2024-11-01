@@ -129,6 +129,12 @@ func (s *KeeperTestSuite) SetupTest() {
 	for _, addr := range s.addrsStr {
 		err := s.emissionsKeeper.AddWhitelistAdmin(ctx, addr)
 		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToGlobalWhitelist(ctx, addr)
+		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToTopicCreatorWhitelist(ctx, addr)
+		s.Require().NoError(err)
 	}
 }
 
