@@ -218,6 +218,14 @@ message GenesisState {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+
+  // whitelists
+  repeated string whitelist_admins = 77;
+  repeated string global_whitelist = 78;
+  repeated string topic_creator_whitelist = 79;
+  repeated TopicAndActorId topic_worker_whitelist = 80;
+  repeated TopicAndActorId topic_reputer_whitelist = 81;
+  repeated uint64 topic_whitelist_enabled = 82;
 }
 
 message TopicIdAndTopic {

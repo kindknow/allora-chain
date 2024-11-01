@@ -2190,6 +2190,8 @@ func (s *RewardsTestSuite) SetParamsForTest() {
 		MaxStringLength:                     nil,
 		InitialRegretQuantile:               nil,
 		PNormSafeDiv:                        nil,
+		GlobalWhitelistEnabled:              nil,
+		TopicCreatorWhitelistEnabled:        nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

@@ -20,6 +20,12 @@ func (ms msgServer) InsertReputerPayload(ctx context.Context, msg *types.InsertR
 	if err != nil {
 		return nil, err
 	}
+	canSubmit, err := ms.k.CanSubmitReputerPayload(ctx, msg.ReputerValueBundle.ValueBundle.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canSubmit {
+		return nil, types.ErrNotPermittedToSubmitReputerPayload
+	}
 
 	blockHeight := sdkCtx.BlockHeight()
 	err = msg.ReputerValueBundle.Validate()

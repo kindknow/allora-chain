@@ -13,6 +13,17 @@ import (
 func (ms msgServer) CreateNewTopic(ctx context.Context, msg *types.CreateNewTopicRequest) (_ *types.CreateNewTopicResponse, err error) {
 	defer metrics.RecordMetrics("CreateNewTopic", time.Now(), &err)
 
+	// Validate the address
+	if err := ms.k.ValidateStringIsBech32(msg.Creator); err != nil {
+		return nil, err
+	}
+	canCreate, err := ms.k.CanCreateTopic(ctx, msg.Creator)
+	if err != nil {
+		return nil, err
+	} else if !canCreate {
+		return nil, types.ErrNotPermittedToCreateTopic
+	}
+
 	params, err := ms.k.GetParams(ctx)
 	if err != nil {
 		return nil, errorsmod.Wrapf(err, "Error getting params for sender: %v", &msg.Creator)

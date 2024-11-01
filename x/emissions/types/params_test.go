@@ -53,6 +53,8 @@ func TestDefaultParams(t *testing.T) {
 		MaxStringLength:                     uint64(255),
 		InitialRegretQuantile:               alloraMath.MustNewDecFromString("0.25"),
 		PNormSafeDiv:                        alloraMath.MustNewDecFromString("8.25"),
+		GlobalWhitelistEnabled:              true,
+		TopicCreatorWhitelistEnabled:        true,
 	}
 
 	params := DefaultParams()

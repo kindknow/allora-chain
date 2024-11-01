@@ -3047,32 +3047,6 @@ func (s *KeeperTestSuite) TestSetGetPreviousPercentageRewardToStakedReputers() {
 	s.Require().Equal(previousPercentageReward, fetchedPercentageReward, "The fetched percentage reward should match the set value")
 }
 
-/// WHITELISTS
-
-func (s *KeeperTestSuite) TestWhitelistAdminOperations() {
-	ctx := s.ctx
-	keeper := s.emissionsKeeper
-	adminAddress := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
-
-	// Test Adding to whitelist
-	err := keeper.AddWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Adding whitelist admin should not fail")
-
-	// Test Checking whitelist
-	isAdmin, err := keeper.IsWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Checking if address is an admin should not fail")
-	s.Require().True(isAdmin, "Address should be an admin after being added")
-
-	// Test Removing from whitelist
-	err = keeper.RemoveWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Removing whitelist admin should not fail")
-
-	// Verify removal
-	isAdmin, err = keeper.IsWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Checking admin status after removal should not fail")
-	s.Require().False(isAdmin, "Address should not be an admin after being removed")
-}
-
 /// TOPIC REWARD NONCE
 
 func (s *KeeperTestSuite) TestGetSetDeleteTopicRewardNonce() {
@@ -3831,6 +3805,8 @@ func mockUninitializedParams() types.Params {
 		MaxStringLength:                     uint64(0),
 		InitialRegretQuantile:               alloraMath.ZeroDec(),
 		PNormSafeDiv:                        alloraMath.ZeroDec(),
+		GlobalWhitelistEnabled:              true,
+		TopicCreatorWhitelistEnabled:        true,
 	}
 }
 

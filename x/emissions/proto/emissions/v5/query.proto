@@ -429,6 +429,154 @@ service QueryService {
     option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http).get = "/emissions/v5/active_inferers/{topic_id}";
   }
+
+  rpc IsTopicWhitelistEnabled(IsTopicWhitelistEnabledRequest) returns (IsTopicWhitelistEnabledResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/IsTopicWhitelistEnabled/{topic_id}";
+  }
+
+  rpc IsWhitelistedTopicCreator(IsWhitelistedTopicCreatorRequest) returns (IsWhitelistedTopicCreatorResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/IsWhitelistedTopicCreator/{address}";
+  }
+
+  rpc IsWhitelistGlobalActor(IsWhitelistGlobalActorRequest) returns (IsWhitelistGlobalActorResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/IsWhitelistGlobalActor/{address}";
+  }
+
+  rpc IsWhitelistedTopicWorker(IsWhitelistedTopicWorkerRequest) returns (IsWhitelistedTopicWorkerResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/IsWhitelistedTopicWorker/{topic_id}/{address}";
+  }
+
+  rpc IsWhitelistedTopicReputer(IsWhitelistedTopicReputerRequest) returns (IsWhitelistedTopicReputerResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/IsWhitelistedTopicReputer/{topic_id}/{address}";
+  }
+
+  rpc CanUpdateGlobalWhitelists(CanUpdateGlobalWhitelistsRequest) returns (CanUpdateGlobalWhitelistsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/CanUpdateGlobalWhitelists/{address}";
+  }
+
+  rpc CanUpdateParams(CanUpdateParamsRequest) returns (CanUpdateParamsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/CanUpdateParams/{address}";
+  }
+
+  rpc CanUpdateTopicWhitelist(CanUpdateTopicWhitelistRequest) returns (CanUpdateTopicWhitelistResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/CanUpdateTopicWhitelist/{topic_id}/{address}";
+  }
+
+  rpc CanCreateTopic(CanCreateTopicRequest) returns (CanCreateTopicResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/CanCreateTopic/{address}";
+  }
+
+  rpc CanSubmitWorkerPayload(CanSubmitWorkerPayloadRequest) returns (CanSubmitWorkerPayloadResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/CanSubmitWorkerPayload/{topic_id}/{address}";
+  }
+
+  rpc CanSubmitReputerPayload(CanSubmitReputerPayloadRequest) returns (CanSubmitReputerPayloadResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/CanSubmitReputerPayload/{topic_id}/{address}";
+  }
+}
+
+message IsTopicWhitelistEnabledRequest {
+  uint64 topic_id = 1;
+}
+
+message IsTopicWhitelistEnabledResponse {
+  bool is_topic_whitelist_enabled = 1;
+}
+
+message IsWhitelistedTopicCreatorRequest {
+  string address = 1;
+}
+
+message IsWhitelistedTopicCreatorResponse {
+  bool is_whitelisted_topic_creator = 1;
+}
+
+message IsWhitelistGlobalActorRequest {
+  string address = 1;
+}
+
+message IsWhitelistGlobalActorResponse {
+  bool is_whitelist_global_actor = 1;
+}
+
+message IsWhitelistedTopicWorkerRequest {
+  uint64 topic_id = 1;
+  string address = 2;
+}
+
+message IsWhitelistedTopicWorkerResponse {
+  bool is_whitelisted_topic_worker = 1;
+}
+
+message IsWhitelistedTopicReputerRequest {
+  uint64 topic_id = 1;
+  string address = 2;
+}
+
+message IsWhitelistedTopicReputerResponse {
+  bool is_whitelisted_topic_reputer = 1;
+}
+
+message CanUpdateGlobalWhitelistsRequest {
+  string address = 1;
+}
+
+message CanUpdateGlobalWhitelistsResponse {
+  bool can_update_global_whitelists = 1;
+}
+
+message CanUpdateParamsRequest {
+  string address = 1;
+}
+
+message CanUpdateParamsResponse {
+  bool can_update_params = 1;
+}
+
+message CanUpdateTopicWhitelistRequest {
+  uint64 topic_id = 1;
+  string address = 2;
+}
+
+message CanUpdateTopicWhitelistResponse {
+  bool can_update_topic_whitelist = 1;
+}
+
+message CanCreateTopicRequest {
+  string address = 1;
+}
+
+message CanCreateTopicResponse {
+  bool can_create_topic = 1;
+}
+
+message CanSubmitWorkerPayloadRequest {
+  uint64 topic_id = 1;
+  string address = 2;
+}
+
+message CanSubmitWorkerPayloadResponse {
+  bool can_submit_worker_payload = 1;
+}
+
+message CanSubmitReputerPayloadRequest {
+  uint64 topic_id = 1;
+  string address = 2;
+}
+
+message CanSubmitReputerPayloadResponse {
+  bool can_submit_reputer_payload = 1;
 }
 
 message GetCountInfererInclusionsInTopicRequest {

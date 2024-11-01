@@ -45,6 +45,26 @@ service MsgService {
   rpc InsertWorkerPayload(InsertWorkerPayloadRequest) returns (InsertWorkerPayloadResponse);
 
   rpc InsertReputerPayload(InsertReputerPayloadRequest) returns (InsertReputerPayloadResponse);
+
+  rpc AddToGlobalWhitelist(AddToGlobalWhitelistRequest) returns (AddToGlobalWhitelistResponse);
+
+  rpc RemoveFromGlobalWhitelist(RemoveFromGlobalWhitelistRequest) returns (RemoveFromGlobalWhitelistResponse);
+
+  rpc EnableTopicWhitelist(EnableTopicWhitelistRequest) returns (EnableTopicWhitelistResponse);
+
+  rpc DisableTopicWhitelist(DisableTopicWhitelistRequest) returns (DisableTopicWhitelistResponse);
+
+  rpc AddToTopicCreatorWhitelist(AddToTopicCreatorWhitelistRequest) returns (AddToTopicCreatorWhitelistResponse);
+
+  rpc RemoveFromTopicCreatorWhitelist(RemoveFromTopicCreatorWhitelistRequest) returns (RemoveFromTopicCreatorWhitelistResponse);
+
+  rpc AddToTopicWorkerWhitelist(AddToTopicWorkerWhitelistRequest) returns (AddToTopicWorkerWhitelistResponse);
+
+  rpc RemoveFromTopicWorkerWhitelist(RemoveFromTopicWorkerWhitelistRequest) returns (RemoveFromTopicWorkerWhitelistResponse);
+
+  rpc AddToTopicReputerWhitelist(AddToTopicReputerWhitelistRequest) returns (AddToTopicReputerWhitelistResponse);
+
+  rpc RemoveFromTopicReputerWhitelist(RemoveFromTopicReputerWhitelistRequest) returns (RemoveFromTopicReputerWhitelistResponse);
 }
 
 /// PARAMS
@@ -182,6 +202,8 @@ message OptionalParams {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
+  repeated bool global_whitelist_enabled = 50;
+  repeated bool topic_creator_whitelist_enabled = 51;
 }
 
 message UpdateParamsRequest {
@@ -373,6 +395,15 @@ message CancelRemoveDelegateStakeRequest {
 
 message CancelRemoveDelegateStakeResponse {}
 
+message RewardDelegateStakeRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  uint64 topic_id = 2;
+  string reputer = 3;
+}
+
+message RewardDelegateStakeResponse {}
+
 // Inferences are requested by consumers who fund topics by sending ALLO to
 // ecosystem account via TopicFund messages
 message FundTopicRequest {
@@ -409,11 +440,86 @@ message RemoveFromWhitelistAdminRequest {
 
 message RemoveFromWhitelistAdminResponse {}
 
-message RewardDelegateStakeResponse {}
-
-message RewardDelegateStakeRequest {
+message EnableTopicWhitelistRequest {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   uint64 topic_id = 2;
-  string reputer = 3;
 }
+
+message EnableTopicWhitelistResponse {}
+
+message DisableTopicWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  uint64 topic_id = 2;
+}
+
+message DisableTopicWhitelistResponse {}
+
+message AddToGlobalWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message AddToGlobalWhitelistResponse {}
+
+message RemoveFromGlobalWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message RemoveFromGlobalWhitelistResponse {}
+
+message AddToTopicCreatorWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message AddToTopicCreatorWhitelistResponse {}
+
+message RemoveFromTopicCreatorWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message RemoveFromTopicCreatorWhitelistResponse {}
+
+message AddToTopicWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+  uint64 topic_id = 3;
+}
+
+message AddToTopicWorkerWhitelistResponse {}
+
+message RemoveFromTopicWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+  uint64 topic_id = 3;
+}
+
+message RemoveFromTopicWorkerWhitelistResponse {}
+
+message AddToTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+  uint64 topic_id = 3;
+}
+
+message AddToTopicReputerWhitelistResponse {}
+
+message RemoveFromTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+  uint64 topic_id = 3;
+}
+
+message RemoveFromTopicReputerWhitelistResponse {}

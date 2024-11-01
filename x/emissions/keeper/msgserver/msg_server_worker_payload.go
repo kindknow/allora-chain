@@ -23,6 +23,12 @@ func (ms msgServer) InsertWorkerPayload(ctx context.Context, msg *types.InsertWo
 	if err != nil {
 		return nil, err
 	}
+	canSubmit, err := ms.k.CanSubmitWorkerPayload(ctx, msg.WorkerDataBundle.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canSubmit {
+		return nil, types.ErrNotPermittedToSubmitWorkerPayload
+	}
 
 	blockHeight := sdkCtx.BlockHeight()
 	err = msg.WorkerDataBundle.Validate()

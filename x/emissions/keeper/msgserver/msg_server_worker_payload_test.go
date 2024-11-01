@@ -327,6 +327,8 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithFewTopElementsPerFore
 		MaxStringLength:                     nil,
 		InitialRegretQuantile:               nil,
 		PNormSafeDiv:                        nil,
+		GlobalWhitelistEnabled:              nil,
+		TopicCreatorWhitelistEnabled:        nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{
@@ -705,6 +707,8 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithLowScoreForecastsAreR
 		MaxStringLength:                     nil,
 		InitialRegretQuantile:               nil,
 		PNormSafeDiv:                        nil,
+		GlobalWhitelistEnabled:              nil,
+		TopicCreatorWhitelistEnabled:        nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

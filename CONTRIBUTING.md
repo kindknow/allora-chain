@@ -34,7 +34,7 @@ For `x/emissions`:
    3. Add validation for the new params
 2. `x/emissions/proto/emissions/v1/params.proto`
    1. Add to the `Params` proto, tracking all global params
-3. x/emissions/proto/emissions/v1/tx.proto
+3. `x/emissions/proto/emissions/v1/tx.proto`
    1. Add to the proto of the tx that allows us to set new params
 4. `x/emissions/keeper/msgserver/msg_server_params.go`
    1. Add code to the tx that allows us to set new params

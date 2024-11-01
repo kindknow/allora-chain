@@ -85,6 +85,8 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			MaxStringLength:                     nil,
 			InitialRegretQuantile:               nil,
 			PNormSafeDiv:                        nil,
+			GlobalWhitelistEnabled:              nil,
+			TopicCreatorWhitelistEnabled:        nil,
 		},
 	}
 	txResp, err := m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)
@@ -141,6 +143,8 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			MaxStringLength:                     nil,
 			InitialRegretQuantile:               nil,
 			PNormSafeDiv:                        nil,
+			GlobalWhitelistEnabled:              nil,
+			TopicCreatorWhitelistEnabled:        nil,
 		},
 	}
 	_, err = m.Client.BroadcastTx(ctx, m.BobAcc, updateParamRequest)
@@ -201,6 +205,8 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			MaxStringLength:                     nil,
 			InitialRegretQuantile:               nil,
 			PNormSafeDiv:                        nil,
+			GlobalWhitelistEnabled:              nil,
+			TopicCreatorWhitelistEnabled:        nil,
 		},
 	}
 	txResp, err = m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)
