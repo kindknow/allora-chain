@@ -27,6 +27,7 @@ func waitForNextChurningBlock(m testCommon.TestConfig, topicId uint64) (*types.T
 	err = m.Client.WaitForBlockHeight(ctx, nextBlockResponse.BlockHeight)
 	return topicResponse.Topic, err
 }
+
 func InsertSingleWorkerPayload(m testCommon.TestConfig, topic *types.Topic, blockHeight int64) error {
 	ctx := context.Background()
 	// Nonce: calculate from EpochLastRan + EpochLength
@@ -230,11 +231,29 @@ func ValidateGetNetworkLossBundle(m testCommon.TestConfig, topicId uint64, Block
 	require.NotNil(m.T, result.LossBundle, "Retrieved data should match inserted data")
 }
 
+func addGlobalActor(m testCommon.TestConfig, address string) error {
+	ctx := context.Background()
+	addGlobalActorRequest := &types.AddToGlobalWhitelistRequest{
+		Sender:  m.AliceAddr,
+		Address: address,
+	}
+	txResp, err := m.Client.BroadcastTx(ctx, m.AliceAcc, addGlobalActorRequest)
+	require.NoError(m.T, err)
+	_, err = m.Client.WaitForTx(ctx, txResp.TxHash)
+	require.NoError(m.T, err)
+	addGlobalActorResponse := &types.AddToGlobalWhitelistResponse{}
+	err = txResp.Decode(addGlobalActorResponse)
+	require.NoError(m.T, err)
+	return nil
+}
+
 // Register two actors and check their registrations went through
 func WorkerInferenceAndForecastChecks(m testCommon.TestConfig) {
 	ctx := context.Background()
 	m.T.Log(time.Now(), "--- START  Worker Inference, Forecast and Reputation test ---")
 	// Nonce: calculate from EpochLastRan + EpochLength
+	require.NoError(m.T, addGlobalActor(m, m.BobAddr))
+	require.NoError(m.T, addGlobalActor(m, m.AliceAddr))
 
 	topic, err := waitForNextChurningBlock(m, 1)
 	if err != nil {

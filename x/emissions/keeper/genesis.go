@@ -689,17 +689,20 @@ func (k *Keeper) InitGenesis(ctx context.Context, data *types.GenesisState) erro
 			}
 		}
 	}
-	//CoreTeamAddresses []string
-	if len(data.CoreTeamAddresses) != 0 {
+	// CoreTeamAddresses, WhitelistAdmins []string
+	// This allows us to add core team addresses to the whitelist during a genesis import
+	// while still keeping the original core team addresses in the genesis file
+	if len(data.CoreTeamAddresses) != 0 || len(data.WhitelistAdmins) != 0 {
 		// make sure what we are storage isn't garbage
-		for _, address := range data.CoreTeamAddresses {
+		for _, address := range append(data.CoreTeamAddresses, data.WhitelistAdmins...) {
 			_, err := sdk.AccAddressFromBech32(address)
 			if err != nil {
 				return errors.Wrap(err, "error converting core team address from bech32")
 			}
-		}
-		if err := k.addCoreTeamToWhitelists(ctx, data.CoreTeamAddresses); err != nil {
-			return errors.Wrap(err, "error adding core team addresses to whitelists")
+			err = k.AddWhitelistAdmin(ctx, address)
+			if err != nil {
+				return errors.Wrap(err, "error adding core team addresses to whitelists")
+			}
 		}
 	}
 	//TopicLastWorkerCommit   []*TopicIdTimestampedActorNonce
@@ -900,15 +903,6 @@ func (k *Keeper) InitGenesis(ctx context.Context, data *types.GenesisState) erro
 	} else {
 		if err := k.SetRewardCurrentBlockEmission(ctx, cosmosMath.ZeroInt()); err != nil {
 			return errors.Wrap(err, "error setting RewardCurrentBlockEmission to zero int")
-		}
-	}
-
-	// whitelistAdmins
-	if len(data.WhitelistAdmins) != 0 {
-		for _, address := range data.WhitelistAdmins {
-			if err := k.AddWhitelistAdmin(ctx, address); err != nil {
-				return errors.Wrap(err, "error setting whitelistAdmins")
-			}
 		}
 	}
 
@@ -2394,14 +2388,4 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 		TopicReputerWhitelist:                          topicReputerWhitelist,
 		TopicWhitelistEnabled:                          topicWhitelistEnabled,
 	}, nil
-}
-
-func (k *Keeper) addCoreTeamToWhitelists(ctx context.Context, coreTeamAddresses []string) error {
-	for _, addr := range coreTeamAddresses {
-		err := k.AddWhitelistAdmin(ctx, addr)
-		if err != nil {
-			return errors.Wrap(err, "failed to add core team to whitelist")
-		}
-	}
-	return nil
 }
