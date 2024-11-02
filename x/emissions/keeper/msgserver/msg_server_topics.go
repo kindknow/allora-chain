@@ -77,6 +77,12 @@ func (ms msgServer) CreateNewTopic(ctx context.Context, msg *types.CreateNewTopi
 		return nil, err
 	}
 
+	// Turn topic whitelist on by default so no one can squeeze in worker payloads within the same block
+	err = ms.k.EnableTopicWhitelist(ctx, topicId)
+	if err != nil {
+		return nil, err
+	}
+
 	err = ms.k.AddTopicFeeRevenue(ctx, topicId, params.CreateTopicFee)
 	return &types.CreateNewTopicResponse{TopicId: topicId}, err
 }

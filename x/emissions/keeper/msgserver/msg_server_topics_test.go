@@ -51,6 +51,10 @@ func (s *MsgServerTestSuite) TestMsgCreateNewTopic() {
 		}
 	}
 	require.False(found, "Added topic found in active topics")
+
+	enabled, err := s.emissionsKeeper.IsTopicWhitelistEnabled(s.ctx, result.TopicId)
+	require.NoError(err)
+	require.True(enabled, "Topic whitelist should be enabled")
 }
 
 func (s *MsgServerTestSuite) TestMsgCreateNewTopicWithEpsilonZeroFails() {

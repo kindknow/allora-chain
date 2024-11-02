@@ -231,7 +231,7 @@ func ValidateGetNetworkLossBundle(m testCommon.TestConfig, topicId uint64, Block
 	require.NotNil(m.T, result.LossBundle, "Retrieved data should match inserted data")
 }
 
-func addGlobalActor(m testCommon.TestConfig, address string) error {
+func addGlobalActor(m testCommon.TestConfig, address string) {
 	ctx := context.Background()
 	addGlobalActorRequest := &types.AddToGlobalWhitelistRequest{
 		Sender:  m.AliceAddr,
@@ -244,7 +244,6 @@ func addGlobalActor(m testCommon.TestConfig, address string) error {
 	addGlobalActorResponse := &types.AddToGlobalWhitelistResponse{}
 	err = txResp.Decode(addGlobalActorResponse)
 	require.NoError(m.T, err)
-	return nil
 }
 
 // Register two actors and check their registrations went through
@@ -252,8 +251,8 @@ func WorkerInferenceAndForecastChecks(m testCommon.TestConfig) {
 	ctx := context.Background()
 	m.T.Log(time.Now(), "--- START  Worker Inference, Forecast and Reputation test ---")
 	// Nonce: calculate from EpochLastRan + EpochLength
-	require.NoError(m.T, addGlobalActor(m, m.BobAddr))
-	require.NoError(m.T, addGlobalActor(m, m.AliceAddr))
+	addGlobalActor(m, m.BobAddr)
+	addGlobalActor(m, m.AliceAddr)
 
 	topic, err := waitForNextChurningBlock(m, 1)
 	if err != nil {

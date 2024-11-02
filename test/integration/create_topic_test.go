@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func addTopicCreator(m testCommon.TestConfig, address string) error {
+func addTopicCreator(m testCommon.TestConfig, address string) {
 	ctx := context.Background()
 	addTopicCreatorRequest := &emissionstypes.AddToTopicCreatorWhitelistRequest{
 		Sender:  m.AliceAddr,
@@ -22,7 +22,6 @@ func addTopicCreator(m testCommon.TestConfig, address string) error {
 	addTopicCreatorResponse := &emissionstypes.AddToTopicCreatorWhitelistResponse{}
 	err = txResp.Decode(addTopicCreatorResponse)
 	require.NoError(m.T, err)
-	return nil
 }
 
 // test that we can create topics and that the resultant topics are what we asked for
@@ -34,7 +33,7 @@ func CreateTopic(m testCommon.TestConfig) (topicId uint64) {
 	)
 
 	// Allow Alice to create topics
-	require.NoError(m.T, addTopicCreator(m, m.AliceAddr))
+	addTopicCreator(m, m.AliceAddr)
 
 	require.NoError(m.T, err)
 	require.Positive(m.T, topicIdStart.NextTopicId)
