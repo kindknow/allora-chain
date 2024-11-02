@@ -178,14 +178,14 @@ func (s *KeeperTestSuite) TestIsTopicWhitelistEnabled() {
 	keeper := s.emissionsKeeper
 	topicId := uint64(1)
 
-	enabled, err := keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err := keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().False(enabled)
 
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
-	enabled, err = keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err = keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().True(enabled)
 }
@@ -207,32 +207,62 @@ func (s *KeeperTestSuite) TestIsEnabledGlobalActor() {
 	s.Require().True(enabled)
 }
 
-func (s *KeeperTestSuite) TestDisableTopicWhitelist() {
+func (s *KeeperTestSuite) TestDisableTopicWorkerWhitelist() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 	topicId := uint64(1)
 
 	// Test disabling when not enabled
-	err := keeper.DisableTopicWhitelist(ctx, topicId)
+	err := keeper.DisableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err, "Disabling non-enabled whitelist should not error")
 
-	enabled, err := keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err := keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().False(enabled, "Whitelist should remain disabled")
 
 	// Enable whitelist first
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
-	enabled, err = keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err = keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().True(enabled, "Whitelist should be enabled")
 
 	// Test disabling when enabled
-	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	err = keeper.DisableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err, "Disabling enabled whitelist should not error")
 
-	enabled, err = keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err = keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
+	s.Require().NoError(err)
+	s.Require().False(enabled, "Whitelist should be disabled")
+}
+
+func (s *KeeperTestSuite) TestDisableTopicReputerWhitelist() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+	topicId := uint64(1)
+
+	// Test disabling when not enabled
+	err := keeper.DisableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err, "Disabling non-enabled whitelist should not error")
+
+	enabled, err := keeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
+	s.Require().NoError(err)
+	s.Require().False(enabled, "Whitelist should remain disabled")
+
+	// Enable whitelist first
+	err = keeper.EnableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	enabled, err = keeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
+	s.Require().NoError(err)
+	s.Require().True(enabled, "Whitelist should be enabled")
+
+	// Test disabling when enabled
+	err = keeper.DisableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err, "Disabling enabled whitelist should not error")
+
+	enabled, err = keeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().False(enabled, "Whitelist should be disabled")
 }
@@ -380,14 +410,14 @@ func (s *KeeperTestSuite) TestIsEnabledTopicWorker() {
 	err := keeper.RemoveFromTopicWorkerWhitelist(ctx, topicId, testAddr)
 	s.Require().NoError(err)
 
-	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	err = keeper.DisableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	enabled, err := keeper.IsEnabledTopicWorker(ctx, topicId, testAddr)
 	s.Require().NoError(err)
 	s.Require().True(enabled)
 
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	enabled, err = keeper.IsEnabledTopicWorker(ctx, topicId, testAddr)
@@ -411,14 +441,14 @@ func (s *KeeperTestSuite) TestIsEnabledTopicReputer() {
 	err := keeper.RemoveFromTopicReputerWhitelist(ctx, topicId, testAddr)
 	s.Require().NoError(err)
 
-	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	err = keeper.DisableTopicReputerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	enabled, err := keeper.IsEnabledTopicReputer(ctx, topicId, testAddr)
 	s.Require().NoError(err)
 	s.Require().True(enabled)
 
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicReputerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	enabled, err = keeper.IsEnabledTopicReputer(ctx, topicId, testAddr)
@@ -516,7 +546,7 @@ func (s *KeeperTestSuite) TestCanSubmitWorkerPayloadWithWhitelist() {
 	neitherAddr := "allo1w6uwgrv77szudkve7g84uazuhyw6j4q9hdqelv"
 	topicId := uint64(1)
 
-	err := keeper.EnableTopicWhitelist(ctx, topicId)
+	err := keeper.EnableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	can, err := keeper.CanSubmitWorkerPayload(ctx, topicId, neitherAddr)
@@ -537,7 +567,7 @@ func (s *KeeperTestSuite) TestCanSubmitWorkerPayloadWithWhitelist() {
 	s.Require().NoError(err)
 	s.Require().True(can)
 
-	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	err = keeper.DisableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	can, err = keeper.CanSubmitWorkerPayload(ctx, topicId, neitherAddr)
@@ -553,7 +583,7 @@ func (s *KeeperTestSuite) TestCanSubmitReputerPayloadWithWhitelist() {
 	neitherAddr := "allo1w6uwgrv77szudkve7g84uazuhyw6j4q9hdqelv"
 	topicId := uint64(1)
 
-	err := keeper.EnableTopicWhitelist(ctx, topicId)
+	err := keeper.EnableTopicReputerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	can, err := keeper.CanSubmitReputerPayload(ctx, topicId, neitherAddr)
@@ -574,7 +604,7 @@ func (s *KeeperTestSuite) TestCanSubmitReputerPayloadWithWhitelist() {
 	s.Require().NoError(err)
 	s.Require().True(can)
 
-	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	err = keeper.DisableTopicReputerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	can, err = keeper.CanSubmitReputerPayload(ctx, topicId, neitherAddr)
@@ -582,29 +612,56 @@ func (s *KeeperTestSuite) TestCanSubmitReputerPayloadWithWhitelist() {
 	s.Require().True(can)
 }
 
-func (s *KeeperTestSuite) TestEnableDisableTopicWhitelist() {
+func (s *KeeperTestSuite) TestEnableDisableTopicWorkerWhitelist() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 	topicId := uint64(1)
 
 	// Initially should be disabled
-	enabled, err := keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err := keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().False(enabled)
 
 	// Test enabling
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
-	enabled, err = keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err = keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().True(enabled)
 
 	// Test disabling
-	err = keeper.DisableTopicWhitelist(ctx, topicId)
+	err = keeper.DisableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
-	enabled, err = keeper.IsTopicWhitelistEnabled(ctx, topicId)
+	enabled, err = keeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
+	s.Require().NoError(err)
+	s.Require().False(enabled)
+}
+
+func (s *KeeperTestSuite) TestEnableDisableTopicReputerWhitelist() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+	topicId := uint64(1)
+
+	// Initially should be disabled
+	enabled, err := keeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
+	s.Require().NoError(err)
+	s.Require().False(enabled)
+
+	// Test enabling
+	err = keeper.EnableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	enabled, err = keeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
+	s.Require().NoError(err)
+	s.Require().True(enabled)
+
+	// Test disabling
+	err = keeper.DisableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	enabled, err = keeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
 	s.Require().NoError(err)
 	s.Require().False(enabled)
 }

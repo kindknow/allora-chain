@@ -37,8 +37,10 @@ const (
 	MsgService_InsertReputerPayload_FullMethodName            = "/emissions.v5.MsgService/InsertReputerPayload"
 	MsgService_AddToGlobalWhitelist_FullMethodName            = "/emissions.v5.MsgService/AddToGlobalWhitelist"
 	MsgService_RemoveFromGlobalWhitelist_FullMethodName       = "/emissions.v5.MsgService/RemoveFromGlobalWhitelist"
-	MsgService_EnableTopicWhitelist_FullMethodName            = "/emissions.v5.MsgService/EnableTopicWhitelist"
-	MsgService_DisableTopicWhitelist_FullMethodName           = "/emissions.v5.MsgService/DisableTopicWhitelist"
+	MsgService_EnableTopicWorkerWhitelist_FullMethodName      = "/emissions.v5.MsgService/EnableTopicWorkerWhitelist"
+	MsgService_DisableTopicWorkerWhitelist_FullMethodName     = "/emissions.v5.MsgService/DisableTopicWorkerWhitelist"
+	MsgService_EnableTopicReputerWhitelist_FullMethodName     = "/emissions.v5.MsgService/EnableTopicReputerWhitelist"
+	MsgService_DisableTopicReputerWhitelist_FullMethodName    = "/emissions.v5.MsgService/DisableTopicReputerWhitelist"
 	MsgService_AddToTopicCreatorWhitelist_FullMethodName      = "/emissions.v5.MsgService/AddToTopicCreatorWhitelist"
 	MsgService_RemoveFromTopicCreatorWhitelist_FullMethodName = "/emissions.v5.MsgService/RemoveFromTopicCreatorWhitelist"
 	MsgService_AddToTopicWorkerWhitelist_FullMethodName       = "/emissions.v5.MsgService/AddToTopicWorkerWhitelist"
@@ -71,8 +73,10 @@ type MsgServiceClient interface {
 	InsertReputerPayload(ctx context.Context, in *InsertReputerPayloadRequest, opts ...grpc.CallOption) (*InsertReputerPayloadResponse, error)
 	AddToGlobalWhitelist(ctx context.Context, in *AddToGlobalWhitelistRequest, opts ...grpc.CallOption) (*AddToGlobalWhitelistResponse, error)
 	RemoveFromGlobalWhitelist(ctx context.Context, in *RemoveFromGlobalWhitelistRequest, opts ...grpc.CallOption) (*RemoveFromGlobalWhitelistResponse, error)
-	EnableTopicWhitelist(ctx context.Context, in *EnableTopicWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicWhitelistResponse, error)
-	DisableTopicWhitelist(ctx context.Context, in *DisableTopicWhitelistRequest, opts ...grpc.CallOption) (*DisableTopicWhitelistResponse, error)
+	EnableTopicWorkerWhitelist(ctx context.Context, in *EnableTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicWorkerWhitelistResponse, error)
+	DisableTopicWorkerWhitelist(ctx context.Context, in *DisableTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*DisableTopicWorkerWhitelistResponse, error)
+	EnableTopicReputerWhitelist(ctx context.Context, in *EnableTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicReputerWhitelistResponse, error)
+	DisableTopicReputerWhitelist(ctx context.Context, in *DisableTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*DisableTopicReputerWhitelistResponse, error)
 	AddToTopicCreatorWhitelist(ctx context.Context, in *AddToTopicCreatorWhitelistRequest, opts ...grpc.CallOption) (*AddToTopicCreatorWhitelistResponse, error)
 	RemoveFromTopicCreatorWhitelist(ctx context.Context, in *RemoveFromTopicCreatorWhitelistRequest, opts ...grpc.CallOption) (*RemoveFromTopicCreatorWhitelistResponse, error)
 	AddToTopicWorkerWhitelist(ctx context.Context, in *AddToTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*AddToTopicWorkerWhitelistResponse, error)
@@ -269,20 +273,40 @@ func (c *msgServiceClient) RemoveFromGlobalWhitelist(ctx context.Context, in *Re
 	return out, nil
 }
 
-func (c *msgServiceClient) EnableTopicWhitelist(ctx context.Context, in *EnableTopicWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicWhitelistResponse, error) {
+func (c *msgServiceClient) EnableTopicWorkerWhitelist(ctx context.Context, in *EnableTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicWorkerWhitelistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EnableTopicWhitelistResponse)
-	err := c.cc.Invoke(ctx, MsgService_EnableTopicWhitelist_FullMethodName, in, out, cOpts...)
+	out := new(EnableTopicWorkerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_EnableTopicWorkerWhitelist_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgServiceClient) DisableTopicWhitelist(ctx context.Context, in *DisableTopicWhitelistRequest, opts ...grpc.CallOption) (*DisableTopicWhitelistResponse, error) {
+func (c *msgServiceClient) DisableTopicWorkerWhitelist(ctx context.Context, in *DisableTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*DisableTopicWorkerWhitelistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DisableTopicWhitelistResponse)
-	err := c.cc.Invoke(ctx, MsgService_DisableTopicWhitelist_FullMethodName, in, out, cOpts...)
+	out := new(DisableTopicWorkerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_DisableTopicWorkerWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) EnableTopicReputerWhitelist(ctx context.Context, in *EnableTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicReputerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EnableTopicReputerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_EnableTopicReputerWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) DisableTopicReputerWhitelist(ctx context.Context, in *DisableTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*DisableTopicReputerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DisableTopicReputerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_DisableTopicReputerWhitelist_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -373,8 +397,10 @@ type MsgServiceServer interface {
 	InsertReputerPayload(context.Context, *InsertReputerPayloadRequest) (*InsertReputerPayloadResponse, error)
 	AddToGlobalWhitelist(context.Context, *AddToGlobalWhitelistRequest) (*AddToGlobalWhitelistResponse, error)
 	RemoveFromGlobalWhitelist(context.Context, *RemoveFromGlobalWhitelistRequest) (*RemoveFromGlobalWhitelistResponse, error)
-	EnableTopicWhitelist(context.Context, *EnableTopicWhitelistRequest) (*EnableTopicWhitelistResponse, error)
-	DisableTopicWhitelist(context.Context, *DisableTopicWhitelistRequest) (*DisableTopicWhitelistResponse, error)
+	EnableTopicWorkerWhitelist(context.Context, *EnableTopicWorkerWhitelistRequest) (*EnableTopicWorkerWhitelistResponse, error)
+	DisableTopicWorkerWhitelist(context.Context, *DisableTopicWorkerWhitelistRequest) (*DisableTopicWorkerWhitelistResponse, error)
+	EnableTopicReputerWhitelist(context.Context, *EnableTopicReputerWhitelistRequest) (*EnableTopicReputerWhitelistResponse, error)
+	DisableTopicReputerWhitelist(context.Context, *DisableTopicReputerWhitelistRequest) (*DisableTopicReputerWhitelistResponse, error)
 	AddToTopicCreatorWhitelist(context.Context, *AddToTopicCreatorWhitelistRequest) (*AddToTopicCreatorWhitelistResponse, error)
 	RemoveFromTopicCreatorWhitelist(context.Context, *RemoveFromTopicCreatorWhitelistRequest) (*RemoveFromTopicCreatorWhitelistResponse, error)
 	AddToTopicWorkerWhitelist(context.Context, *AddToTopicWorkerWhitelistRequest) (*AddToTopicWorkerWhitelistResponse, error)
@@ -445,11 +471,17 @@ func (UnimplementedMsgServiceServer) AddToGlobalWhitelist(context.Context, *AddT
 func (UnimplementedMsgServiceServer) RemoveFromGlobalWhitelist(context.Context, *RemoveFromGlobalWhitelistRequest) (*RemoveFromGlobalWhitelistResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveFromGlobalWhitelist not implemented")
 }
-func (UnimplementedMsgServiceServer) EnableTopicWhitelist(context.Context, *EnableTopicWhitelistRequest) (*EnableTopicWhitelistResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EnableTopicWhitelist not implemented")
+func (UnimplementedMsgServiceServer) EnableTopicWorkerWhitelist(context.Context, *EnableTopicWorkerWhitelistRequest) (*EnableTopicWorkerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnableTopicWorkerWhitelist not implemented")
 }
-func (UnimplementedMsgServiceServer) DisableTopicWhitelist(context.Context, *DisableTopicWhitelistRequest) (*DisableTopicWhitelistResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DisableTopicWhitelist not implemented")
+func (UnimplementedMsgServiceServer) DisableTopicWorkerWhitelist(context.Context, *DisableTopicWorkerWhitelistRequest) (*DisableTopicWorkerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisableTopicWorkerWhitelist not implemented")
+}
+func (UnimplementedMsgServiceServer) EnableTopicReputerWhitelist(context.Context, *EnableTopicReputerWhitelistRequest) (*EnableTopicReputerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnableTopicReputerWhitelist not implemented")
+}
+func (UnimplementedMsgServiceServer) DisableTopicReputerWhitelist(context.Context, *DisableTopicReputerWhitelistRequest) (*DisableTopicReputerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisableTopicReputerWhitelist not implemented")
 }
 func (UnimplementedMsgServiceServer) AddToTopicCreatorWhitelist(context.Context, *AddToTopicCreatorWhitelistRequest) (*AddToTopicCreatorWhitelistResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddToTopicCreatorWhitelist not implemented")
@@ -814,38 +846,74 @@ func _MsgService_RemoveFromGlobalWhitelist_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MsgService_EnableTopicWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EnableTopicWhitelistRequest)
+func _MsgService_EnableTopicWorkerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnableTopicWorkerWhitelistRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServiceServer).EnableTopicWhitelist(ctx, in)
+		return srv.(MsgServiceServer).EnableTopicWorkerWhitelist(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MsgService_EnableTopicWhitelist_FullMethodName,
+		FullMethod: MsgService_EnableTopicWorkerWhitelist_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).EnableTopicWhitelist(ctx, req.(*EnableTopicWhitelistRequest))
+		return srv.(MsgServiceServer).EnableTopicWorkerWhitelist(ctx, req.(*EnableTopicWorkerWhitelistRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MsgService_DisableTopicWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DisableTopicWhitelistRequest)
+func _MsgService_DisableTopicWorkerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisableTopicWorkerWhitelistRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServiceServer).DisableTopicWhitelist(ctx, in)
+		return srv.(MsgServiceServer).DisableTopicWorkerWhitelist(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MsgService_DisableTopicWhitelist_FullMethodName,
+		FullMethod: MsgService_DisableTopicWorkerWhitelist_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).DisableTopicWhitelist(ctx, req.(*DisableTopicWhitelistRequest))
+		return srv.(MsgServiceServer).DisableTopicWorkerWhitelist(ctx, req.(*DisableTopicWorkerWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_EnableTopicReputerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnableTopicReputerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).EnableTopicReputerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MsgService_EnableTopicReputerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).EnableTopicReputerWhitelist(ctx, req.(*EnableTopicReputerWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_DisableTopicReputerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisableTopicReputerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).DisableTopicReputerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MsgService_DisableTopicReputerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).DisableTopicReputerWhitelist(ctx, req.(*DisableTopicReputerWhitelistRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1038,12 +1106,20 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MsgService_RemoveFromGlobalWhitelist_Handler,
 		},
 		{
-			MethodName: "EnableTopicWhitelist",
-			Handler:    _MsgService_EnableTopicWhitelist_Handler,
+			MethodName: "EnableTopicWorkerWhitelist",
+			Handler:    _MsgService_EnableTopicWorkerWhitelist_Handler,
 		},
 		{
-			MethodName: "DisableTopicWhitelist",
-			Handler:    _MsgService_DisableTopicWhitelist_Handler,
+			MethodName: "DisableTopicWorkerWhitelist",
+			Handler:    _MsgService_DisableTopicWorkerWhitelist_Handler,
+		},
+		{
+			MethodName: "EnableTopicReputerWhitelist",
+			Handler:    _MsgService_EnableTopicReputerWhitelist_Handler,
+		},
+		{
+			MethodName: "DisableTopicReputerWhitelist",
+			Handler:    _MsgService_DisableTopicReputerWhitelist_Handler,
 		},
 		{
 			MethodName: "AddToTopicCreatorWhitelist",

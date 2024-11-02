@@ -31,18 +31,32 @@ func (k *Keeper) RemoveWhitelistAdmin(ctx context.Context, admin ActorId) error 
 	return k.whitelistAdmins.Remove(ctx, admin)
 }
 
-func (k *Keeper) EnableTopicWhitelist(ctx context.Context, topicId TopicId) error {
-	return k.topicWhitelistEnabled.Set(ctx, topicId)
+func (k *Keeper) EnableTopicWorkerWhitelist(ctx context.Context, topicId TopicId) error {
+	return k.topicWorkerWhitelistEnabled.Set(ctx, topicId)
 }
 
-func (k *Keeper) DisableTopicWhitelist(ctx context.Context, topicId TopicId) error {
-	has, err := k.topicWhitelistEnabled.Has(ctx, topicId)
+func (k *Keeper) DisableTopicWorkerWhitelist(ctx context.Context, topicId TopicId) error {
+	has, err := k.topicWorkerWhitelistEnabled.Has(ctx, topicId)
 	if err != nil {
 		return err
 	} else if !has {
 		return nil
 	}
-	return k.topicWhitelistEnabled.Remove(ctx, topicId)
+	return k.topicWorkerWhitelistEnabled.Remove(ctx, topicId)
+}
+
+func (k *Keeper) EnableTopicReputerWhitelist(ctx context.Context, topicId TopicId) error {
+	return k.topicReputerWhitelistEnabled.Set(ctx, topicId)
+}
+
+func (k *Keeper) DisableTopicReputerWhitelist(ctx context.Context, topicId TopicId) error {
+	has, err := k.topicReputerWhitelistEnabled.Has(ctx, topicId)
+	if err != nil {
+		return err
+	} else if !has {
+		return nil
+	}
+	return k.topicReputerWhitelistEnabled.Remove(ctx, topicId)
 }
 
 func (k *Keeper) AddToGlobalWhitelist(ctx context.Context, actor ActorId) error {
@@ -137,8 +151,13 @@ func (k Keeper) IsWhitelistAdmin(ctx context.Context, admin ActorId) (bool, erro
 }
 
 // A topic is whitelist enabled if the topicWhitelistEnabled keyset has the topicId
-func (k *Keeper) IsTopicWhitelistEnabled(ctx context.Context, topicId TopicId) (bool, error) {
-	return k.topicWhitelistEnabled.Has(ctx, topicId)
+func (k *Keeper) IsTopicWorkerWhitelistEnabled(ctx context.Context, topicId TopicId) (bool, error) {
+	return k.topicWorkerWhitelistEnabled.Has(ctx, topicId)
+}
+
+// A topic is whitelist enabled if the topicWhitelistEnabled keyset has the topicId
+func (k *Keeper) IsTopicReputerWhitelistEnabled(ctx context.Context, topicId TopicId) (bool, error) {
+	return k.topicReputerWhitelistEnabled.Has(ctx, topicId)
 }
 
 func (k *Keeper) IsWhitelistedTopicCreator(ctx context.Context, actor ActorId) (bool, error) {
@@ -192,7 +211,7 @@ func (k *Keeper) IsEnabledWhitelistedTopicCreator(ctx context.Context, actor Act
 // An actor is topic worker whitelisted if the topicWhitelistEnabled parameter is false
 // or (the parameter is true and topicWorkerWhitelist keyset has the (topicId, actor) key)
 func (k *Keeper) IsEnabledTopicWorker(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
-	topicWhitelistEnabled, err := k.IsTopicWhitelistEnabled(ctx, topicId)
+	topicWhitelistEnabled, err := k.IsTopicWorkerWhitelistEnabled(ctx, topicId)
 	if err != nil {
 		return false, err
 	}
@@ -206,7 +225,7 @@ func (k *Keeper) IsEnabledTopicWorker(ctx context.Context, topicId TopicId, acto
 // An actor is topic reputer whitelisted if the topicWhitelistEnabled parameter is false
 // or (the parameter is true and topicReputerWhitelist keyset has the (topicId, actor) key)
 func (k *Keeper) IsEnabledTopicReputer(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
-	topicWhitelistEnabled, err := k.IsTopicWhitelistEnabled(ctx, topicId)
+	topicWhitelistEnabled, err := k.IsTopicReputerWhitelistEnabled(ctx, topicId)
 	if err != nil {
 		return false, err
 	}

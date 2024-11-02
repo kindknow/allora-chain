@@ -43,23 +43,50 @@ func (s *QueryServerTestSuite) TestIsTopicWhitelistEnabled() {
 	topicId := uint64(1)
 
 	// Initially should be disabled
-	req := &types.IsTopicWhitelistEnabledRequest{
+	req := &types.IsTopicWorkerWhitelistEnabledRequest{
 		TopicId: topicId,
 	}
 
-	response, err := queryServer.IsTopicWhitelistEnabled(ctx, req)
+	response, err := queryServer.IsTopicWorkerWhitelistEnabled(ctx, req)
 	s.Require().NoError(err)
 	s.Require().NotNil(response)
-	s.Require().False(response.IsTopicWhitelistEnabled)
+	s.Require().False(response.IsTopicWorkerWhitelistEnabled)
 
 	// Enable whitelist
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
-	response, err = queryServer.IsTopicWhitelistEnabled(ctx, req)
+	response, err = queryServer.IsTopicWorkerWhitelistEnabled(ctx, req)
 	s.Require().NoError(err)
 	s.Require().NotNil(response)
-	s.Require().True(response.IsTopicWhitelistEnabled)
+	s.Require().True(response.IsTopicWorkerWhitelistEnabled)
+}
+
+func (s *QueryServerTestSuite) TestIsTopicReputerWhitelistEnabled() {
+	ctx := s.ctx
+	queryServer := s.queryServer
+	keeper := s.emissionsKeeper
+
+	topicId := uint64(1)
+
+	// Initially should be disabled
+	req := &types.IsTopicReputerWhitelistEnabledRequest{
+		TopicId: topicId,
+	}
+
+	response, err := queryServer.IsTopicReputerWhitelistEnabled(ctx, req)
+	s.Require().NoError(err)
+	s.Require().NotNil(response)
+	s.Require().False(response.IsTopicReputerWhitelistEnabled)
+
+	// Enable whitelist
+	err = keeper.EnableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	response, err = queryServer.IsTopicReputerWhitelistEnabled(ctx, req)
+	s.Require().NoError(err)
+	s.Require().NotNil(response)
+	s.Require().True(response.IsTopicReputerWhitelistEnabled)
 }
 
 func (s *QueryServerTestSuite) TestIsWhitelistedTopicCreator() {
@@ -319,7 +346,7 @@ func (s *QueryServerTestSuite) TestCanSubmitWorkerPayload() {
 	}
 
 	// Update TopicWhitelist
-	err := keeper.DisableTopicWhitelist(ctx, topicId)
+	err := keeper.DisableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	// Initially should be able to submit
@@ -329,7 +356,7 @@ func (s *QueryServerTestSuite) TestCanSubmitWorkerPayload() {
 	s.Require().True(response.CanSubmitWorkerPayload)
 
 	// Update TopicWhitelist
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicWorkerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	// Should be unable to submit after whitelist is enabled and they are not whitelisted
@@ -363,7 +390,7 @@ func (s *QueryServerTestSuite) TestCanSubmitReputerPayload() {
 	}
 
 	// Update TopicWhitelist
-	err := keeper.DisableTopicWhitelist(ctx, topicId)
+	err := keeper.DisableTopicReputerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	// Initially should be able to submit
@@ -373,7 +400,7 @@ func (s *QueryServerTestSuite) TestCanSubmitReputerPayload() {
 	s.Require().True(response.CanSubmitReputerPayload)
 
 	// Update TopicWhitelist
-	err = keeper.EnableTopicWhitelist(ctx, topicId)
+	err = keeper.EnableTopicReputerWhitelist(ctx, topicId)
 	s.Require().NoError(err)
 
 	// Should be unable to submit after whitelist is enabled and they are not whitelisted

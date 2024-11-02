@@ -77,8 +77,12 @@ func (ms msgServer) CreateNewTopic(ctx context.Context, msg *types.CreateNewTopi
 		return nil, err
 	}
 
-	// Turn topic whitelist on by default so no one can squeeze in worker payloads within the same block
-	err = ms.k.EnableTopicWhitelist(ctx, topicId)
+	// Turn topic whitelist on by default so no one can squeeze in payloads before an admin notices or can act
+	err = ms.k.EnableTopicWorkerWhitelist(ctx, topicId)
+	if err != nil {
+		return nil, err
+	}
+	err = ms.k.EnableTopicReputerWhitelist(ctx, topicId)
 	if err != nil {
 		return nil, err
 	}

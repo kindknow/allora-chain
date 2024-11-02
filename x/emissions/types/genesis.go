@@ -86,7 +86,8 @@ func NewGenesisState() *GenesisState {
 		TopicCreatorWhitelist:                          []string{},
 		TopicWorkerWhitelist:                           []*TopicAndActorId{},
 		TopicReputerWhitelist:                          []*TopicAndActorId{},
-		TopicWhitelistEnabled:                          []uint64{},
+		TopicWorkerWhitelistEnabled:                    []uint64{},
+		TopicReputerWhitelistEnabled:                   []uint64{},
 	}
 }
 

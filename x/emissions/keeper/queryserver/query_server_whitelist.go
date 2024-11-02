@@ -27,15 +27,26 @@ func (qs queryServer) IsWhitelistAdmin(ctx context.Context, req *types.IsWhiteli
 	return &types.IsWhitelistAdminResponse{IsAdmin: isAdmin}, nil
 }
 
-func (qs queryServer) IsTopicWhitelistEnabled(ctx context.Context, req *types.IsTopicWhitelistEnabledRequest) (_ *types.IsTopicWhitelistEnabledResponse, err error) {
-	defer metrics.RecordMetrics("IsTopicWhitelistEnabled", time.Now(), &err)
+func (qs queryServer) IsTopicWorkerWhitelistEnabled(ctx context.Context, req *types.IsTopicWorkerWhitelistEnabledRequest) (_ *types.IsTopicWorkerWhitelistEnabledResponse, err error) {
+	defer metrics.RecordMetrics("IsTopicWorkerWhitelistEnabled", time.Now(), &err)
 
-	val, err := qs.k.IsTopicWhitelistEnabled(ctx, req.TopicId)
+	val, err := qs.k.IsTopicWorkerWhitelistEnabled(ctx, req.TopicId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.IsTopicWhitelistEnabledResponse{IsTopicWhitelistEnabled: val}, nil
+	return &types.IsTopicWorkerWhitelistEnabledResponse{IsTopicWorkerWhitelistEnabled: val}, nil
+}
+
+func (qs queryServer) IsTopicReputerWhitelistEnabled(ctx context.Context, req *types.IsTopicReputerWhitelistEnabledRequest) (_ *types.IsTopicReputerWhitelistEnabledResponse, err error) {
+	defer metrics.RecordMetrics("IsTopicReputerWhitelistEnabled", time.Now(), &err)
+
+	val, err := qs.k.IsTopicReputerWhitelistEnabled(ctx, req.TopicId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.IsTopicReputerWhitelistEnabledResponse{IsTopicReputerWhitelistEnabled: val}, nil
 }
 
 func (qs queryServer) IsWhitelistedTopicCreator(ctx context.Context, req *types.IsWhitelistedTopicCreatorRequest) (_ *types.IsWhitelistedTopicCreatorResponse, err error) {

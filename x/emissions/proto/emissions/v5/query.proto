@@ -430,9 +430,14 @@ service QueryService {
     option (google.api.http).get = "/emissions/v5/active_inferers/{topic_id}";
   }
 
-  rpc IsTopicWhitelistEnabled(IsTopicWhitelistEnabledRequest) returns (IsTopicWhitelistEnabledResponse) {
+  rpc IsTopicWorkerWhitelistEnabled(IsTopicWorkerWhitelistEnabledRequest) returns (IsTopicWorkerWhitelistEnabledResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v5/IsTopicWhitelistEnabled/{topic_id}";
+    option (google.api.http).get = "/emissions/v5/IsTopicWorkerWhitelistEnabled/{topic_id}";
+  }
+
+  rpc IsTopicReputerWhitelistEnabled(IsTopicReputerWhitelistEnabledRequest) returns (IsTopicReputerWhitelistEnabledResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v5/IsTopicReputerWhitelistEnabled/{topic_id}";
   }
 
   rpc IsWhitelistedTopicCreator(IsWhitelistedTopicCreatorRequest) returns (IsWhitelistedTopicCreatorResponse) {
@@ -486,12 +491,20 @@ service QueryService {
   }
 }
 
-message IsTopicWhitelistEnabledRequest {
+message IsTopicWorkerWhitelistEnabledRequest {
   uint64 topic_id = 1;
 }
 
-message IsTopicWhitelistEnabledResponse {
-  bool is_topic_whitelist_enabled = 1;
+message IsTopicWorkerWhitelistEnabledResponse {
+  bool is_topic_worker_whitelist_enabled = 1;
+}
+
+message IsTopicReputerWhitelistEnabledRequest {
+  uint64 topic_id = 1;
+}
+
+message IsTopicReputerWhitelistEnabledResponse {
+  bool is_topic_reputer_whitelist_enabled = 1;
 }
 
 message IsWhitelistedTopicCreatorRequest {

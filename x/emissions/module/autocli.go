@@ -708,9 +708,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
-					RpcMethod: "IsTopicWhitelistEnabled",
-					Use:       "is-topic-whitelist-enabled [topic_id]",
-					Short:     "Check if whitelist is enabled for a topic",
+					RpcMethod: "IsTopicWorkerWhitelistEnabled",
+					Use:       "is-topic-worker-whitelist-enabled [topic_id]",
+					Short:     "Check if topic-level worker whitelist is enabled for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "IsTopicReputerWhitelistEnabled",
+					Use:       "is-topic-reputer-whitelist-enabled [topic_id]",
+					Short:     "Check if topic-level reputer whitelist is enabled for a topic",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "topic_id"},
 					},
@@ -995,18 +1003,36 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
-					RpcMethod: "EnableTopicWhitelist",
-					Use:       "enable-topic-whitelist [sender] [topic_id]",
-					Short:     "Enable whitelist for a topic",
+					RpcMethod: "EnableTopicWorkerWhitelist",
+					Use:       "enable-topic-worker-whitelist [sender] [topic_id]",
+					Short:     "Enable worker whitelist for a topic",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "sender"},
 						{ProtoField: "topic_id"},
 					},
 				},
 				{
-					RpcMethod: "DisableTopicWhitelist",
-					Use:       "disable-topic-whitelist [sender] [topic_id]",
-					Short:     "Disable whitelist for a topic",
+					RpcMethod: "DisableTopicWorkerWhitelist",
+					Use:       "disable-topic-worker-whitelist [sender] [topic_id]",
+					Short:     "Disable worker whitelist for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "EnableTopicReputerWhitelist",
+					Use:       "enable-topic-reputer-whitelist [sender] [topic_id]",
+					Short:     "Enable reputer whitelist for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "DisableTopicReputerWhitelist",
+					Use:       "disable-topic-reputer-whitelist [sender] [topic_id]",
+					Short:     "Disable reputer whitelist for a topic",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "sender"},
 						{ProtoField: "topic_id"},

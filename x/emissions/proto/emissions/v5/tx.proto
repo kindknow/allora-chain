@@ -50,9 +50,13 @@ service MsgService {
 
   rpc RemoveFromGlobalWhitelist(RemoveFromGlobalWhitelistRequest) returns (RemoveFromGlobalWhitelistResponse);
 
-  rpc EnableTopicWhitelist(EnableTopicWhitelistRequest) returns (EnableTopicWhitelistResponse);
+  rpc EnableTopicWorkerWhitelist(EnableTopicWorkerWhitelistRequest) returns (EnableTopicWorkerWhitelistResponse);
 
-  rpc DisableTopicWhitelist(DisableTopicWhitelistRequest) returns (DisableTopicWhitelistResponse);
+  rpc DisableTopicWorkerWhitelist(DisableTopicWorkerWhitelistRequest) returns (DisableTopicWorkerWhitelistResponse);
+
+  rpc EnableTopicReputerWhitelist(EnableTopicReputerWhitelistRequest) returns (EnableTopicReputerWhitelistResponse);
+
+  rpc DisableTopicReputerWhitelist(DisableTopicReputerWhitelistRequest) returns (DisableTopicReputerWhitelistResponse);
 
   rpc AddToTopicCreatorWhitelist(AddToTopicCreatorWhitelistRequest) returns (AddToTopicCreatorWhitelistResponse);
 
@@ -440,21 +444,37 @@ message RemoveFromWhitelistAdminRequest {
 
 message RemoveFromWhitelistAdminResponse {}
 
-message EnableTopicWhitelistRequest {
+message EnableTopicWorkerWhitelistRequest {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   uint64 topic_id = 2;
 }
 
-message EnableTopicWhitelistResponse {}
+message EnableTopicWorkerWhitelistResponse {}
 
-message DisableTopicWhitelistRequest {
+message DisableTopicWorkerWhitelistRequest {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
   uint64 topic_id = 2;
 }
 
-message DisableTopicWhitelistResponse {}
+message DisableTopicWorkerWhitelistResponse {}
+
+message EnableTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  uint64 topic_id = 2;
+}
+
+message EnableTopicReputerWhitelistResponse {}
+
+message DisableTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  uint64 topic_id = 2;
+}
+
+message DisableTopicReputerWhitelistResponse {}
 
 message AddToGlobalWhitelistRequest {
   option (cosmos.msg.v1.signer) = "sender";

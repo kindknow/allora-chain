@@ -113,8 +113,8 @@ func (ms msgServer) RemoveFromGlobalWhitelist(ctx context.Context, msg *types.Re
 	return &types.RemoveFromGlobalWhitelistResponse{}, ms.k.RemoveFromGlobalWhitelist(ctx, msg.Address)
 }
 
-func (ms msgServer) EnableTopicWhitelist(ctx context.Context, msg *types.EnableTopicWhitelistRequest) (_ *types.EnableTopicWhitelistResponse, err error) {
-	defer metrics.RecordMetrics("EnableTopicWhitelist", time.Now(), &err)
+func (ms msgServer) EnableTopicWorkerWhitelist(ctx context.Context, msg *types.EnableTopicWorkerWhitelistRequest) (_ *types.EnableTopicWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("EnableTopicWorkerWhitelist", time.Now(), &err)
 
 	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
 	if err != nil {
@@ -134,11 +134,11 @@ func (ms msgServer) EnableTopicWhitelist(ctx context.Context, msg *types.EnableT
 		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
 	}
 
-	return &types.EnableTopicWhitelistResponse{}, ms.k.EnableTopicWhitelist(ctx, msg.TopicId)
+	return &types.EnableTopicWorkerWhitelistResponse{}, ms.k.EnableTopicWorkerWhitelist(ctx, msg.TopicId)
 }
 
-func (ms msgServer) DisableTopicWhitelist(ctx context.Context, msg *types.DisableTopicWhitelistRequest) (_ *types.DisableTopicWhitelistResponse, err error) {
-	defer metrics.RecordMetrics("DisableTopicWhitelist", time.Now(), &err)
+func (ms msgServer) DisableTopicWorkerWhitelist(ctx context.Context, msg *types.DisableTopicWorkerWhitelistRequest) (_ *types.DisableTopicWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("DisableTopicWorkerWhitelist", time.Now(), &err)
 
 	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
 	if err != nil {
@@ -158,7 +158,55 @@ func (ms msgServer) DisableTopicWhitelist(ctx context.Context, msg *types.Disabl
 		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
 	}
 
-	return &types.DisableTopicWhitelistResponse{}, ms.k.DisableTopicWhitelist(ctx, msg.TopicId)
+	return &types.DisableTopicWorkerWhitelistResponse{}, ms.k.DisableTopicWorkerWhitelist(ctx, msg.TopicId)
+}
+
+func (ms msgServer) EnableTopicReputerWhitelist(ctx context.Context, msg *types.EnableTopicReputerWhitelistRequest) (_ *types.EnableTopicReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("EnableTopicReputerWhitelist", time.Now(), &err)
+
+	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	if err != nil {
+		return nil, err
+	} else if !exists {
+		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
+	}
+
+	// Validate the address
+	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+		return nil, err
+	}
+	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
+	}
+
+	return &types.EnableTopicReputerWhitelistResponse{}, ms.k.EnableTopicReputerWhitelist(ctx, msg.TopicId)
+}
+
+func (ms msgServer) DisableTopicReputerWhitelist(ctx context.Context, msg *types.DisableTopicReputerWhitelistRequest) (_ *types.DisableTopicReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("DisableTopicReputerWhitelist", time.Now(), &err)
+
+	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	if err != nil {
+		return nil, err
+	} else if !exists {
+		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
+	}
+
+	// Validate the address
+	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+		return nil, err
+	}
+	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
+	}
+
+	return &types.DisableTopicReputerWhitelistResponse{}, ms.k.DisableTopicReputerWhitelist(ctx, msg.TopicId)
 }
 
 func (ms msgServer) AddToTopicCreatorWhitelist(ctx context.Context, msg *types.AddToTopicCreatorWhitelistRequest) (_ *types.AddToTopicCreatorWhitelistResponse, err error) {

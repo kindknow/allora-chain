@@ -173,7 +173,7 @@ func (s *MsgServerTestSuite) TestRemoveFromGlobalWhitelistInvalidUnauthorized() 
 	require.ErrorIs(err, types.ErrNotPermittedToUpdateGlobalWhitelist, "Should fail due to unauthorized access")
 }
 
-func (s *MsgServerTestSuite) TestEnableTopicWhitelist() {
+func (s *MsgServerTestSuite) TestEnableTopicWorkerWhitelist() {
 	ctx := s.ctx
 	require := s.Require()
 	msgServer := s.msgServer
@@ -181,36 +181,73 @@ func (s *MsgServerTestSuite) TestEnableTopicWhitelist() {
 	topicId := s.CreateOneTopic().Id
 
 	// Enable whitelist for topic
-	msg := &types.EnableTopicWhitelistRequest{
+	msg := &types.EnableTopicWorkerWhitelistRequest{
 		Sender:  adminAddr,
 		TopicId: topicId,
 	}
-	_, err := msgServer.EnableTopicWhitelist(ctx, msg)
+	_, err := msgServer.EnableTopicWorkerWhitelist(ctx, msg)
 	require.NoError(err, "Enabling topic whitelist should succeed")
 
 	// Verify topic whitelist is enabled
-	isEnabled, err := s.emissionsKeeper.IsTopicWhitelistEnabled(ctx, topicId)
-	require.NoError(err, "IsTopicWhitelistEnabled check should not return an error")
-	require.True(isEnabled, "Topic whitelist should be enabled")
+	isEnabled, err := s.emissionsKeeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
+	require.NoError(err, "IsTopicWorkerWhitelistEnabled check should not return an error")
+	require.True(isEnabled, "Topic worker whitelist should be enabled")
 }
 
-func (s *MsgServerTestSuite) TestEnableTopicWhitelistInvalidUnauthorized() {
+func (s *MsgServerTestSuite) TestEnableTopicWorkerWhitelistInvalidUnauthorized() {
 	ctx := s.ctx
 	require := s.Require()
 	nonAdminAddr := nonAdminAccounts[0]
 	topicId := s.CreateOneTopic().Id
 
 	// Attempt to enable whitelist for topic by nonAdminAddr
-	msg := &types.EnableTopicWhitelistRequest{
+	msg := &types.EnableTopicWorkerWhitelistRequest{
 		Sender:  nonAdminAddr.String(),
 		TopicId: topicId,
 	}
 
-	_, err := s.msgServer.EnableTopicWhitelist(ctx, msg)
+	_, err := s.msgServer.EnableTopicWorkerWhitelist(ctx, msg)
 	require.ErrorIs(err, types.ErrNotPermittedToUpdateTopicWhitelist, "Should fail due to unauthorized access")
 }
 
-func (s *MsgServerTestSuite) TestDisableTopicWhitelist() {
+func (s *MsgServerTestSuite) TestEnableTopicReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+	topicId := s.CreateOneTopic().Id
+
+	// Enable whitelist for topic
+	msg := &types.EnableTopicReputerWhitelistRequest{
+		Sender:  adminAddr,
+		TopicId: topicId,
+	}
+	_, err := msgServer.EnableTopicReputerWhitelist(ctx, msg)
+	require.NoError(err, "Enabling topic whitelist should succeed")
+
+	// Verify topic whitelist is enabled
+	isEnabled, err := s.emissionsKeeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
+	require.NoError(err, "IsTopicReputerWhitelistEnabled check should not return an error")
+	require.True(isEnabled, "Topic reputer whitelist should be enabled")
+}
+
+func (s *MsgServerTestSuite) TestEnableTopicReputerWhitelistInvalidUnauthorized() {
+	ctx := s.ctx
+	require := s.Require()
+	nonAdminAddr := nonAdminAccounts[0]
+	topicId := s.CreateOneTopic().Id
+
+	// Attempt to enable whitelist for topic by nonAdminAddr
+	msg := &types.EnableTopicReputerWhitelistRequest{
+		Sender:  nonAdminAddr.String(),
+		TopicId: topicId,
+	}
+
+	_, err := s.msgServer.EnableTopicReputerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrNotPermittedToUpdateTopicWhitelist, "Should fail due to unauthorized access")
+}
+
+func (s *MsgServerTestSuite) TestDisableTopicWorkerWhitelist() {
 	ctx := s.ctx
 	require := s.Require()
 	msgServer := s.msgServer
@@ -218,39 +255,84 @@ func (s *MsgServerTestSuite) TestDisableTopicWhitelist() {
 	topicId := s.CreateOneTopic().Id
 
 	// First enable whitelist for topic
-	enableMsg := &types.EnableTopicWhitelistRequest{
+	enableMsg := &types.EnableTopicWorkerWhitelistRequest{
 		Sender:  adminAddr,
 		TopicId: topicId,
 	}
-	_, err := msgServer.EnableTopicWhitelist(ctx, enableMsg)
+	_, err := msgServer.EnableTopicWorkerWhitelist(ctx, enableMsg)
 	require.NoError(err, "Enabling topic whitelist should succeed")
 
 	// Disable whitelist for topic
-	disableMsg := &types.DisableTopicWhitelistRequest{
+	disableMsg := &types.DisableTopicWorkerWhitelistRequest{
 		Sender:  adminAddr,
 		TopicId: topicId,
 	}
-	_, err = msgServer.DisableTopicWhitelist(ctx, disableMsg)
+	_, err = msgServer.DisableTopicWorkerWhitelist(ctx, disableMsg)
 	require.NoError(err, "Disabling topic whitelist should succeed")
 
 	// Verify topic whitelist is disabled
-	isEnabled, err := s.emissionsKeeper.IsTopicWhitelistEnabled(ctx, topicId)
-	require.NoError(err, "IsTopicWhitelistEnabled check should not return an error")
+	isEnabled, err := s.emissionsKeeper.IsTopicWorkerWhitelistEnabled(ctx, topicId)
+	require.NoError(err, "IsTopicWorkerWhitelistEnabled check should not return an error")
 	require.False(isEnabled, "Topic whitelist should be disabled")
 }
 
-func (s *MsgServerTestSuite) TestDisableTopicWhitelistInvalidUnauthorized() {
+func (s *MsgServerTestSuite) TestDisableTopicWorkerWhitelistInvalidUnauthorized() {
 	ctx := s.ctx
 	require := s.Require()
 	nonAdminAddr := nonAdminAccounts[0]
 	topicId := s.CreateOneTopic().Id
 
 	// Attempt to disable whitelist for topic by nonAdminAddr
-	msg := &types.DisableTopicWhitelistRequest{
+	msg := &types.DisableTopicWorkerWhitelistRequest{
 		Sender:  nonAdminAddr.String(),
 		TopicId: topicId,
 	}
 
-	_, err := s.msgServer.DisableTopicWhitelist(ctx, msg)
+	_, err := s.msgServer.DisableTopicWorkerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrNotPermittedToUpdateTopicWhitelist, "Should fail due to unauthorized access")
+}
+
+func (s *MsgServerTestSuite) TestDisableTopicReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+	topicId := s.CreateOneTopic().Id
+
+	// First enable whitelist for topic
+	enableMsg := &types.EnableTopicReputerWhitelistRequest{
+		Sender:  adminAddr,
+		TopicId: topicId,
+	}
+	_, err := msgServer.EnableTopicReputerWhitelist(ctx, enableMsg)
+	require.NoError(err, "Enabling topic whitelist should succeed")
+
+	// Disable whitelist for topic
+	disableMsg := &types.DisableTopicReputerWhitelistRequest{
+		Sender:  adminAddr,
+		TopicId: topicId,
+	}
+	_, err = msgServer.DisableTopicReputerWhitelist(ctx, disableMsg)
+	require.NoError(err, "Disabling topic whitelist should succeed")
+
+	// Verify topic whitelist is disabled
+	isEnabled, err := s.emissionsKeeper.IsTopicReputerWhitelistEnabled(ctx, topicId)
+	require.NoError(err, "IsTopicReputerWhitelistEnabled check should not return an error")
+	require.False(isEnabled, "Topic reputer whitelist should be disabled")
+}
+
+func (s *MsgServerTestSuite) TestDisableTopicReputerWhitelistInvalidUnauthorized() {
+	ctx := s.ctx
+	require := s.Require()
+	nonAdminAddr := nonAdminAccounts[0]
+	topicId := s.CreateOneTopic().Id
+
+	// Attempt to disable whitelist for topic by nonAdminAddr
+	msg := &types.DisableTopicReputerWhitelistRequest{
+		Sender:  nonAdminAddr.String(),
+		TopicId: topicId,
+	}
+
+	_, err := s.msgServer.DisableTopicReputerWhitelist(ctx, msg)
 	require.ErrorIs(err, types.ErrNotPermittedToUpdateTopicWhitelist, "Should fail due to unauthorized access")
 }

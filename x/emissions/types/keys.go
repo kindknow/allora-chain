@@ -101,5 +101,6 @@ var (
 	TopicCreatorWhitelistKey                          = collections.NewPrefix(86)
 	TopicWorkerWhitelistKey                           = collections.NewPrefix(87)
 	TopicReputerWhitelistKey                          = collections.NewPrefix(88)
-	TopicWhitelistEnabledKey                          = collections.NewPrefix(89)
+	TopicWorkerWhitelistEnabledKey                    = collections.NewPrefix(89)
+	TopicReputerWhitelistEnabledKey                   = collections.NewPrefix(90)
 )

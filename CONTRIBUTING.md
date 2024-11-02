@@ -63,9 +63,9 @@ __TBD__
 
 `vX` should refer to the latest version of the respective module (the version of the highest `X`).
 
-## Checklist for updating the state machine
+## Checklist for updating the state store
 
-When updating the state machine, you must update the following files:
+When updating the state store in `x/emissions`, you must update the following files:
 
 1. `x/emissions/keeper/keeper.go`
 2. `x/emissions/keeper/keeper_test.go` as needed

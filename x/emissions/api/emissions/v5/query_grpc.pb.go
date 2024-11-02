@@ -101,7 +101,8 @@ const (
 	QueryService_GetActiveReputersForTopic_FullMethodName                   = "/emissions.v5.QueryService/GetActiveReputersForTopic"
 	QueryService_GetActiveForecastersForTopic_FullMethodName                = "/emissions.v5.QueryService/GetActiveForecastersForTopic"
 	QueryService_GetActiveInferersForTopic_FullMethodName                   = "/emissions.v5.QueryService/GetActiveInferersForTopic"
-	QueryService_IsTopicWhitelistEnabled_FullMethodName                     = "/emissions.v5.QueryService/IsTopicWhitelistEnabled"
+	QueryService_IsTopicWorkerWhitelistEnabled_FullMethodName               = "/emissions.v5.QueryService/IsTopicWorkerWhitelistEnabled"
+	QueryService_IsTopicReputerWhitelistEnabled_FullMethodName              = "/emissions.v5.QueryService/IsTopicReputerWhitelistEnabled"
 	QueryService_IsWhitelistedTopicCreator_FullMethodName                   = "/emissions.v5.QueryService/IsWhitelistedTopicCreator"
 	QueryService_IsWhitelistGlobalActor_FullMethodName                      = "/emissions.v5.QueryService/IsWhitelistGlobalActor"
 	QueryService_IsWhitelistedTopicWorker_FullMethodName                    = "/emissions.v5.QueryService/IsWhitelistedTopicWorker"
@@ -203,7 +204,8 @@ type QueryServiceClient interface {
 	GetActiveReputersForTopic(ctx context.Context, in *GetActiveReputersForTopicRequest, opts ...grpc.CallOption) (*GetActiveReputersForTopicResponse, error)
 	GetActiveForecastersForTopic(ctx context.Context, in *GetActiveForecastersForTopicRequest, opts ...grpc.CallOption) (*GetActiveForecastersForTopicResponse, error)
 	GetActiveInferersForTopic(ctx context.Context, in *GetActiveInferersForTopicRequest, opts ...grpc.CallOption) (*GetActiveInferersForTopicResponse, error)
-	IsTopicWhitelistEnabled(ctx context.Context, in *IsTopicWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWhitelistEnabledResponse, error)
+	IsTopicWorkerWhitelistEnabled(ctx context.Context, in *IsTopicWorkerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWorkerWhitelistEnabledResponse, error)
+	IsTopicReputerWhitelistEnabled(ctx context.Context, in *IsTopicReputerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicReputerWhitelistEnabledResponse, error)
 	IsWhitelistedTopicCreator(ctx context.Context, in *IsWhitelistedTopicCreatorRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicCreatorResponse, error)
 	IsWhitelistGlobalActor(ctx context.Context, in *IsWhitelistGlobalActorRequest, opts ...grpc.CallOption) (*IsWhitelistGlobalActorResponse, error)
 	IsWhitelistedTopicWorker(ctx context.Context, in *IsWhitelistedTopicWorkerRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicWorkerResponse, error)
@@ -1044,10 +1046,20 @@ func (c *queryServiceClient) GetActiveInferersForTopic(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *queryServiceClient) IsTopicWhitelistEnabled(ctx context.Context, in *IsTopicWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWhitelistEnabledResponse, error) {
+func (c *queryServiceClient) IsTopicWorkerWhitelistEnabled(ctx context.Context, in *IsTopicWorkerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWorkerWhitelistEnabledResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(IsTopicWhitelistEnabledResponse)
-	err := c.cc.Invoke(ctx, QueryService_IsTopicWhitelistEnabled_FullMethodName, in, out, cOpts...)
+	out := new(IsTopicWorkerWhitelistEnabledResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsTopicWorkerWhitelistEnabled_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsTopicReputerWhitelistEnabled(ctx context.Context, in *IsTopicReputerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicReputerWhitelistEnabledResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsTopicReputerWhitelistEnabledResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsTopicReputerWhitelistEnabled_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1243,7 +1255,8 @@ type QueryServiceServer interface {
 	GetActiveReputersForTopic(context.Context, *GetActiveReputersForTopicRequest) (*GetActiveReputersForTopicResponse, error)
 	GetActiveForecastersForTopic(context.Context, *GetActiveForecastersForTopicRequest) (*GetActiveForecastersForTopicResponse, error)
 	GetActiveInferersForTopic(context.Context, *GetActiveInferersForTopicRequest) (*GetActiveInferersForTopicResponse, error)
-	IsTopicWhitelistEnabled(context.Context, *IsTopicWhitelistEnabledRequest) (*IsTopicWhitelistEnabledResponse, error)
+	IsTopicWorkerWhitelistEnabled(context.Context, *IsTopicWorkerWhitelistEnabledRequest) (*IsTopicWorkerWhitelistEnabledResponse, error)
+	IsTopicReputerWhitelistEnabled(context.Context, *IsTopicReputerWhitelistEnabledRequest) (*IsTopicReputerWhitelistEnabledResponse, error)
 	IsWhitelistedTopicCreator(context.Context, *IsWhitelistedTopicCreatorRequest) (*IsWhitelistedTopicCreatorResponse, error)
 	IsWhitelistGlobalActor(context.Context, *IsWhitelistGlobalActorRequest) (*IsWhitelistGlobalActorResponse, error)
 	IsWhitelistedTopicWorker(context.Context, *IsWhitelistedTopicWorkerRequest) (*IsWhitelistedTopicWorkerResponse, error)
@@ -1510,8 +1523,11 @@ func (UnimplementedQueryServiceServer) GetActiveForecastersForTopic(context.Cont
 func (UnimplementedQueryServiceServer) GetActiveInferersForTopic(context.Context, *GetActiveInferersForTopicRequest) (*GetActiveInferersForTopicResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetActiveInferersForTopic not implemented")
 }
-func (UnimplementedQueryServiceServer) IsTopicWhitelistEnabled(context.Context, *IsTopicWhitelistEnabledRequest) (*IsTopicWhitelistEnabledResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsTopicWhitelistEnabled not implemented")
+func (UnimplementedQueryServiceServer) IsTopicWorkerWhitelistEnabled(context.Context, *IsTopicWorkerWhitelistEnabledRequest) (*IsTopicWorkerWhitelistEnabledResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsTopicWorkerWhitelistEnabled not implemented")
+}
+func (UnimplementedQueryServiceServer) IsTopicReputerWhitelistEnabled(context.Context, *IsTopicReputerWhitelistEnabledRequest) (*IsTopicReputerWhitelistEnabledResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsTopicReputerWhitelistEnabled not implemented")
 }
 func (UnimplementedQueryServiceServer) IsWhitelistedTopicCreator(context.Context, *IsWhitelistedTopicCreatorRequest) (*IsWhitelistedTopicCreatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedTopicCreator not implemented")
@@ -3040,20 +3056,38 @@ func _QueryService_GetActiveInferersForTopic_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QueryService_IsTopicWhitelistEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IsTopicWhitelistEnabledRequest)
+func _QueryService_IsTopicWorkerWhitelistEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsTopicWorkerWhitelistEnabledRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServiceServer).IsTopicWhitelistEnabled(ctx, in)
+		return srv.(QueryServiceServer).IsTopicWorkerWhitelistEnabled(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: QueryService_IsTopicWhitelistEnabled_FullMethodName,
+		FullMethod: QueryService_IsTopicWorkerWhitelistEnabled_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServiceServer).IsTopicWhitelistEnabled(ctx, req.(*IsTopicWhitelistEnabledRequest))
+		return srv.(QueryServiceServer).IsTopicWorkerWhitelistEnabled(ctx, req.(*IsTopicWorkerWhitelistEnabledRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsTopicReputerWhitelistEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsTopicReputerWhitelistEnabledRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsTopicReputerWhitelistEnabled(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsTopicReputerWhitelistEnabled_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsTopicReputerWhitelistEnabled(ctx, req.(*IsTopicReputerWhitelistEnabledRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3574,8 +3608,12 @@ var QueryService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _QueryService_GetActiveInferersForTopic_Handler,
 		},
 		{
-			MethodName: "IsTopicWhitelistEnabled",
-			Handler:    _QueryService_IsTopicWhitelistEnabled_Handler,
+			MethodName: "IsTopicWorkerWhitelistEnabled",
+			Handler:    _QueryService_IsTopicWorkerWhitelistEnabled_Handler,
+		},
+		{
+			MethodName: "IsTopicReputerWhitelistEnabled",
+			Handler:    _QueryService_IsTopicReputerWhitelistEnabled_Handler,
 		},
 		{
 			MethodName: "IsWhitelistedTopicCreator",

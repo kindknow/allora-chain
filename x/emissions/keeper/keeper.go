@@ -230,8 +230,10 @@ type Keeper struct {
 	topicWorkerWhitelist collections.KeySet[collections.Pair[TopicId, ActorId]]
 	// map from topic id to whitelist of reputers
 	topicReputerWhitelist collections.KeySet[collections.Pair[TopicId, ActorId]]
-	// map from topic id to whether the whitelist is enabled
-	topicWhitelistEnabled collections.KeySet[TopicId]
+	// map from topic id to whether the whitelist is enabled for topic workers
+	topicWorkerWhitelistEnabled collections.KeySet[TopicId]
+	// map from topic id to whether the whitelist is enabled for topic reputers
+	topicReputerWhitelistEnabled collections.KeySet[TopicId]
 
 	/// RECORD COMMITS
 
@@ -302,7 +304,8 @@ func NewKeeper(
 		topicCreatorWhitelist:                     collections.NewKeySet(sb, types.TopicCreatorWhitelistKey, "topic_creator_whitelist", collections.StringKey),
 		topicWorkerWhitelist:                      collections.NewKeySet(sb, types.TopicWorkerWhitelistKey, "topic_worker_whitelist", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey)),
 		topicReputerWhitelist:                     collections.NewKeySet(sb, types.TopicReputerWhitelistKey, "topic_reputer_whitelist", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey)),
-		topicWhitelistEnabled:                     collections.NewKeySet(sb, types.TopicWhitelistEnabledKey, "topic_whitelist_enabled", collections.Uint64Key),
+		topicWorkerWhitelistEnabled:               collections.NewKeySet(sb, types.TopicWorkerWhitelistEnabledKey, "topic_worker_whitelist_enabled", collections.Uint64Key),
+		topicReputerWhitelistEnabled:              collections.NewKeySet(sb, types.TopicReputerWhitelistEnabledKey, "topic_reputer_whitelist_enabled", collections.Uint64Key),
 		infererScoresByBlock:                      collections.NewMap(sb, types.InferenceScoresKey, "inferer_scores_by_block", collections.PairKeyCodec(collections.Uint64Key, collections.Int64Key), codec.CollValue[types.Scores](cdc)),
 		forecasterScoresByBlock:                   collections.NewMap(sb, types.ForecastScoresKey, "forecaster_scores_by_block", collections.PairKeyCodec(collections.Uint64Key, collections.Int64Key), codec.CollValue[types.Scores](cdc)),
 		infererScoreEmas:                          collections.NewMap(sb, types.InfererScoreEmasKey, "latest_inferer_scores_by_worker", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey), codec.CollValue[types.Score](cdc)),

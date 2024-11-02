@@ -225,7 +225,8 @@ message GenesisState {
   repeated string topic_creator_whitelist = 79;
   repeated TopicAndActorId topic_worker_whitelist = 80;
   repeated TopicAndActorId topic_reputer_whitelist = 81;
-  repeated uint64 topic_whitelist_enabled = 82;
+  repeated uint64 topic_worker_whitelist_enabled = 82;
+  repeated uint64 topic_reputer_whitelist_enabled = 83;
 }
 
 message TopicIdAndTopic {

@@ -946,11 +946,20 @@ func (k *Keeper) InitGenesis(ctx context.Context, data *types.GenesisState) erro
 		}
 	}
 
-	// topicWhitelistEnabled
-	if len(data.TopicWhitelistEnabled) != 0 {
-		for _, topicId := range data.TopicWhitelistEnabled {
-			if err := k.EnableTopicWhitelist(ctx, topicId); err != nil {
-				return errors.Wrap(err, "error setting topicWhitelistEnabled")
+	// topicWorkerWhitelistEnabled
+	if len(data.TopicWorkerWhitelistEnabled) != 0 {
+		for _, topicId := range data.TopicWorkerWhitelistEnabled {
+			if err := k.EnableTopicWorkerWhitelist(ctx, topicId); err != nil {
+				return errors.Wrap(err, "error setting topicWorkerWhitelistEnabled")
+			}
+		}
+	}
+
+	// topicReputerWhitelistEnabled
+	if len(data.TopicReputerWhitelistEnabled) != 0 {
+		for _, topicId := range data.TopicReputerWhitelistEnabled {
+			if err := k.EnableTopicReputerWhitelist(ctx, topicId); err != nil {
+				return errors.Wrap(err, "error setting topicReputerWhitelistEnabled")
 			}
 		}
 	}
@@ -2294,17 +2303,30 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 		})
 	}
 
-	topicWhitelistEnabled := make([]uint64, 0)
-	topicWhitelistEnabledIter, err := k.topicWhitelistEnabled.Iterate(ctx, nil)
+	topicWorkerWhitelistEnabled := make([]uint64, 0)
+	topicWorkerWhitelistEnabledIter, err := k.topicWorkerWhitelistEnabled.Iterate(ctx, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to iterate topic whitelist enabled")
 	}
-	for ; topicWhitelistEnabledIter.Valid(); topicWhitelistEnabledIter.Next() {
-		key, err := topicWhitelistEnabledIter.Key()
+	for ; topicWorkerWhitelistEnabledIter.Valid(); topicWorkerWhitelistEnabledIter.Next() {
+		key, err := topicWorkerWhitelistEnabledIter.Key()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get key: topicWhitelistEnabledIter")
 		}
-		topicWhitelistEnabled = append(topicWhitelistEnabled, key)
+		topicWorkerWhitelistEnabled = append(topicWorkerWhitelistEnabled, key)
+	}
+
+	topicReputerWhitelistEnabled := make([]uint64, 0)
+	topicReputerWhitelistEnabledIter, err := k.topicReputerWhitelistEnabled.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate topic reputer whitelist enabled")
+	}
+	for ; topicReputerWhitelistEnabledIter.Valid(); topicReputerWhitelistEnabledIter.Next() {
+		key, err := topicReputerWhitelistEnabledIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: topicReputerWhitelistEnabledIter")
+		}
+		topicReputerWhitelistEnabled = append(topicReputerWhitelistEnabled, key)
 	}
 
 	return &types.GenesisState{
@@ -2386,6 +2408,7 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 		TopicCreatorWhitelist:                          topicCreatorWhitelist,
 		TopicWorkerWhitelist:                           topicWorkerWhitelist,
 		TopicReputerWhitelist:                          topicReputerWhitelist,
-		TopicWhitelistEnabled:                          topicWhitelistEnabled,
+		TopicWorkerWhitelistEnabled:                    topicWorkerWhitelistEnabled,
+		TopicReputerWhitelistEnabled:                   topicReputerWhitelistEnabled,
 	}, nil
 }
