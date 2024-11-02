@@ -139,6 +139,7 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayload() {
 	ctx = ctx.WithBlockHeight(blockHeight)
 
 	err := s.emissionsKeeper.AddToTopicWorkerWhitelist(ctx, topicId, workerMsg.WorkerDataBundle.Worker)
+	require.NoError(err)
 	err = s.emissionsKeeper.AddToTopicWorkerWhitelist(ctx, workerMsg.WorkerDataBundle.TopicId, workerMsg.WorkerDataBundle.Worker)
 	require.NoError(err)
 
