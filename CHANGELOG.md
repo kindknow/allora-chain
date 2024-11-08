@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * [#654](https://github.com/allora-network/allora-chain/pull/654) Reorganize Linter Folder, add linter to check fuzzer state transition probabilities add to 100 percent
+* [#634](https://github.com/allora-network/allora-chain/pull/634) Add events for listening coefficients and the computationally cheapest regrets
 
 ### Changed
 
