@@ -3,6 +3,7 @@ package inferencesynthesis_test
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	alloraMath "github.com/allora-network/allora-chain/math"
 	"github.com/allora-network/allora-chain/test/testutil"
@@ -744,6 +745,7 @@ func (s *InferenceSynthesisTestSuite) TestCalcTopicInitialRegret() {
 		cNorm,
 		percentileRegert,
 		pnormDiv,
+		false,
 	)
 	require.NoError(err)
 	testutil.InEpsilon5(s.T(), calculatedInitialRegret, "0.3354820760526412097325669544281814")
@@ -949,4 +951,145 @@ func (s *InferenceSynthesisTestSuite) TestNotUpdateTopicInitialRegret() {
 	topic, err = s.emissionsKeeper.GetTopic(s.ctx, topicId)
 	require.NoError(err)
 	require.Equal(topic.InitialRegret, initialRegret)
+}
+
+func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegrets() {
+	require := s.Require()
+	k := s.emissionsKeeper
+	
+	// Setup topic
+	topicId := uint64(1)
+	blockHeight := int64(1003)
+	nonce := emissionstypes.Nonce{BlockHeight: blockHeight}
+	alpha := alloraMath.MustNewDecFromString("0.5") // Set high alpha so workers need 2 inclusions to be experienced
+	pNorm := alloraMath.MustNewDecFromString("3.0")
+	cNorm := alloraMath.MustNewDecFromString("0.75")
+	epsilon := alloraMath.MustNewDecFromString("1e-4")
+	initialRegretQuantile := alloraMath.MustNewDecFromString("0.25")
+	pnormSafeDiv := alloraMath.MustNewDecFromString("1.0")
+
+	// Create topic
+	topic := s.mockTopic()
+	topic.AlphaRegret = alpha
+	err := k.SetTopic(s.ctx, topicId, topic)
+	require.NoError(err)
+
+	// Setup workers
+	inferer0 := s.addrsStr[0]
+	inferer1 := s.addrsStr[1]
+	inferer2 := s.addrsStr[2]
+	inferer3 := s.addrsStr[3]
+	inferer4 := s.addrsStr[4]
+	inferer5 := s.addrsStr[5]
+	inferer6 := s.addrsStr[6]
+	inferer7 := s.addrsStr[7]
+	inferer8 := s.addrsStr[8]
+	inferer9 := s.addrsStr[9]
+	infererAddresses := []string{inferer0, inferer1, inferer2, inferer3, inferer4, 
+		inferer5, inferer6, inferer7, inferer8, inferer9}
+
+	forecaster0 := s.addrsStr[10]
+	forecaster1 := s.addrsStr[11]
+	forecasterAddresses := []string{forecaster0, forecaster1}
+
+	// Add workers with only 1 inclusion each (not experienced)
+	for _, worker := range infererAddresses {
+		err := k.IncrementCountInfererInclusionsInTopic(s.ctx, topicId, worker)
+		require.NoError(err)
+	}
+	for _, worker := range forecasterAddresses {
+		err := k.IncrementCountForecasterInclusionsInTopic(s.ctx, topicId, worker)
+		require.NoError(err)
+	}
+
+	// Set initial regrets with fixed values
+	timestampedValue0_1 := emissionstypes.TimestampedValue{
+		BlockHeight: blockHeight,
+		Value:       alloraMath.MustNewDecFromString("0.1"),
+	}
+	timestampedValue0_2 := emissionstypes.TimestampedValue{
+		BlockHeight: blockHeight,
+		Value:       alloraMath.MustNewDecFromString("0.2"),
+	}
+
+	for i, inferer := range infererAddresses {
+		if i < 5 {
+			err = k.SetInfererNetworkRegret(s.ctx, topicId, inferer, timestampedValue0_1)
+		} else {
+			err = k.SetInfererNetworkRegret(s.ctx, topicId, inferer, timestampedValue0_2)
+		}
+		require.NoError(err)
+	}
+
+	for _, forecaster := range forecasterAddresses {
+		err = k.SetForecasterNetworkRegret(s.ctx, topicId, forecaster, timestampedValue0_2)
+		require.NoError(err)
+	}
+
+	// Create network losses value bundle
+	networkLosses := emissionstypes.ValueBundle{
+		TopicId:             topicId,
+		ReputerRequestNonce: &emissionstypes.ReputerRequestNonce{ReputerNonce: &nonce},
+		Reputer:             s.addrsStr[12],
+		ExtraData:           nil,
+		CombinedValue:       alloraMath.MustNewDecFromString("0.1"),
+		InfererValues: []*emissionstypes.WorkerAttributedValue{
+			{Worker: inferer0, Value: alloraMath.MustNewDecFromString("0.2")},
+			{Worker: inferer1, Value: alloraMath.MustNewDecFromString("0.2")},
+			{Worker: inferer2, Value: alloraMath.MustNewDecFromString("0.2")},
+			{Worker: inferer3, Value: alloraMath.MustNewDecFromString("0.2")},
+			{Worker: inferer4, Value: alloraMath.MustNewDecFromString("0.2")},
+			{Worker: inferer5, Value: alloraMath.MustNewDecFromString("0.3")},
+			{Worker: inferer6, Value: alloraMath.MustNewDecFromString("0.3")},
+			{Worker: inferer7, Value: alloraMath.MustNewDecFromString("0.3")},
+			{Worker: inferer8, Value: alloraMath.MustNewDecFromString("0.3")},
+			{Worker: inferer9, Value: alloraMath.MustNewDecFromString("0.3")},
+		},
+		ForecasterValues: []*emissionstypes.WorkerAttributedValue{
+			{Worker: forecaster0, Value: alloraMath.MustNewDecFromString("0.3")},
+			{Worker: forecaster1, Value: alloraMath.MustNewDecFromString("0.3")},
+		},
+		NaiveValue: alloraMath.MustNewDecFromString("0.1"),
+	}
+
+	// Call GetCalcSetNetworkRegrets
+	err = inferencesynthesis.GetCalcSetNetworkRegrets(
+		inferencesynthesis.GetCalcSetNetworkRegretsArgs{
+			Ctx:                   s.ctx,
+			K:                     k,
+			TopicId:              topicId,
+			NetworkLosses:        networkLosses,
+			Nonce:                nonce,
+			AlphaRegret:          alpha,
+			CNorm:                cNorm,
+			PNorm:                pNorm,
+			EpsilonTopic:         epsilon,
+			InitialRegretQuantile: initialRegretQuantile,
+			PNormSafeDiv:         pnormSafeDiv,
+		})
+	require.NoError(err)
+
+	// Get the updated topic
+	updatedTopic, err := k.GetTopic(s.ctx, topicId)
+	require.NoError(err)
+
+	// Since we're using fallback regrets (no experienced workers but >10 total workers),
+	// the initial regret should just be the 25th percentile without the offset calculation
+	expectedRegrets := make([]alloraMath.Dec, 0)
+	for _, worker := range append(infererAddresses, forecasterAddresses...) {
+		var regret emissionstypes.TimestampedValue
+		var err error
+		if slices.Contains(infererAddresses, worker) {
+			regret, _, err = k.GetInfererNetworkRegret(s.ctx, topicId, worker)
+		} else {
+			regret, _, err = k.GetForecasterNetworkRegret(s.ctx, topicId, worker)
+		}
+		require.NoError(err)
+		expectedRegrets = append(expectedRegrets, regret.Value)
+	}
+	
+	expectedInitialRegret, err := alloraMath.GetQuantileOfDecs(expectedRegrets, initialRegretQuantile)
+	require.NoError(err)
+	
+	require.Equal(expectedInitialRegret, updatedTopic.InitialRegret)
 }
