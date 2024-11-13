@@ -180,5 +180,5 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 
 	// Expect an error since the sender is not whitelisted
 	require.Nil(response, "Response should be nil when access is denied")
-	require.Error(err, types.ErrNotWhitelistAdmin, "Expected an error for non-whitelisted sender")
+	require.ErrorIs(err, types.ErrNotWhitelistAdmin, "Expected an error for non-whitelisted sender")
 }

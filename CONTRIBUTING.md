@@ -87,7 +87,7 @@ As a result, nodes may get diverging responses where some get successful respons
 
 #### Randomness
 
-Randomness cannot be used in the state machine, as the state machine definitionally must be deterministic. Any time you'd consider using it, instead seed a CSPRNG off of some seed.
+Randomness cannot be used in the state machine, as the state machine by definition must be deterministic. Any time you'd consider using it, instead seed a CSPRNG off of some seed.
 
 One thing to note is that in golang, iteration order over maps is non-deterministic, so to be deterministic you must gather the keys, and sort them all prior to iterating over all values.
 
