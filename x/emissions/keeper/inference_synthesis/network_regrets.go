@@ -383,9 +383,9 @@ func GetCalcSetNetworkRegrets(args GetCalcSetNetworkRegretsArgs) error {
 	// Get the initial topic std dev regrets
 	// If we don't have enough workers with enough experience, use the fallback regrets
 	initialTopicStdDevRegrets := make([]alloraMath.Dec, 0)
-	if len(workersRegrets) > 0 {
+	if len(workersRegrets) >= 10 {
 		initialTopicStdDevRegrets = workersRegrets
-	} else if len(fallbackRegrets) >= 10 {
+	} else if len(fallbackRegrets) > 0 {
 		initialTopicStdDevRegrets = fallbackRegrets
 	}
 	// Recalculate topic initial regret
