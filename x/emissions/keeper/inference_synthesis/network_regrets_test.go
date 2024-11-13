@@ -956,7 +956,7 @@ func (s *InferenceSynthesisTestSuite) TestNotUpdateTopicInitialRegret() {
 func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegrets() {
 	require := s.Require()
 	k := s.emissionsKeeper
-	
+
 	// Setup topic
 	topicId := uint64(1)
 	blockHeight := int64(1003)
@@ -985,7 +985,7 @@ func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegre
 	inferer7 := s.addrsStr[7]
 	inferer8 := s.addrsStr[8]
 	inferer9 := s.addrsStr[9]
-	infererAddresses := []string{inferer0, inferer1, inferer2, inferer3, inferer4, 
+	infererAddresses := []string{inferer0, inferer1, inferer2, inferer3, inferer4,
 		inferer5, inferer6, inferer7, inferer8, inferer9}
 
 	forecaster0 := s.addrsStr[10]
@@ -1057,15 +1057,15 @@ func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegre
 		inferencesynthesis.GetCalcSetNetworkRegretsArgs{
 			Ctx:                   s.ctx,
 			K:                     k,
-			TopicId:              topicId,
-			NetworkLosses:        networkLosses,
-			Nonce:                nonce,
-			AlphaRegret:          alpha,
-			CNorm:                cNorm,
-			PNorm:                pNorm,
-			EpsilonTopic:         epsilon,
+			TopicId:               topicId,
+			NetworkLosses:         networkLosses,
+			Nonce:                 nonce,
+			AlphaRegret:           alpha,
+			CNorm:                 cNorm,
+			PNorm:                 pNorm,
+			EpsilonTopic:          epsilon,
 			InitialRegretQuantile: initialRegretQuantile,
-			PNormSafeDiv:         pnormSafeDiv,
+			PNormSafeDiv:          pnormSafeDiv,
 		})
 	require.NoError(err)
 
@@ -1073,7 +1073,7 @@ func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegre
 	updatedTopic, err := k.GetTopic(s.ctx, topicId)
 	require.NoError(err)
 
-	// Since we're using fallback regrets (no experienced workers but >10 total workers),
+	// Since we're using fallback regrets (no experienced workers),
 	// the initial regret should just be the 25th percentile without the offset calculation
 	expectedRegrets := make([]alloraMath.Dec, 0)
 	for _, worker := range append(infererAddresses, forecasterAddresses...) {
@@ -1087,9 +1087,9 @@ func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegre
 		require.NoError(err)
 		expectedRegrets = append(expectedRegrets, regret.Value)
 	}
-	
+
 	expectedInitialRegret, err := alloraMath.GetQuantileOfDecs(expectedRegrets, initialRegretQuantile)
 	require.NoError(err)
-	
+
 	require.Equal(expectedInitialRegret, updatedTopic.InitialRegret)
 }
