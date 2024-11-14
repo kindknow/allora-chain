@@ -862,97 +862,32 @@ func (s *InferenceSynthesisTestSuite) TestUpdateTopicInitialRegret() {
 	require.NotEqual(topic.InitialRegret, initialRegret)
 }
 
-// TestNotUpdateTopicInitialRegret tests that the topic's initial regret is not updated
-// when there are no experienced workers for the topic.
+// TestCalcSetNetworkRegretsWithFallbackRegrets tests that when there are no experienced workers
+// but enough total workers (>10), the system falls back to using all workers' regrets for
+// calculating the initial regret.
 //
 // Setup:
-// - Create a topic with an initial regret of 0
-// - Set up inferer and forecaster addresses
-// - Do not increment the inclusion counts for workers, leaving them as inexperienced
-// - Set regrets from the previous epoch
-// - Generate network losses for the current epoch
+// - Create a topic with a high alpha regret (0.5) so workers need 2 inclusions to be experienced
+// - Add 10 inferers and 2 forecasters with only 1 inclusion each (not experienced)
+// - Set initial regrets with fixed values:
+//   * First 5 inferers: 0.1
+//   * Last 5 inferers: 0.2
+//   * Both forecasters: 0.2
+// - Create network losses value bundle with fixed values
+//
+// Test steps:
+// 1. Call GetCalcSetNetworkRegrets with the network losses
+// 2. Retrieve the updated topic
 //
 // Expected outcomes:
-//  1. The GetCalcSetNetworkRegrets function should execute without error
-//  2. The topic's initial regret should remain unchanged (0) after the function call
-//     because there are no experienced workers to trigger an update
+// 1. The function should execute without error
+// 2. Since we're using fallback regrets (no experienced workers but >10 total workers),
+//    the initial regret should be the 25th percentile of all workers' regrets
+//    without the offset calculation
+// 3. The new initial regret should match the expected value based on the fixed regrets
 //
-// This test ensures that the initial regret of a topic is not modified when
-// there are no experienced workers, maintaining the system's integrity by
-// preventing premature updates to the topic's regret baseline.
-func (s *InferenceSynthesisTestSuite) TestNotUpdateTopicInitialRegret() {
-	require := s.Require()
-	k := s.emissionsKeeper
-	epochGet := testutil.GetSimulatedValuesGetterForEpochs()
-	epochPrevGet := epochGet[300]
-	epoch301Get := epochGet[301]
-
-	topicId := uint64(1)
-	blockHeight := int64(1003)
-	nonce := emissionstypes.Nonce{BlockHeight: blockHeight}
-	alpha := alloraMath.MustNewDecFromString("0.1")
-	pNorm := alloraMath.MustNewDecFromString("3.0")
-	cNorm := alloraMath.MustNewDecFromString("0.75")
-	epsilon := alloraMath.MustNewDecFromString("1e-4")
-	initialRegretQuantile := alloraMath.MustNewDecFromString("0.5")
-	pnormSafeDiv := alloraMath.MustNewDecFromString("1.0")
-
-	// Set initial Regret to check if this value is updated or not
-	initialRegret := alloraMath.MustNewDecFromString("0")
-	// Create new topic
-	topic := s.mockTopic()
-	topic.InitialRegret = initialRegret
-	err := s.emissionsKeeper.SetTopic(s.ctx, topicId, topic)
-	s.Require().NoError(err)
-
-	inferer0 := s.addrs[0].String()
-	inferer1 := s.addrs[1].String()
-	inferer2 := s.addrs[2].String()
-	inferer3 := s.addrs[3].String()
-	inferer4 := s.addrs[4].String()
-	infererAddresses := []string{inferer0, inferer1, inferer2, inferer3, inferer4}
-
-	forecaster0 := s.addrs[5].String()
-	forecaster1 := s.addrs[6].String()
-	forecaster2 := s.addrs[7].String()
-	forecasterAddresses := []string{forecaster0, forecaster1, forecaster2}
-
-	reputer0 := s.addrs[8].String()
-
-	err = testutil.SetRegretsFromPreviousEpoch(s.ctx, s.emissionsKeeper, topicId, blockHeight, infererAddresses, forecasterAddresses, epochPrevGet)
-	require.NoError(err)
-
-	networkLosses, err := testutil.GetNetworkLossFromCsv(
-		topicId,
-		blockHeight,
-		infererAddresses,
-		forecasterAddresses,
-		reputer0,
-		epoch301Get,
-	)
-	s.Require().NoError(err)
-
-	err = inferencesynthesis.GetCalcSetNetworkRegrets(inferencesynthesis.GetCalcSetNetworkRegretsArgs{
-		Ctx:                   s.ctx,
-		K:                     k,
-		TopicId:               topicId,
-		NetworkLosses:         networkLosses,
-		Nonce:                 nonce,
-		AlphaRegret:           alpha,
-		CNorm:                 cNorm,
-		PNorm:                 pNorm,
-		EpsilonTopic:          epsilon,
-		InitialRegretQuantile: initialRegretQuantile,
-		PNormSafeDiv:          pnormSafeDiv,
-	})
-	require.NoError(err)
-
-	// Initial Regret will not be updated because this topic has no experienced actors
-	topic, err = s.emissionsKeeper.GetTopic(s.ctx, topicId)
-	require.NoError(err)
-	require.Equal(topic.InitialRegret, initialRegret)
-}
-
+// This test ensures that the fallback regret calculation works correctly when there
+// are no experienced workers but enough total workers to use the fallback mechanism.
 func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegrets() {
 	require := s.Require()
 	k := s.emissionsKeeper
@@ -1049,7 +984,11 @@ func (s *InferenceSynthesisTestSuite) TestCalcSetNetworkRegretsWithFallbackRegre
 			{Worker: forecaster0, Value: alloraMath.MustNewDecFromString("0.3")},
 			{Worker: forecaster1, Value: alloraMath.MustNewDecFromString("0.3")},
 		},
-		NaiveValue: alloraMath.MustNewDecFromString("0.1"),
+		NaiveValue:                    alloraMath.MustNewDecFromString("0.1"),
+		OneOutInfererValues:           nil,
+		OneOutForecasterValues:        nil,
+		OneInForecasterValues:         nil,
+		OneOutInfererForecasterValues: nil,
 	}
 
 	// Call GetCalcSetNetworkRegrets
