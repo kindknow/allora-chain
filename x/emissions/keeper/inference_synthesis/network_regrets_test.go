@@ -869,10 +869,7 @@ func (s *InferenceSynthesisTestSuite) TestUpdateTopicInitialRegret() {
 // Setup:
 // - Create a topic with a high alpha regret (0.5) so workers need 2 inclusions to be experienced
 // - Add 10 inferers and 2 forecasters with only 1 inclusion each (not experienced)
-// - Set initial regrets with fixed values:
-//   * First 5 inferers: 0.1
-//   * Last 5 inferers: 0.2
-//   * Both forecasters: 0.2
+// - Set initial regrets
 // - Create network losses value bundle with fixed values
 //
 // Test steps:
@@ -882,8 +879,8 @@ func (s *InferenceSynthesisTestSuite) TestUpdateTopicInitialRegret() {
 // Expected outcomes:
 // 1. The function should execute without error
 // 2. Since we're using fallback regrets (no experienced workers but >10 total workers),
-//    the initial regret should be the 25th percentile of all workers' regrets
-//    without the offset calculation
+// the initial regret should be the 25th percentile of all workers' regrets
+// without the offset calculation
 // 3. The new initial regret should match the expected value based on the fixed regrets
 //
 // This test ensures that the fallback regret calculation works correctly when there
