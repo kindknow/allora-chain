@@ -909,8 +909,8 @@ func TestGetAllReputersOutputWithOneReputerWithZeroListeningCoefficient(t *testi
 	require.NoError(t, err)
 	require.NotNil(t, scores)
 	require.NotNil(t, coefficients)
-	require.Equal(t, 1, len(scores))
-	require.Equal(t, 1, len(coefficients))
+	require.Len(t, scores, 1)
+	require.Len(t, coefficients, 1)
 	// Check that the listening coefficient is set to 0.5 which happens
 	// when there's only one reputer and the listening coefficient is zero
 	require.True(t, coefficients[0].Equal(alloraMath.MustNewDecFromString("0.5")))
