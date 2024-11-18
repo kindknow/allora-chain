@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * [#654](https://github.com/allora-network/allora-chain/pull/654) Reorganize Linter Folder, add linter to check fuzzer state transition probabilities add to 100 percent
 * [#634](https://github.com/allora-network/allora-chain/pull/634) Add events for listening coefficients and the computationally cheapest regrets
+* [#678](https://github.com/allora-network/allora-chain/pull/678) Add optimistic execution + update CometBFT to v0.38.15
 
 ### Changed
 
