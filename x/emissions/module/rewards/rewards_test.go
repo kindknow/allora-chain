@@ -264,6 +264,8 @@ func (s *RewardsTestSuite) TestStandardRewardEmission() {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -390,6 +392,8 @@ func (s *RewardsTestSuite) TestStandardRewardEmissionShouldRewardTopicsWithFulfi
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -525,6 +529,8 @@ func (s *RewardsTestSuite) TestStandardRewardEmissionShouldRewardTopicsWithFulfi
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err = s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -664,6 +670,8 @@ func (s *RewardsTestSuite) setUpTopicWithEpochLength(
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	require.NoError(err)
@@ -1271,6 +1279,8 @@ func (s *RewardsTestSuite) TestGenerateTasksRewardsShouldIncreaseRewardShareIfMo
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -1436,6 +1446,8 @@ func (s *RewardsTestSuite) TestGenerateTasksRewardsShouldIncreaseRewardShareIfMo
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err = s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -1599,6 +1611,8 @@ func (s *RewardsTestSuite) TestRewardsIncreasesBalance() {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -1775,6 +1789,8 @@ func (s *RewardsTestSuite) TestRewardsHandleStandardDeviationOfZero() {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -2001,6 +2017,8 @@ func (s *RewardsTestSuite) TestStandardRewardEmissionWithOneInfererAndOneReputer
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -2245,6 +2263,8 @@ func (s *RewardsTestSuite) TestOnlyFewTopActorsGetReward() {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -2399,6 +2419,8 @@ func (s *RewardsTestSuite) TestTotalInferersRewardFractionGrowsWithMoreInferers(
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -2581,6 +2603,8 @@ func (s *RewardsTestSuite) TestTotalInferersRewardFractionGrowsWithMoreInferers(
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err = s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)
@@ -2752,6 +2776,8 @@ func (s *RewardsTestSuite) TestTotalInferersRewardFractionGrowsWithMoreInferers(
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err = s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)

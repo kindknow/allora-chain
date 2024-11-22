@@ -25,6 +25,8 @@ func createNewTopic(s *RewardsTestSuite) uint64 {
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		AllowNegative:            false,
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
 	s.Require().NoError(err)

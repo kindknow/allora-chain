@@ -43,6 +43,8 @@ func (s *MsgServerTestSuite) commonStakingSetup(
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 
 	reputerInitialBalance := types.DefaultParams().CreateTopicFee.Add(reputerInitialBalanceUint)
@@ -93,7 +95,7 @@ func (s *MsgServerTestSuite) commonStakingSetup(
 	return topicId
 }
 
-func (s *MsgServerTestSuite) TestMsgAddStake() {
+func (s *MsgServerTestSuite) TestMsgAddStakeWithWhitelistCheck() {
 	ctx := s.ctx
 	require := s.Require()
 
@@ -122,7 +124,23 @@ func (s *MsgServerTestSuite) TestMsgAddStake() {
 	require.NoError(err)
 	require.Equal(cosmosMath.ZeroInt(), topicStake, "Stake amount mismatch")
 
+	// Remove sender from whitelist
+	err = s.emissionsKeeper.RemoveFromTopicReputerWhitelist(ctx, topicId, reputer)
+	require.NoError(err)
+	err = s.emissionsKeeper.RemoveFromGlobalWhitelist(ctx, reputer)
+	require.NoError(err)
+
+	// Should now fail
 	response, err := s.msgServer.AddStake(ctx, addStakeMsg)
+	require.ErrorIs(err, types.ErrNotPermittedToAddStake)
+	require.Nil(response)
+
+	// Add sender back to whitelist
+	err = s.emissionsKeeper.AddToTopicReputerWhitelist(ctx, topicId, reputer)
+	require.NoError(err)
+
+	// Should now succeed
+	response, err = s.msgServer.AddStake(ctx, addStakeMsg)
 	require.NoError(err, "AddStake should not return an error")
 	require.NotNil(response)
 

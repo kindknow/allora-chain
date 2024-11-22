@@ -2,14 +2,14 @@ package module
 
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	statev5 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v5"
+	statev6 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v6"
 )
 
 // AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
 func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Query: &autocliv1.ServiceCommandDescriptor{
-			Service: statev5.QueryService_ServiceDesc.ServiceName,
+			Service: statev6.QueryService_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "GetParams",
@@ -732,7 +732,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
-					RpcMethod: "IsWhitelistGlobalActor",
+					RpcMethod: "IsWhitelistedGlobalActor",
 					Use:       "is-whitelist-global-actor [address]",
 					Short:     "Check if address is a global whitelist actor",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
@@ -814,7 +814,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			Short:                "Emissions module query commands",
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
-			Service: statev5.MsgService_ServiceDesc.ServiceName,
+			Service: statev6.MsgService_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "UpdateParams",
@@ -827,7 +827,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				},
 				{
 					RpcMethod: "CreateNewTopic",
-					Use:       "create-topic [creator] [metadata] [loss_method] [epoch_length] [ground_truth_lag] [worker_submission_window] [p_norm] [alpha_regret] [allow_negative] [epsilon] [merit_sortition_alpha] [active_inferer_quantile] [active_forecaster_quantile] [active_reputer_quantile]",
+					Use:       "create-topic [creator] [metadata] [loss_method] [epoch_length] [ground_truth_lag] [worker_submission_window] [p_norm] [alpha_regret] [allow_negative] [epsilon] [merit_sortition_alpha] [active_inferer_quantile] [active_forecaster_quantile] [active_reputer_quantile] [enable_worker_whitelist] [enable_reputer_whitelist]",
 					Short:     "Add a new topic to the network",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "creator"},
@@ -844,6 +844,8 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						{ProtoField: "active_inferer_quantile"},
 						{ProtoField: "active_forecaster_quantile"},
 						{ProtoField: "active_reputer_quantile"},
+						{ProtoField: "enable_worker_whitelist"},
+						{ProtoField: "enable_reputer_whitelist"},
 					},
 				},
 				{

@@ -164,7 +164,7 @@ func (k *Keeper) IsWhitelistedTopicCreator(ctx context.Context, actor ActorId) (
 	return k.topicCreatorWhitelist.Has(ctx, actor)
 }
 
-func (k *Keeper) IsWhitelistGlobalActor(ctx context.Context, actor ActorId) (bool, error) {
+func (k *Keeper) IsWhitelistedGlobalActor(ctx context.Context, actor ActorId) (bool, error) {
 	return k.globalWhitelist.Has(ctx, actor)
 }
 
@@ -189,7 +189,7 @@ func (k *Keeper) IsEnabledGlobalActor(ctx context.Context, actor ActorId) (bool,
 	}
 	if params.GlobalWhitelistEnabled {
 		// If whitelist enabled check to see if actor is whitelisted
-		return k.IsWhitelistGlobalActor(ctx, actor)
+		return k.IsWhitelistedGlobalActor(ctx, actor)
 	}
 	return true, nil
 }
@@ -279,11 +279,11 @@ func (k *Keeper) CanCreateTopic(ctx context.Context, actor ActorId) (bool, error
 // An actor can submit a worker payload if they are topic worker whitelisted
 // or if they are globally whitelisted
 func (k *Keeper) CanSubmitWorkerPayload(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
-	has, err := k.IsEnabledTopicWorker(ctx, topicId, actor)
+	isEnabledTopicWorker, err := k.IsEnabledTopicWorker(ctx, topicId, actor)
 	if err != nil {
 		return false, err
 	}
-	if has {
+	if isEnabledTopicWorker {
 		return true, nil
 	}
 	return k.IsEnabledGlobalActor(ctx, actor)
@@ -292,11 +292,24 @@ func (k *Keeper) CanSubmitWorkerPayload(ctx context.Context, topicId TopicId, ac
 // An actor can submit a reputer payload if they are topic reputer whitelisted
 // or if they are globally whitelisted
 func (k *Keeper) CanSubmitReputerPayload(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
-	has, err := k.IsEnabledTopicReputer(ctx, topicId, actor)
+	isEnabledTopicReputer, err := k.IsEnabledTopicReputer(ctx, topicId, actor)
 	if err != nil {
 		return false, err
 	}
-	if has {
+	if isEnabledTopicReputer {
+		return true, nil
+	}
+	return k.IsEnabledGlobalActor(ctx, actor)
+}
+
+// An actor can submit a reputer payload if they are topic reputer whitelisted
+// or if they are globally whitelisted
+func (k *Keeper) CanAddReputerStake(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
+	isEnabledTopicReputer, err := k.IsEnabledTopicReputer(ctx, topicId, actor)
+	if err != nil {
+		return false, err
+	}
+	if isEnabledTopicReputer {
 		return true, nil
 	}
 	return k.IsEnabledGlobalActor(ctx, actor)

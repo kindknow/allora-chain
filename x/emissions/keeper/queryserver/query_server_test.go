@@ -201,6 +201,8 @@ func (s *QueryServerTestSuite) CreateOneTopic() uint64 {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 
 	s.MintTokensToAddress(creator, types.DefaultParams().CreateTopicFee)
@@ -235,6 +237,8 @@ func (s *QueryServerTestSuite) TestCreateSeveralTopics() {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 
 	creatorInitialBalance := types.DefaultParams().CreateTopicFee.Mul(cosmosMath.NewInt(3))

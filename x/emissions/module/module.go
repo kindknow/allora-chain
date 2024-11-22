@@ -13,6 +13,7 @@ import (
 	migrationV3 "github.com/allora-network/allora-chain/x/emissions/migrations/v3"
 	migrationV4 "github.com/allora-network/allora-chain/x/emissions/migrations/v4"
 	migrationV5 "github.com/allora-network/allora-chain/x/emissions/migrations/v5"
+	migrationV6 "github.com/allora-network/allora-chain/x/emissions/migrations/v6"
 	"github.com/allora-network/allora-chain/x/emissions/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -93,6 +94,11 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 		return migrationV5.MigrateStore(ctx, am.keeper)
 	}); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/%s from version 4 to 5: %v", types.ModuleName, err))
+	}
+	if err := cfg.RegisterMigration(types.ModuleName, 5, func(ctx sdk.Context) error {
+		return migrationV6.MigrateStore(ctx, am.keeper)
+	}); err != nil {
+		panic(fmt.Sprintf("failed to migrate x/%s from version 5 to 6: %v", types.ModuleName, err))
 	}
 }
 

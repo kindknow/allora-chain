@@ -693,7 +693,7 @@ func (k *Keeper) InitGenesis(ctx context.Context, data *types.GenesisState) erro
 	// This allows us to add core team addresses to the whitelist during a genesis import
 	// while still keeping the original core team addresses in the genesis file
 	if len(data.CoreTeamAddresses) != 0 || len(data.WhitelistAdmins) != 0 {
-		// make sure what we are storage isn't garbage
+		// make sure what we are storing is not garbage
 		for _, address := range append(data.CoreTeamAddresses, data.WhitelistAdmins...) {
 			_, err := sdk.AccAddressFromBech32(address)
 			if err != nil {

@@ -208,6 +208,8 @@ func (s *KeeperTestSuite) CreateOneTopic(epochLen int64) uint64 {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 
 	s.MintTokensToAddress(s.addrs[0], types.DefaultParams().CreateTopicFee)
@@ -2472,7 +2474,7 @@ func (s *KeeperTestSuite) TestGetTopic() {
 
 	topicId := uint64(1)
 	_, err := keeper.GetTopic(ctx, topicId)
-	s.Require().Error(err, "Retrieving a non-existent topic should result in an error")
+	s.Require().ErrorIs(err, types.ErrTopicDoesNotExist, "Retrieving a non-existent topic should result in an error")
 
 	newTopic := s.mockTopic()
 

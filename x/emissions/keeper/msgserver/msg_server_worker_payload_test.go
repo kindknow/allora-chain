@@ -165,9 +165,12 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadNotFailsWithNilInference(
 	blockHeight := workerMsg.WorkerDataBundle.InferenceForecastsBundle.Forecast.BlockHeight
 	ctx = ctx.WithBlockHeight(blockHeight)
 
+	_, err := msgServer.InsertWorkerPayload(ctx, &workerMsg)
+	require.ErrorIs(err, types.ErrNotPermittedToSubmitWorkerPayload)
+
 	// Add worker to topic whitelist
-	err := s.emissionsKeeper.AddToTopicWorkerWhitelist(ctx, workerMsg.WorkerDataBundle.TopicId, workerMsg.WorkerDataBundle.Worker)
-	require.NoError(err)
+	err = s.emissionsKeeper.AddToTopicWorkerWhitelist(ctx, workerMsg.WorkerDataBundle.TopicId, workerMsg.WorkerDataBundle.Worker)
+	require.NoError(err, "InsertWorkerPayload should not return an error after adding worker to whitelist")
 
 	_, err = msgServer.InsertWorkerPayload(ctx, &workerMsg)
 	require.NoError(err)

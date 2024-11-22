@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             (unknown)
-// source: emissions/v5/query.proto
+// source: emissions/v6/query.proto
 
-package emissionsv5
+package emissionsv6
 
 import (
 	context "context"
@@ -19,88 +19,100 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	QueryService_GetParams_FullMethodName                                   = "/emissions.v5.QueryService/GetParams"
-	QueryService_GetNextTopicId_FullMethodName                              = "/emissions.v5.QueryService/GetNextTopicId"
-	QueryService_GetTopic_FullMethodName                                    = "/emissions.v5.QueryService/GetTopic"
-	QueryService_GetWorkerLatestInferenceByTopicId_FullMethodName           = "/emissions.v5.QueryService/GetWorkerLatestInferenceByTopicId"
-	QueryService_GetInferencesAtBlock_FullMethodName                        = "/emissions.v5.QueryService/GetInferencesAtBlock"
-	QueryService_GetLatestTopicInferences_FullMethodName                    = "/emissions.v5.QueryService/GetLatestTopicInferences"
-	QueryService_GetForecastsAtBlock_FullMethodName                         = "/emissions.v5.QueryService/GetForecastsAtBlock"
-	QueryService_GetNetworkLossBundleAtBlock_FullMethodName                 = "/emissions.v5.QueryService/GetNetworkLossBundleAtBlock"
-	QueryService_GetTotalStake_FullMethodName                               = "/emissions.v5.QueryService/GetTotalStake"
-	QueryService_GetReputerStakeInTopic_FullMethodName                      = "/emissions.v5.QueryService/GetReputerStakeInTopic"
-	QueryService_GetMultiReputerStakeInTopic_FullMethodName                 = "/emissions.v5.QueryService/GetMultiReputerStakeInTopic"
-	QueryService_GetStakeFromReputerInTopicInSelf_FullMethodName            = "/emissions.v5.QueryService/GetStakeFromReputerInTopicInSelf"
-	QueryService_GetDelegateStakeInTopicInReputer_FullMethodName            = "/emissions.v5.QueryService/GetDelegateStakeInTopicInReputer"
-	QueryService_GetStakeFromDelegatorInTopicInReputer_FullMethodName       = "/emissions.v5.QueryService/GetStakeFromDelegatorInTopicInReputer"
-	QueryService_GetStakeFromDelegatorInTopic_FullMethodName                = "/emissions.v5.QueryService/GetStakeFromDelegatorInTopic"
-	QueryService_GetTopicStake_FullMethodName                               = "/emissions.v5.QueryService/GetTopicStake"
-	QueryService_GetStakeRemovalsUpUntilBlock_FullMethodName                = "/emissions.v5.QueryService/GetStakeRemovalsUpUntilBlock"
-	QueryService_GetDelegateStakeRemovalsUpUntilBlock_FullMethodName        = "/emissions.v5.QueryService/GetDelegateStakeRemovalsUpUntilBlock"
-	QueryService_GetStakeRemovalInfo_FullMethodName                         = "/emissions.v5.QueryService/GetStakeRemovalInfo"
-	QueryService_GetDelegateStakeRemovalInfo_FullMethodName                 = "/emissions.v5.QueryService/GetDelegateStakeRemovalInfo"
-	QueryService_GetWorkerNodeInfo_FullMethodName                           = "/emissions.v5.QueryService/GetWorkerNodeInfo"
-	QueryService_GetReputerNodeInfo_FullMethodName                          = "/emissions.v5.QueryService/GetReputerNodeInfo"
-	QueryService_IsWorkerRegisteredInTopicId_FullMethodName                 = "/emissions.v5.QueryService/IsWorkerRegisteredInTopicId"
-	QueryService_IsReputerRegisteredInTopicId_FullMethodName                = "/emissions.v5.QueryService/IsReputerRegisteredInTopicId"
-	QueryService_GetNetworkInferencesAtBlock_FullMethodName                 = "/emissions.v5.QueryService/GetNetworkInferencesAtBlock"
-	QueryService_GetLatestNetworkInferences_FullMethodName                  = "/emissions.v5.QueryService/GetLatestNetworkInferences"
-	QueryService_GetLatestAvailableNetworkInferences_FullMethodName         = "/emissions.v5.QueryService/GetLatestAvailableNetworkInferences"
-	QueryService_IsWorkerNonceUnfulfilled_FullMethodName                    = "/emissions.v5.QueryService/IsWorkerNonceUnfulfilled"
-	QueryService_IsReputerNonceUnfulfilled_FullMethodName                   = "/emissions.v5.QueryService/IsReputerNonceUnfulfilled"
-	QueryService_GetUnfulfilledWorkerNonces_FullMethodName                  = "/emissions.v5.QueryService/GetUnfulfilledWorkerNonces"
-	QueryService_GetUnfulfilledReputerNonces_FullMethodName                 = "/emissions.v5.QueryService/GetUnfulfilledReputerNonces"
-	QueryService_GetInfererNetworkRegret_FullMethodName                     = "/emissions.v5.QueryService/GetInfererNetworkRegret"
-	QueryService_GetForecasterNetworkRegret_FullMethodName                  = "/emissions.v5.QueryService/GetForecasterNetworkRegret"
-	QueryService_GetOneInForecasterNetworkRegret_FullMethodName             = "/emissions.v5.QueryService/GetOneInForecasterNetworkRegret"
-	QueryService_IsWhitelistAdmin_FullMethodName                            = "/emissions.v5.QueryService/IsWhitelistAdmin"
-	QueryService_GetTopicLastWorkerCommitInfo_FullMethodName                = "/emissions.v5.QueryService/GetTopicLastWorkerCommitInfo"
-	QueryService_GetTopicLastReputerCommitInfo_FullMethodName               = "/emissions.v5.QueryService/GetTopicLastReputerCommitInfo"
-	QueryService_GetTopicRewardNonce_FullMethodName                         = "/emissions.v5.QueryService/GetTopicRewardNonce"
-	QueryService_GetReputerLossBundlesAtBlock_FullMethodName                = "/emissions.v5.QueryService/GetReputerLossBundlesAtBlock"
-	QueryService_GetStakeReputerAuthority_FullMethodName                    = "/emissions.v5.QueryService/GetStakeReputerAuthority"
-	QueryService_GetDelegateStakePlacement_FullMethodName                   = "/emissions.v5.QueryService/GetDelegateStakePlacement"
-	QueryService_GetDelegateStakeUponReputer_FullMethodName                 = "/emissions.v5.QueryService/GetDelegateStakeUponReputer"
-	QueryService_GetDelegateRewardPerShare_FullMethodName                   = "/emissions.v5.QueryService/GetDelegateRewardPerShare"
-	QueryService_GetStakeRemovalForReputerAndTopicId_FullMethodName         = "/emissions.v5.QueryService/GetStakeRemovalForReputerAndTopicId"
-	QueryService_GetDelegateStakeRemoval_FullMethodName                     = "/emissions.v5.QueryService/GetDelegateStakeRemoval"
-	QueryService_GetPreviousTopicWeight_FullMethodName                      = "/emissions.v5.QueryService/GetPreviousTopicWeight"
-	QueryService_GetTotalSumPreviousTopicWeights_FullMethodName             = "/emissions.v5.QueryService/GetTotalSumPreviousTopicWeights"
-	QueryService_TopicExists_FullMethodName                                 = "/emissions.v5.QueryService/TopicExists"
-	QueryService_IsTopicActive_FullMethodName                               = "/emissions.v5.QueryService/IsTopicActive"
-	QueryService_GetTopicFeeRevenue_FullMethodName                          = "/emissions.v5.QueryService/GetTopicFeeRevenue"
-	QueryService_GetInfererScoreEma_FullMethodName                          = "/emissions.v5.QueryService/GetInfererScoreEma"
-	QueryService_GetForecasterScoreEma_FullMethodName                       = "/emissions.v5.QueryService/GetForecasterScoreEma"
-	QueryService_GetReputerScoreEma_FullMethodName                          = "/emissions.v5.QueryService/GetReputerScoreEma"
-	QueryService_GetInferenceScoresUntilBlock_FullMethodName                = "/emissions.v5.QueryService/GetInferenceScoresUntilBlock"
-	QueryService_GetPreviousTopicQuantileForecasterScoreEma_FullMethodName  = "/emissions.v5.QueryService/GetPreviousTopicQuantileForecasterScoreEma"
-	QueryService_GetPreviousTopicQuantileInfererScoreEma_FullMethodName     = "/emissions.v5.QueryService/GetPreviousTopicQuantileInfererScoreEma"
-	QueryService_GetPreviousTopicQuantileReputerScoreEma_FullMethodName     = "/emissions.v5.QueryService/GetPreviousTopicQuantileReputerScoreEma"
-	QueryService_GetWorkerInferenceScoresAtBlock_FullMethodName             = "/emissions.v5.QueryService/GetWorkerInferenceScoresAtBlock"
-	QueryService_GetCurrentLowestInfererScore_FullMethodName                = "/emissions.v5.QueryService/GetCurrentLowestInfererScore"
-	QueryService_GetForecastScoresUntilBlock_FullMethodName                 = "/emissions.v5.QueryService/GetForecastScoresUntilBlock"
-	QueryService_GetWorkerForecastScoresAtBlock_FullMethodName              = "/emissions.v5.QueryService/GetWorkerForecastScoresAtBlock"
-	QueryService_GetCurrentLowestForecasterScore_FullMethodName             = "/emissions.v5.QueryService/GetCurrentLowestForecasterScore"
-	QueryService_GetReputersScoresAtBlock_FullMethodName                    = "/emissions.v5.QueryService/GetReputersScoresAtBlock"
-	QueryService_GetCurrentLowestReputerScore_FullMethodName                = "/emissions.v5.QueryService/GetCurrentLowestReputerScore"
-	QueryService_GetListeningCoefficient_FullMethodName                     = "/emissions.v5.QueryService/GetListeningCoefficient"
-	QueryService_GetPreviousReputerRewardFraction_FullMethodName            = "/emissions.v5.QueryService/GetPreviousReputerRewardFraction"
-	QueryService_GetPreviousInferenceRewardFraction_FullMethodName          = "/emissions.v5.QueryService/GetPreviousInferenceRewardFraction"
-	QueryService_GetPreviousForecastRewardFraction_FullMethodName           = "/emissions.v5.QueryService/GetPreviousForecastRewardFraction"
-	QueryService_GetPreviousPercentageRewardToStakedReputers_FullMethodName = "/emissions.v5.QueryService/GetPreviousPercentageRewardToStakedReputers"
-	QueryService_GetTotalRewardToDistribute_FullMethodName                  = "/emissions.v5.QueryService/GetTotalRewardToDistribute"
-	QueryService_GetNaiveInfererNetworkRegret_FullMethodName                = "/emissions.v5.QueryService/GetNaiveInfererNetworkRegret"
-	QueryService_GetOneOutInfererInfererNetworkRegret_FullMethodName        = "/emissions.v5.QueryService/GetOneOutInfererInfererNetworkRegret"
-	QueryService_GetOneOutInfererForecasterNetworkRegret_FullMethodName     = "/emissions.v5.QueryService/GetOneOutInfererForecasterNetworkRegret"
-	QueryService_GetOneOutForecasterInfererNetworkRegret_FullMethodName     = "/emissions.v5.QueryService/GetOneOutForecasterInfererNetworkRegret"
-	QueryService_GetOneOutForecasterForecasterNetworkRegret_FullMethodName  = "/emissions.v5.QueryService/GetOneOutForecasterForecasterNetworkRegret"
-	QueryService_GetActiveTopicsAtBlock_FullMethodName                      = "/emissions.v5.QueryService/GetActiveTopicsAtBlock"
-	QueryService_GetNextChurningBlockByTopicId_FullMethodName               = "/emissions.v5.QueryService/GetNextChurningBlockByTopicId"
-	QueryService_GetCountInfererInclusionsInTopic_FullMethodName            = "/emissions.v5.QueryService/GetCountInfererInclusionsInTopic"
-	QueryService_GetCountForecasterInclusionsInTopic_FullMethodName         = "/emissions.v5.QueryService/GetCountForecasterInclusionsInTopic"
-	QueryService_GetActiveReputersForTopic_FullMethodName                   = "/emissions.v5.QueryService/GetActiveReputersForTopic"
-	QueryService_GetActiveForecastersForTopic_FullMethodName                = "/emissions.v5.QueryService/GetActiveForecastersForTopic"
-	QueryService_GetActiveInferersForTopic_FullMethodName                   = "/emissions.v5.QueryService/GetActiveInferersForTopic"
+	QueryService_GetParams_FullMethodName                                   = "/emissions.v6.QueryService/GetParams"
+	QueryService_GetNextTopicId_FullMethodName                              = "/emissions.v6.QueryService/GetNextTopicId"
+	QueryService_GetTopic_FullMethodName                                    = "/emissions.v6.QueryService/GetTopic"
+	QueryService_GetWorkerLatestInferenceByTopicId_FullMethodName           = "/emissions.v6.QueryService/GetWorkerLatestInferenceByTopicId"
+	QueryService_GetInferencesAtBlock_FullMethodName                        = "/emissions.v6.QueryService/GetInferencesAtBlock"
+	QueryService_GetLatestTopicInferences_FullMethodName                    = "/emissions.v6.QueryService/GetLatestTopicInferences"
+	QueryService_GetForecastsAtBlock_FullMethodName                         = "/emissions.v6.QueryService/GetForecastsAtBlock"
+	QueryService_GetNetworkLossBundleAtBlock_FullMethodName                 = "/emissions.v6.QueryService/GetNetworkLossBundleAtBlock"
+	QueryService_GetTotalStake_FullMethodName                               = "/emissions.v6.QueryService/GetTotalStake"
+	QueryService_GetReputerStakeInTopic_FullMethodName                      = "/emissions.v6.QueryService/GetReputerStakeInTopic"
+	QueryService_GetMultiReputerStakeInTopic_FullMethodName                 = "/emissions.v6.QueryService/GetMultiReputerStakeInTopic"
+	QueryService_GetStakeFromReputerInTopicInSelf_FullMethodName            = "/emissions.v6.QueryService/GetStakeFromReputerInTopicInSelf"
+	QueryService_GetDelegateStakeInTopicInReputer_FullMethodName            = "/emissions.v6.QueryService/GetDelegateStakeInTopicInReputer"
+	QueryService_GetStakeFromDelegatorInTopicInReputer_FullMethodName       = "/emissions.v6.QueryService/GetStakeFromDelegatorInTopicInReputer"
+	QueryService_GetStakeFromDelegatorInTopic_FullMethodName                = "/emissions.v6.QueryService/GetStakeFromDelegatorInTopic"
+	QueryService_GetTopicStake_FullMethodName                               = "/emissions.v6.QueryService/GetTopicStake"
+	QueryService_GetStakeRemovalsUpUntilBlock_FullMethodName                = "/emissions.v6.QueryService/GetStakeRemovalsUpUntilBlock"
+	QueryService_GetDelegateStakeRemovalsUpUntilBlock_FullMethodName        = "/emissions.v6.QueryService/GetDelegateStakeRemovalsUpUntilBlock"
+	QueryService_GetStakeRemovalInfo_FullMethodName                         = "/emissions.v6.QueryService/GetStakeRemovalInfo"
+	QueryService_GetDelegateStakeRemovalInfo_FullMethodName                 = "/emissions.v6.QueryService/GetDelegateStakeRemovalInfo"
+	QueryService_GetWorkerNodeInfo_FullMethodName                           = "/emissions.v6.QueryService/GetWorkerNodeInfo"
+	QueryService_GetReputerNodeInfo_FullMethodName                          = "/emissions.v6.QueryService/GetReputerNodeInfo"
+	QueryService_IsWorkerRegisteredInTopicId_FullMethodName                 = "/emissions.v6.QueryService/IsWorkerRegisteredInTopicId"
+	QueryService_IsReputerRegisteredInTopicId_FullMethodName                = "/emissions.v6.QueryService/IsReputerRegisteredInTopicId"
+	QueryService_GetNetworkInferencesAtBlock_FullMethodName                 = "/emissions.v6.QueryService/GetNetworkInferencesAtBlock"
+	QueryService_GetLatestNetworkInferences_FullMethodName                  = "/emissions.v6.QueryService/GetLatestNetworkInferences"
+	QueryService_GetLatestAvailableNetworkInferences_FullMethodName         = "/emissions.v6.QueryService/GetLatestAvailableNetworkInferences"
+	QueryService_IsWorkerNonceUnfulfilled_FullMethodName                    = "/emissions.v6.QueryService/IsWorkerNonceUnfulfilled"
+	QueryService_IsReputerNonceUnfulfilled_FullMethodName                   = "/emissions.v6.QueryService/IsReputerNonceUnfulfilled"
+	QueryService_GetUnfulfilledWorkerNonces_FullMethodName                  = "/emissions.v6.QueryService/GetUnfulfilledWorkerNonces"
+	QueryService_GetUnfulfilledReputerNonces_FullMethodName                 = "/emissions.v6.QueryService/GetUnfulfilledReputerNonces"
+	QueryService_GetInfererNetworkRegret_FullMethodName                     = "/emissions.v6.QueryService/GetInfererNetworkRegret"
+	QueryService_GetForecasterNetworkRegret_FullMethodName                  = "/emissions.v6.QueryService/GetForecasterNetworkRegret"
+	QueryService_GetOneInForecasterNetworkRegret_FullMethodName             = "/emissions.v6.QueryService/GetOneInForecasterNetworkRegret"
+	QueryService_IsWhitelistAdmin_FullMethodName                            = "/emissions.v6.QueryService/IsWhitelistAdmin"
+	QueryService_GetTopicLastWorkerCommitInfo_FullMethodName                = "/emissions.v6.QueryService/GetTopicLastWorkerCommitInfo"
+	QueryService_GetTopicLastReputerCommitInfo_FullMethodName               = "/emissions.v6.QueryService/GetTopicLastReputerCommitInfo"
+	QueryService_GetTopicRewardNonce_FullMethodName                         = "/emissions.v6.QueryService/GetTopicRewardNonce"
+	QueryService_GetReputerLossBundlesAtBlock_FullMethodName                = "/emissions.v6.QueryService/GetReputerLossBundlesAtBlock"
+	QueryService_GetStakeReputerAuthority_FullMethodName                    = "/emissions.v6.QueryService/GetStakeReputerAuthority"
+	QueryService_GetDelegateStakePlacement_FullMethodName                   = "/emissions.v6.QueryService/GetDelegateStakePlacement"
+	QueryService_GetDelegateStakeUponReputer_FullMethodName                 = "/emissions.v6.QueryService/GetDelegateStakeUponReputer"
+	QueryService_GetDelegateRewardPerShare_FullMethodName                   = "/emissions.v6.QueryService/GetDelegateRewardPerShare"
+	QueryService_GetStakeRemovalForReputerAndTopicId_FullMethodName         = "/emissions.v6.QueryService/GetStakeRemovalForReputerAndTopicId"
+	QueryService_GetDelegateStakeRemoval_FullMethodName                     = "/emissions.v6.QueryService/GetDelegateStakeRemoval"
+	QueryService_GetPreviousTopicWeight_FullMethodName                      = "/emissions.v6.QueryService/GetPreviousTopicWeight"
+	QueryService_GetTotalSumPreviousTopicWeights_FullMethodName             = "/emissions.v6.QueryService/GetTotalSumPreviousTopicWeights"
+	QueryService_TopicExists_FullMethodName                                 = "/emissions.v6.QueryService/TopicExists"
+	QueryService_IsTopicActive_FullMethodName                               = "/emissions.v6.QueryService/IsTopicActive"
+	QueryService_GetTopicFeeRevenue_FullMethodName                          = "/emissions.v6.QueryService/GetTopicFeeRevenue"
+	QueryService_GetInfererScoreEma_FullMethodName                          = "/emissions.v6.QueryService/GetInfererScoreEma"
+	QueryService_GetForecasterScoreEma_FullMethodName                       = "/emissions.v6.QueryService/GetForecasterScoreEma"
+	QueryService_GetReputerScoreEma_FullMethodName                          = "/emissions.v6.QueryService/GetReputerScoreEma"
+	QueryService_GetInferenceScoresUntilBlock_FullMethodName                = "/emissions.v6.QueryService/GetInferenceScoresUntilBlock"
+	QueryService_GetPreviousTopicQuantileForecasterScoreEma_FullMethodName  = "/emissions.v6.QueryService/GetPreviousTopicQuantileForecasterScoreEma"
+	QueryService_GetPreviousTopicQuantileInfererScoreEma_FullMethodName     = "/emissions.v6.QueryService/GetPreviousTopicQuantileInfererScoreEma"
+	QueryService_GetPreviousTopicQuantileReputerScoreEma_FullMethodName     = "/emissions.v6.QueryService/GetPreviousTopicQuantileReputerScoreEma"
+	QueryService_GetWorkerInferenceScoresAtBlock_FullMethodName             = "/emissions.v6.QueryService/GetWorkerInferenceScoresAtBlock"
+	QueryService_GetCurrentLowestInfererScore_FullMethodName                = "/emissions.v6.QueryService/GetCurrentLowestInfererScore"
+	QueryService_GetForecastScoresUntilBlock_FullMethodName                 = "/emissions.v6.QueryService/GetForecastScoresUntilBlock"
+	QueryService_GetWorkerForecastScoresAtBlock_FullMethodName              = "/emissions.v6.QueryService/GetWorkerForecastScoresAtBlock"
+	QueryService_GetCurrentLowestForecasterScore_FullMethodName             = "/emissions.v6.QueryService/GetCurrentLowestForecasterScore"
+	QueryService_GetReputersScoresAtBlock_FullMethodName                    = "/emissions.v6.QueryService/GetReputersScoresAtBlock"
+	QueryService_GetCurrentLowestReputerScore_FullMethodName                = "/emissions.v6.QueryService/GetCurrentLowestReputerScore"
+	QueryService_GetListeningCoefficient_FullMethodName                     = "/emissions.v6.QueryService/GetListeningCoefficient"
+	QueryService_GetPreviousReputerRewardFraction_FullMethodName            = "/emissions.v6.QueryService/GetPreviousReputerRewardFraction"
+	QueryService_GetPreviousInferenceRewardFraction_FullMethodName          = "/emissions.v6.QueryService/GetPreviousInferenceRewardFraction"
+	QueryService_GetPreviousForecastRewardFraction_FullMethodName           = "/emissions.v6.QueryService/GetPreviousForecastRewardFraction"
+	QueryService_GetPreviousPercentageRewardToStakedReputers_FullMethodName = "/emissions.v6.QueryService/GetPreviousPercentageRewardToStakedReputers"
+	QueryService_GetTotalRewardToDistribute_FullMethodName                  = "/emissions.v6.QueryService/GetTotalRewardToDistribute"
+	QueryService_GetNaiveInfererNetworkRegret_FullMethodName                = "/emissions.v6.QueryService/GetNaiveInfererNetworkRegret"
+	QueryService_GetOneOutInfererInfererNetworkRegret_FullMethodName        = "/emissions.v6.QueryService/GetOneOutInfererInfererNetworkRegret"
+	QueryService_GetOneOutInfererForecasterNetworkRegret_FullMethodName     = "/emissions.v6.QueryService/GetOneOutInfererForecasterNetworkRegret"
+	QueryService_GetOneOutForecasterInfererNetworkRegret_FullMethodName     = "/emissions.v6.QueryService/GetOneOutForecasterInfererNetworkRegret"
+	QueryService_GetOneOutForecasterForecasterNetworkRegret_FullMethodName  = "/emissions.v6.QueryService/GetOneOutForecasterForecasterNetworkRegret"
+	QueryService_GetActiveTopicsAtBlock_FullMethodName                      = "/emissions.v6.QueryService/GetActiveTopicsAtBlock"
+	QueryService_GetNextChurningBlockByTopicId_FullMethodName               = "/emissions.v6.QueryService/GetNextChurningBlockByTopicId"
+	QueryService_GetCountInfererInclusionsInTopic_FullMethodName            = "/emissions.v6.QueryService/GetCountInfererInclusionsInTopic"
+	QueryService_GetCountForecasterInclusionsInTopic_FullMethodName         = "/emissions.v6.QueryService/GetCountForecasterInclusionsInTopic"
+	QueryService_GetActiveReputersForTopic_FullMethodName                   = "/emissions.v6.QueryService/GetActiveReputersForTopic"
+	QueryService_GetActiveForecastersForTopic_FullMethodName                = "/emissions.v6.QueryService/GetActiveForecastersForTopic"
+	QueryService_GetActiveInferersForTopic_FullMethodName                   = "/emissions.v6.QueryService/GetActiveInferersForTopic"
+	QueryService_IsTopicWorkerWhitelistEnabled_FullMethodName               = "/emissions.v6.QueryService/IsTopicWorkerWhitelistEnabled"
+	QueryService_IsTopicReputerWhitelistEnabled_FullMethodName              = "/emissions.v6.QueryService/IsTopicReputerWhitelistEnabled"
+	QueryService_IsWhitelistedTopicCreator_FullMethodName                   = "/emissions.v6.QueryService/IsWhitelistedTopicCreator"
+	QueryService_IsWhitelistedGlobalActor_FullMethodName                    = "/emissions.v6.QueryService/IsWhitelistedGlobalActor"
+	QueryService_IsWhitelistedTopicWorker_FullMethodName                    = "/emissions.v6.QueryService/IsWhitelistedTopicWorker"
+	QueryService_IsWhitelistedTopicReputer_FullMethodName                   = "/emissions.v6.QueryService/IsWhitelistedTopicReputer"
+	QueryService_CanUpdateGlobalWhitelists_FullMethodName                   = "/emissions.v6.QueryService/CanUpdateGlobalWhitelists"
+	QueryService_CanUpdateParams_FullMethodName                             = "/emissions.v6.QueryService/CanUpdateParams"
+	QueryService_CanUpdateTopicWhitelist_FullMethodName                     = "/emissions.v6.QueryService/CanUpdateTopicWhitelist"
+	QueryService_CanCreateTopic_FullMethodName                              = "/emissions.v6.QueryService/CanCreateTopic"
+	QueryService_CanSubmitWorkerPayload_FullMethodName                      = "/emissions.v6.QueryService/CanSubmitWorkerPayload"
+	QueryService_CanSubmitReputerPayload_FullMethodName                     = "/emissions.v6.QueryService/CanSubmitReputerPayload"
 )
 
 // QueryServiceClient is the client API for QueryService service.
@@ -192,6 +204,18 @@ type QueryServiceClient interface {
 	GetActiveReputersForTopic(ctx context.Context, in *GetActiveReputersForTopicRequest, opts ...grpc.CallOption) (*GetActiveReputersForTopicResponse, error)
 	GetActiveForecastersForTopic(ctx context.Context, in *GetActiveForecastersForTopicRequest, opts ...grpc.CallOption) (*GetActiveForecastersForTopicResponse, error)
 	GetActiveInferersForTopic(ctx context.Context, in *GetActiveInferersForTopicRequest, opts ...grpc.CallOption) (*GetActiveInferersForTopicResponse, error)
+	IsTopicWorkerWhitelistEnabled(ctx context.Context, in *IsTopicWorkerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWorkerWhitelistEnabledResponse, error)
+	IsTopicReputerWhitelistEnabled(ctx context.Context, in *IsTopicReputerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicReputerWhitelistEnabledResponse, error)
+	IsWhitelistedTopicCreator(ctx context.Context, in *IsWhitelistedTopicCreatorRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicCreatorResponse, error)
+	IsWhitelistedGlobalActor(ctx context.Context, in *IsWhitelistedGlobalActorRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalActorResponse, error)
+	IsWhitelistedTopicWorker(ctx context.Context, in *IsWhitelistedTopicWorkerRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicWorkerResponse, error)
+	IsWhitelistedTopicReputer(ctx context.Context, in *IsWhitelistedTopicReputerRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicReputerResponse, error)
+	CanUpdateGlobalWhitelists(ctx context.Context, in *CanUpdateGlobalWhitelistsRequest, opts ...grpc.CallOption) (*CanUpdateGlobalWhitelistsResponse, error)
+	CanUpdateParams(ctx context.Context, in *CanUpdateParamsRequest, opts ...grpc.CallOption) (*CanUpdateParamsResponse, error)
+	CanUpdateTopicWhitelist(ctx context.Context, in *CanUpdateTopicWhitelistRequest, opts ...grpc.CallOption) (*CanUpdateTopicWhitelistResponse, error)
+	CanCreateTopic(ctx context.Context, in *CanCreateTopicRequest, opts ...grpc.CallOption) (*CanCreateTopicResponse, error)
+	CanSubmitWorkerPayload(ctx context.Context, in *CanSubmitWorkerPayloadRequest, opts ...grpc.CallOption) (*CanSubmitWorkerPayloadResponse, error)
+	CanSubmitReputerPayload(ctx context.Context, in *CanSubmitReputerPayloadRequest, opts ...grpc.CallOption) (*CanSubmitReputerPayloadResponse, error)
 }
 
 type queryServiceClient struct {
@@ -1022,6 +1046,126 @@ func (c *queryServiceClient) GetActiveInferersForTopic(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *queryServiceClient) IsTopicWorkerWhitelistEnabled(ctx context.Context, in *IsTopicWorkerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWorkerWhitelistEnabledResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsTopicWorkerWhitelistEnabledResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsTopicWorkerWhitelistEnabled_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsTopicReputerWhitelistEnabled(ctx context.Context, in *IsTopicReputerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicReputerWhitelistEnabledResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsTopicReputerWhitelistEnabledResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsTopicReputerWhitelistEnabled_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsWhitelistedTopicCreator(ctx context.Context, in *IsWhitelistedTopicCreatorRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicCreatorResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWhitelistedTopicCreatorResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsWhitelistedTopicCreator_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsWhitelistedGlobalActor(ctx context.Context, in *IsWhitelistedGlobalActorRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalActorResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWhitelistedGlobalActorResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsWhitelistedGlobalActor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsWhitelistedTopicWorker(ctx context.Context, in *IsWhitelistedTopicWorkerRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicWorkerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWhitelistedTopicWorkerResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsWhitelistedTopicWorker_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsWhitelistedTopicReputer(ctx context.Context, in *IsWhitelistedTopicReputerRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicReputerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWhitelistedTopicReputerResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsWhitelistedTopicReputer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanUpdateGlobalWhitelists(ctx context.Context, in *CanUpdateGlobalWhitelistsRequest, opts ...grpc.CallOption) (*CanUpdateGlobalWhitelistsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanUpdateGlobalWhitelistsResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanUpdateGlobalWhitelists_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanUpdateParams(ctx context.Context, in *CanUpdateParamsRequest, opts ...grpc.CallOption) (*CanUpdateParamsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanUpdateParamsResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanUpdateParams_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanUpdateTopicWhitelist(ctx context.Context, in *CanUpdateTopicWhitelistRequest, opts ...grpc.CallOption) (*CanUpdateTopicWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanUpdateTopicWhitelistResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanUpdateTopicWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanCreateTopic(ctx context.Context, in *CanCreateTopicRequest, opts ...grpc.CallOption) (*CanCreateTopicResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanCreateTopicResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanCreateTopic_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanSubmitWorkerPayload(ctx context.Context, in *CanSubmitWorkerPayloadRequest, opts ...grpc.CallOption) (*CanSubmitWorkerPayloadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanSubmitWorkerPayloadResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanSubmitWorkerPayload_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanSubmitReputerPayload(ctx context.Context, in *CanSubmitReputerPayloadRequest, opts ...grpc.CallOption) (*CanSubmitReputerPayloadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanSubmitReputerPayloadResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanSubmitReputerPayload_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServiceServer is the server API for QueryService service.
 // All implementations must embed UnimplementedQueryServiceServer
 // for forward compatibility.
@@ -1111,6 +1255,18 @@ type QueryServiceServer interface {
 	GetActiveReputersForTopic(context.Context, *GetActiveReputersForTopicRequest) (*GetActiveReputersForTopicResponse, error)
 	GetActiveForecastersForTopic(context.Context, *GetActiveForecastersForTopicRequest) (*GetActiveForecastersForTopicResponse, error)
 	GetActiveInferersForTopic(context.Context, *GetActiveInferersForTopicRequest) (*GetActiveInferersForTopicResponse, error)
+	IsTopicWorkerWhitelistEnabled(context.Context, *IsTopicWorkerWhitelistEnabledRequest) (*IsTopicWorkerWhitelistEnabledResponse, error)
+	IsTopicReputerWhitelistEnabled(context.Context, *IsTopicReputerWhitelistEnabledRequest) (*IsTopicReputerWhitelistEnabledResponse, error)
+	IsWhitelistedTopicCreator(context.Context, *IsWhitelistedTopicCreatorRequest) (*IsWhitelistedTopicCreatorResponse, error)
+	IsWhitelistedGlobalActor(context.Context, *IsWhitelistedGlobalActorRequest) (*IsWhitelistedGlobalActorResponse, error)
+	IsWhitelistedTopicWorker(context.Context, *IsWhitelistedTopicWorkerRequest) (*IsWhitelistedTopicWorkerResponse, error)
+	IsWhitelistedTopicReputer(context.Context, *IsWhitelistedTopicReputerRequest) (*IsWhitelistedTopicReputerResponse, error)
+	CanUpdateGlobalWhitelists(context.Context, *CanUpdateGlobalWhitelistsRequest) (*CanUpdateGlobalWhitelistsResponse, error)
+	CanUpdateParams(context.Context, *CanUpdateParamsRequest) (*CanUpdateParamsResponse, error)
+	CanUpdateTopicWhitelist(context.Context, *CanUpdateTopicWhitelistRequest) (*CanUpdateTopicWhitelistResponse, error)
+	CanCreateTopic(context.Context, *CanCreateTopicRequest) (*CanCreateTopicResponse, error)
+	CanSubmitWorkerPayload(context.Context, *CanSubmitWorkerPayloadRequest) (*CanSubmitWorkerPayloadResponse, error)
+	CanSubmitReputerPayload(context.Context, *CanSubmitReputerPayloadRequest) (*CanSubmitReputerPayloadResponse, error)
 	mustEmbedUnimplementedQueryServiceServer()
 }
 
@@ -1366,6 +1522,42 @@ func (UnimplementedQueryServiceServer) GetActiveForecastersForTopic(context.Cont
 }
 func (UnimplementedQueryServiceServer) GetActiveInferersForTopic(context.Context, *GetActiveInferersForTopicRequest) (*GetActiveInferersForTopicResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetActiveInferersForTopic not implemented")
+}
+func (UnimplementedQueryServiceServer) IsTopicWorkerWhitelistEnabled(context.Context, *IsTopicWorkerWhitelistEnabledRequest) (*IsTopicWorkerWhitelistEnabledResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsTopicWorkerWhitelistEnabled not implemented")
+}
+func (UnimplementedQueryServiceServer) IsTopicReputerWhitelistEnabled(context.Context, *IsTopicReputerWhitelistEnabledRequest) (*IsTopicReputerWhitelistEnabledResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsTopicReputerWhitelistEnabled not implemented")
+}
+func (UnimplementedQueryServiceServer) IsWhitelistedTopicCreator(context.Context, *IsWhitelistedTopicCreatorRequest) (*IsWhitelistedTopicCreatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedTopicCreator not implemented")
+}
+func (UnimplementedQueryServiceServer) IsWhitelistedGlobalActor(context.Context, *IsWhitelistedGlobalActorRequest) (*IsWhitelistedGlobalActorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedGlobalActor not implemented")
+}
+func (UnimplementedQueryServiceServer) IsWhitelistedTopicWorker(context.Context, *IsWhitelistedTopicWorkerRequest) (*IsWhitelistedTopicWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedTopicWorker not implemented")
+}
+func (UnimplementedQueryServiceServer) IsWhitelistedTopicReputer(context.Context, *IsWhitelistedTopicReputerRequest) (*IsWhitelistedTopicReputerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedTopicReputer not implemented")
+}
+func (UnimplementedQueryServiceServer) CanUpdateGlobalWhitelists(context.Context, *CanUpdateGlobalWhitelistsRequest) (*CanUpdateGlobalWhitelistsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateGlobalWhitelists not implemented")
+}
+func (UnimplementedQueryServiceServer) CanUpdateParams(context.Context, *CanUpdateParamsRequest) (*CanUpdateParamsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateParams not implemented")
+}
+func (UnimplementedQueryServiceServer) CanUpdateTopicWhitelist(context.Context, *CanUpdateTopicWhitelistRequest) (*CanUpdateTopicWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateTopicWhitelist not implemented")
+}
+func (UnimplementedQueryServiceServer) CanCreateTopic(context.Context, *CanCreateTopicRequest) (*CanCreateTopicResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanCreateTopic not implemented")
+}
+func (UnimplementedQueryServiceServer) CanSubmitWorkerPayload(context.Context, *CanSubmitWorkerPayloadRequest) (*CanSubmitWorkerPayloadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanSubmitWorkerPayload not implemented")
+}
+func (UnimplementedQueryServiceServer) CanSubmitReputerPayload(context.Context, *CanSubmitReputerPayloadRequest) (*CanSubmitReputerPayloadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanSubmitReputerPayload not implemented")
 }
 func (UnimplementedQueryServiceServer) mustEmbedUnimplementedQueryServiceServer() {}
 func (UnimplementedQueryServiceServer) testEmbeddedByValue()                      {}
@@ -2864,11 +3056,227 @@ func _QueryService_GetActiveInferersForTopic_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QueryService_IsTopicWorkerWhitelistEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsTopicWorkerWhitelistEnabledRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsTopicWorkerWhitelistEnabled(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsTopicWorkerWhitelistEnabled_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsTopicWorkerWhitelistEnabled(ctx, req.(*IsTopicWorkerWhitelistEnabledRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsTopicReputerWhitelistEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsTopicReputerWhitelistEnabledRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsTopicReputerWhitelistEnabled(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsTopicReputerWhitelistEnabled_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsTopicReputerWhitelistEnabled(ctx, req.(*IsTopicReputerWhitelistEnabledRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsWhitelistedTopicCreator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWhitelistedTopicCreatorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsWhitelistedTopicCreator(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsWhitelistedTopicCreator_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsWhitelistedTopicCreator(ctx, req.(*IsWhitelistedTopicCreatorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsWhitelistedGlobalActor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWhitelistedGlobalActorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalActor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsWhitelistedGlobalActor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalActor(ctx, req.(*IsWhitelistedGlobalActorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsWhitelistedTopicWorker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWhitelistedTopicWorkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsWhitelistedTopicWorker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsWhitelistedTopicWorker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsWhitelistedTopicWorker(ctx, req.(*IsWhitelistedTopicWorkerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsWhitelistedTopicReputer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWhitelistedTopicReputerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsWhitelistedTopicReputer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsWhitelistedTopicReputer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsWhitelistedTopicReputer(ctx, req.(*IsWhitelistedTopicReputerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanUpdateGlobalWhitelists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanUpdateGlobalWhitelistsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanUpdateGlobalWhitelists(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanUpdateGlobalWhitelists_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanUpdateGlobalWhitelists(ctx, req.(*CanUpdateGlobalWhitelistsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanUpdateParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanUpdateParamsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanUpdateParams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanUpdateParams_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanUpdateParams(ctx, req.(*CanUpdateParamsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanUpdateTopicWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanUpdateTopicWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanUpdateTopicWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanUpdateTopicWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanUpdateTopicWhitelist(ctx, req.(*CanUpdateTopicWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanCreateTopic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanCreateTopicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanCreateTopic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanCreateTopic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanCreateTopic(ctx, req.(*CanCreateTopicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanSubmitWorkerPayload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanSubmitWorkerPayloadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanSubmitWorkerPayload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanSubmitWorkerPayload_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanSubmitWorkerPayload(ctx, req.(*CanSubmitWorkerPayloadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanSubmitReputerPayload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanSubmitReputerPayloadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanSubmitReputerPayload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanSubmitReputerPayload_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanSubmitReputerPayload(ctx, req.(*CanSubmitReputerPayloadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QueryService_ServiceDesc is the grpc.ServiceDesc for QueryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var QueryService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "emissions.v5.QueryService",
+	ServiceName: "emissions.v6.QueryService",
 	HandlerType: (*QueryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -3199,7 +3607,55 @@ var QueryService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetActiveInferersForTopic",
 			Handler:    _QueryService_GetActiveInferersForTopic_Handler,
 		},
+		{
+			MethodName: "IsTopicWorkerWhitelistEnabled",
+			Handler:    _QueryService_IsTopicWorkerWhitelistEnabled_Handler,
+		},
+		{
+			MethodName: "IsTopicReputerWhitelistEnabled",
+			Handler:    _QueryService_IsTopicReputerWhitelistEnabled_Handler,
+		},
+		{
+			MethodName: "IsWhitelistedTopicCreator",
+			Handler:    _QueryService_IsWhitelistedTopicCreator_Handler,
+		},
+		{
+			MethodName: "IsWhitelistedGlobalActor",
+			Handler:    _QueryService_IsWhitelistedGlobalActor_Handler,
+		},
+		{
+			MethodName: "IsWhitelistedTopicWorker",
+			Handler:    _QueryService_IsWhitelistedTopicWorker_Handler,
+		},
+		{
+			MethodName: "IsWhitelistedTopicReputer",
+			Handler:    _QueryService_IsWhitelistedTopicReputer_Handler,
+		},
+		{
+			MethodName: "CanUpdateGlobalWhitelists",
+			Handler:    _QueryService_CanUpdateGlobalWhitelists_Handler,
+		},
+		{
+			MethodName: "CanUpdateParams",
+			Handler:    _QueryService_CanUpdateParams_Handler,
+		},
+		{
+			MethodName: "CanUpdateTopicWhitelist",
+			Handler:    _QueryService_CanUpdateTopicWhitelist_Handler,
+		},
+		{
+			MethodName: "CanCreateTopic",
+			Handler:    _QueryService_CanCreateTopic_Handler,
+		},
+		{
+			MethodName: "CanSubmitWorkerPayload",
+			Handler:    _QueryService_CanSubmitWorkerPayload_Handler,
+		},
+		{
+			MethodName: "CanSubmitReputerPayload",
+			Handler:    _QueryService_CanSubmitReputerPayload_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "emissions/v5/query.proto",
+	Metadata: "emissions/v6/query.proto",
 }

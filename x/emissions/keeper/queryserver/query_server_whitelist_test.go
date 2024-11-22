@@ -116,31 +116,31 @@ func (s *QueryServerTestSuite) TestIsWhitelistedTopicCreator() {
 	s.Require().True(response.IsWhitelistedTopicCreator)
 }
 
-func (s *QueryServerTestSuite) TestIsWhitelistGlobalActor() {
+func (s *QueryServerTestSuite) TestIsWhitelistedGlobalActor() {
 	ctx := s.ctx
 	queryServer := s.queryServer
 	keeper := s.emissionsKeeper
 
 	testAddr := "allo10es2a97cr7u2m3aa08tcu7yd0d300thdct45ve"
 
-	req := &types.IsWhitelistGlobalActorRequest{
+	req := &types.IsWhitelistedGlobalActorRequest{
 		Address: testAddr,
 	}
 
 	// Initially should not be whitelisted
-	response, err := queryServer.IsWhitelistGlobalActor(ctx, req)
+	response, err := queryServer.IsWhitelistedGlobalActor(ctx, req)
 	s.Require().NoError(err)
 	s.Require().NotNil(response)
-	s.Require().False(response.IsWhitelistGlobalActor)
+	s.Require().False(response.IsWhitelistedGlobalActor)
 
 	// Add to whitelist
 	err = keeper.AddToGlobalWhitelist(ctx, testAddr)
 	s.Require().NoError(err)
 
-	response, err = queryServer.IsWhitelistGlobalActor(ctx, req)
+	response, err = queryServer.IsWhitelistedGlobalActor(ctx, req)
 	s.Require().NoError(err)
 	s.Require().NotNil(response)
-	s.Require().True(response.IsWhitelistGlobalActor)
+	s.Require().True(response.IsWhitelistedGlobalActor)
 }
 
 func (s *QueryServerTestSuite) TestIsWhitelistedTopicWorker() {

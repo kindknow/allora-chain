@@ -53,6 +53,8 @@ func CreateTopic(m testCommon.TestConfig) (topicId uint64) {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 	txResp, err := m.Client.BroadcastTx(ctx, m.AliceAcc, createTopicRequest)
 	require.NoError(m.T, err)

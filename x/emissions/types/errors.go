@@ -92,4 +92,5 @@ var (
 	ErrNotPermittedToUpdateTopicCreatorWhitelist = errors.Register(ModuleName, 87, "not permitted to update topic creator whitelist")
 	ErrNotPermittedToUpdateTopicWorkerWhitelist  = errors.Register(ModuleName, 88, "not permitted to update topic worker whitelist")
 	ErrNotPermittedToUpdateTopicReputerWhitelist = errors.Register(ModuleName, 89, "not permitted to update topic reputer whitelist")
+	ErrNotPermittedToAddStake                    = errors.Register(ModuleName, 90, "not permitted to add stake")
 )

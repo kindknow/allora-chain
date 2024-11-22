@@ -2672,7 +2672,14 @@ func (k *Keeper) IncrementTopicId(ctx context.Context) (TopicId, error) {
 
 // Gets topic by topicId
 func (k *Keeper) GetTopic(ctx context.Context, topicId TopicId) (types.Topic, error) {
-	return k.topics.Get(ctx, topicId)
+	topic, err := k.topics.Get(ctx, topicId)
+	if err != nil {
+		if errors.Is(err, collections.ErrNotFound) {
+			return types.Topic{}, types.ErrTopicDoesNotExist
+		}
+		return types.Topic{}, err
+	}
+	return topic, nil
 }
 
 // Sets a topic config on a topicId

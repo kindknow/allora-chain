@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	errorsmod "cosmossdk.io/errors"
 	"github.com/allora-network/allora-chain/x/emissions/metrics"
 	"github.com/allora-network/allora-chain/x/emissions/types"
 )
@@ -18,17 +17,18 @@ func (ms msgServer) AddToWhitelistAdmin(ctx context.Context, msg *types.AddToWhi
 		return nil, err
 	}
 
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
 	// Check that sender is permitted to update global whitelists
 	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateWhitelistAdmins
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	// Add the address to the whitelist
@@ -44,17 +44,18 @@ func (ms msgServer) RemoveFromWhitelistAdmin(ctx context.Context, msg *types.Rem
 		return nil, err
 	}
 
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
 	// Check that sender is permitted to update global whitelists
 	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateWhitelistAdmins
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	// Remove the address from the whitelist
@@ -70,17 +71,18 @@ func (ms msgServer) AddToGlobalWhitelist(ctx context.Context, msg *types.AddToGl
 		return nil, err
 	}
 
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
 	// Check that sender is permitted to update global whitelists
 	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	// Add the address to the whitelist
@@ -96,17 +98,18 @@ func (ms msgServer) RemoveFromGlobalWhitelist(ctx context.Context, msg *types.Re
 		return nil, err
 	}
 
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
 	// Check that sender is permitted to update global whitelists
 	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	// Remove the address from the whitelist
@@ -116,17 +119,12 @@ func (ms msgServer) RemoveFromGlobalWhitelist(ctx context.Context, msg *types.Re
 func (ms msgServer) EnableTopicWorkerWhitelist(ctx context.Context, msg *types.EnableTopicWorkerWhitelistRequest) (_ *types.EnableTopicWorkerWhitelistResponse, err error) {
 	defer metrics.RecordMetrics("EnableTopicWorkerWhitelist", time.Now(), &err)
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
-		return nil, err
-	}
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
 	if err != nil {
 		return nil, err
@@ -140,17 +138,12 @@ func (ms msgServer) EnableTopicWorkerWhitelist(ctx context.Context, msg *types.E
 func (ms msgServer) DisableTopicWorkerWhitelist(ctx context.Context, msg *types.DisableTopicWorkerWhitelistRequest) (_ *types.DisableTopicWorkerWhitelistResponse, err error) {
 	defer metrics.RecordMetrics("DisableTopicWorkerWhitelist", time.Now(), &err)
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
-		return nil, err
-	}
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
 	if err != nil {
 		return nil, err
@@ -164,17 +157,12 @@ func (ms msgServer) DisableTopicWorkerWhitelist(ctx context.Context, msg *types.
 func (ms msgServer) EnableTopicReputerWhitelist(ctx context.Context, msg *types.EnableTopicReputerWhitelistRequest) (_ *types.EnableTopicReputerWhitelistResponse, err error) {
 	defer metrics.RecordMetrics("EnableTopicReputerWhitelist", time.Now(), &err)
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
-		return nil, err
-	}
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
 	if err != nil {
 		return nil, err
@@ -188,17 +176,12 @@ func (ms msgServer) EnableTopicReputerWhitelist(ctx context.Context, msg *types.
 func (ms msgServer) DisableTopicReputerWhitelist(ctx context.Context, msg *types.DisableTopicReputerWhitelistRequest) (_ *types.DisableTopicReputerWhitelistResponse, err error) {
 	defer metrics.RecordMetrics("DisableTopicReputerWhitelist", time.Now(), &err)
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
-		return nil, err
-	}
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
 	if err != nil {
 		return nil, err
@@ -213,7 +196,14 @@ func (ms msgServer) AddToTopicCreatorWhitelist(ctx context.Context, msg *types.A
 	defer metrics.RecordMetrics("AddToTopicCreatorWhitelist", time.Now(), &err)
 
 	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
 		return nil, err
 	}
 
@@ -222,11 +212,6 @@ func (ms msgServer) AddToTopicCreatorWhitelist(ctx context.Context, msg *types.A
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateTopicCreatorWhitelist
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	return &types.AddToTopicCreatorWhitelistResponse{}, ms.k.AddToTopicCreatorWhitelist(ctx, msg.Address)
@@ -236,7 +221,14 @@ func (ms msgServer) RemoveFromTopicCreatorWhitelist(ctx context.Context, msg *ty
 	defer metrics.RecordMetrics("RemoveFromTopicCreatorWhitelist", time.Now(), &err)
 
 	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
 		return nil, err
 	}
 
@@ -247,11 +239,6 @@ func (ms msgServer) RemoveFromTopicCreatorWhitelist(ctx context.Context, msg *ty
 		return nil, types.ErrNotPermittedToUpdateTopicCreatorWhitelist
 	}
 
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
-	}
-
 	return &types.RemoveFromTopicCreatorWhitelistResponse{}, ms.k.RemoveFromTopicCreatorWhitelist(ctx, msg.Address)
 }
 
@@ -259,15 +246,15 @@ func (ms msgServer) AddToTopicWorkerWhitelist(ctx context.Context, msg *types.Ad
 	defer metrics.RecordMetrics("AddToTopicWorkerWhitelist", time.Now(), &err)
 
 	// Validate the sender
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
 		return nil, err
 	}
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
@@ -275,11 +262,6 @@ func (ms msgServer) AddToTopicWorkerWhitelist(ctx context.Context, msg *types.Ad
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateTopicWorkerWhitelist
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	return &types.AddToTopicWorkerWhitelistResponse{}, ms.k.AddToTopicWorkerWhitelist(ctx, msg.TopicId, msg.Address)
@@ -289,15 +271,15 @@ func (ms msgServer) RemoveFromTopicWorkerWhitelist(ctx context.Context, msg *typ
 	defer metrics.RecordMetrics("RemoveFromTopicWorkerWhitelist", time.Now(), &err)
 
 	// Validate the sender
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
 		return nil, err
 	}
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
@@ -307,11 +289,6 @@ func (ms msgServer) RemoveFromTopicWorkerWhitelist(ctx context.Context, msg *typ
 		return nil, types.ErrNotPermittedToUpdateTopicWorkerWhitelist
 	}
 
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
-	}
-
 	return &types.RemoveFromTopicWorkerWhitelistResponse{}, ms.k.RemoveFromTopicWorkerWhitelist(ctx, msg.TopicId, msg.Address)
 }
 
@@ -319,15 +296,15 @@ func (ms msgServer) AddToTopicReputerWhitelist(ctx context.Context, msg *types.A
 	defer metrics.RecordMetrics("AddToTopicReputerWhitelist", time.Now(), &err)
 
 	// Validate the sender
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
 		return nil, err
 	}
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
@@ -335,11 +312,6 @@ func (ms msgServer) AddToTopicReputerWhitelist(ctx context.Context, msg *types.A
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateTopicReputerWhitelist
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	return &types.AddToTopicReputerWhitelistResponse{}, ms.k.AddToTopicReputerWhitelist(ctx, msg.TopicId, msg.Address)
@@ -349,15 +321,15 @@ func (ms msgServer) RemoveFromTopicReputerWhitelist(ctx context.Context, msg *ty
 	defer metrics.RecordMetrics("RemoveFromTopicReputerWhitelist", time.Now(), &err)
 
 	// Validate the sender
-	if err := ms.k.ValidateStringIsBech32(msg.Sender); err != nil {
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
 		return nil, err
 	}
 
-	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
 	if err != nil {
 		return nil, err
-	} else if !exists {
-		return nil, errorsmod.Wrap(types.ErrNotFound, "topic does not exist")
 	}
 
 	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
@@ -365,11 +337,6 @@ func (ms msgServer) RemoveFromTopicReputerWhitelist(ctx context.Context, msg *ty
 		return nil, err
 	} else if !canUpdate {
 		return nil, types.ErrNotPermittedToUpdateTopicReputerWhitelist
-	}
-
-	// Validate the address
-	if err := ms.k.ValidateStringIsBech32(msg.Address); err != nil {
-		return nil, err
 	}
 
 	return &types.RemoveFromTopicReputerWhitelistResponse{}, ms.k.RemoveFromTopicReputerWhitelist(ctx, msg.TopicId, msg.Address)

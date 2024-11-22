@@ -63,18 +63,18 @@ func (qs queryServer) IsWhitelistedTopicCreator(ctx context.Context, req *types.
 	return &types.IsWhitelistedTopicCreatorResponse{IsWhitelistedTopicCreator: val}, nil
 }
 
-func (qs queryServer) IsWhitelistGlobalActor(ctx context.Context, req *types.IsWhitelistGlobalActorRequest) (_ *types.IsWhitelistGlobalActorResponse, err error) {
-	defer metrics.RecordMetrics("IsWhitelistGlobalActor", time.Now(), &err)
+func (qs queryServer) IsWhitelistedGlobalActor(ctx context.Context, req *types.IsWhitelistedGlobalActorRequest) (_ *types.IsWhitelistedGlobalActorResponse, err error) {
+	defer metrics.RecordMetrics("IsWhitelistedGlobalActor", time.Now(), &err)
 	if err := qs.k.ValidateStringIsBech32(req.Address); err != nil {
 		return nil, sdkerrors.ErrInvalidAddress.Wrapf("invalid address: %s", err)
 	}
 
-	val, err := qs.k.IsWhitelistGlobalActor(ctx, req.Address)
+	val, err := qs.k.IsWhitelistedGlobalActor(ctx, req.Address)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.IsWhitelistGlobalActorResponse{IsWhitelistGlobalActor: val}, nil
+	return &types.IsWhitelistedGlobalActorResponse{IsWhitelistedGlobalActor: val}, nil
 }
 
 func (qs queryServer) IsWhitelistedTopicWorker(ctx context.Context, req *types.IsWhitelistedTopicWorkerRequest) (_ *types.IsWhitelistedTopicWorkerResponse, err error) {

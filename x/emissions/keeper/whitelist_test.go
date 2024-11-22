@@ -37,14 +37,14 @@ func (s *KeeperTestSuite) TestGlobalWhitelistOperations() {
 	testAddr := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
 
 	// Test global whitelist operations
-	isWhitelisted, err := keeper.IsWhitelistGlobalActor(ctx, testAddr)
+	isWhitelisted, err := keeper.IsWhitelistedGlobalActor(ctx, testAddr)
 	s.Require().NoError(err)
 	s.Require().False(isWhitelisted)
 
 	err = keeper.AddToGlobalWhitelist(ctx, testAddr)
 	s.Require().NoError(err)
 
-	isWhitelisted, err = keeper.IsWhitelistGlobalActor(ctx, testAddr)
+	isWhitelisted, err = keeper.IsWhitelistedGlobalActor(ctx, testAddr)
 	s.Require().NoError(err)
 	s.Require().True(isWhitelisted)
 
@@ -285,7 +285,7 @@ func (s *KeeperTestSuite) TestRemoveFromGlobalWhitelist() {
 	s.Require().NoError(err)
 
 	// Verify actor was removed
-	isWhitelisted, err := keeper.IsWhitelistGlobalActor(ctx, actor)
+	isWhitelisted, err := keeper.IsWhitelistedGlobalActor(ctx, actor)
 	s.Require().NoError(err)
 	s.Require().False(isWhitelisted)
 
@@ -608,6 +608,43 @@ func (s *KeeperTestSuite) TestCanSubmitReputerPayloadWithWhitelist() {
 	s.Require().NoError(err)
 
 	can, err = keeper.CanSubmitReputerPayload(ctx, topicId, neitherAddr)
+	s.Require().NoError(err)
+	s.Require().True(can)
+}
+
+func (s *KeeperTestSuite) TestCanAddReputerStakeWithWhitelist() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+	enabledTopicReputer := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
+	enabledGlobalActor := "allo14s7gd09y7mkje8547ukm0c8gjnd3hak7v3fwz6"
+	neitherAddr := "allo1w6uwgrv77szudkve7g84uazuhyw6j4q9hdqelv"
+	topicId := uint64(1)
+
+	err := keeper.EnableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	can, err := keeper.CanAddReputerStake(ctx, topicId, neitherAddr)
+	s.Require().NoError(err)
+	s.Require().False(can)
+
+	err = keeper.AddToTopicReputerWhitelist(ctx, topicId, enabledTopicReputer)
+	s.Require().NoError(err)
+
+	can, err = keeper.CanAddReputerStake(ctx, topicId, enabledTopicReputer)
+	s.Require().NoError(err)
+	s.Require().True(can)
+
+	err = keeper.AddToGlobalWhitelist(ctx, enabledGlobalActor)
+	s.Require().NoError(err)
+
+	can, err = keeper.CanAddReputerStake(ctx, topicId, enabledGlobalActor)
+	s.Require().NoError(err)
+	s.Require().True(can)
+
+	err = keeper.DisableTopicReputerWhitelist(ctx, topicId)
+	s.Require().NoError(err)
+
+	can, err = keeper.CanAddReputerStake(ctx, topicId, neitherAddr)
 	s.Require().NoError(err)
 	s.Require().True(can)
 }
