@@ -734,7 +734,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				{
 					RpcMethod: "IsWhitelistedGlobalActor",
 					Use:       "is-whitelist-global-actor [address]",
-					Short:     "Check if address is a global whitelist actor",
+					Short:     "Check if address is a member of the global whitelist",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "address"},
 					},

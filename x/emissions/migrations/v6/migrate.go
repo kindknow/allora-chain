@@ -132,7 +132,7 @@ func FlipOnTopicWhitelists(
 	for id := uint64(1); id < nextTopicId; id++ {
 		idByte := make([]byte, 8)
 		binary.BigEndian.PutUint64(idByte, id)
-		ctx.Logger().Info(fmt.Sprintf("MIGRATION V5: Updating topic:%d", id))
+		ctx.Logger().Info(fmt.Sprintf("MIGRATION V6: Updating topic:%d", id))
 
 		err = emissionsKeeper.EnableTopicWorkerWhitelist(ctx, id)
 		if err != nil {

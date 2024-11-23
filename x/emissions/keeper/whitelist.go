@@ -22,12 +22,6 @@ func (k *Keeper) RemoveWhitelistAdmin(ctx context.Context, admin ActorId) error 
 	if err := types.ValidateBech32(admin); err != nil {
 		return errorsmod.Wrap(err, "error validating admin id")
 	}
-	has, err := k.whitelistAdmins.Has(ctx, admin)
-	if err != nil {
-		return err
-	} else if !has {
-		return nil
-	}
 	return k.whitelistAdmins.Remove(ctx, admin)
 }
 
@@ -36,12 +30,6 @@ func (k *Keeper) EnableTopicWorkerWhitelist(ctx context.Context, topicId TopicId
 }
 
 func (k *Keeper) DisableTopicWorkerWhitelist(ctx context.Context, topicId TopicId) error {
-	has, err := k.topicWorkerWhitelistEnabled.Has(ctx, topicId)
-	if err != nil {
-		return err
-	} else if !has {
-		return nil
-	}
 	return k.topicWorkerWhitelistEnabled.Remove(ctx, topicId)
 }
 
@@ -50,12 +38,6 @@ func (k *Keeper) EnableTopicReputerWhitelist(ctx context.Context, topicId TopicI
 }
 
 func (k *Keeper) DisableTopicReputerWhitelist(ctx context.Context, topicId TopicId) error {
-	has, err := k.topicReputerWhitelistEnabled.Has(ctx, topicId)
-	if err != nil {
-		return err
-	} else if !has {
-		return nil
-	}
 	return k.topicReputerWhitelistEnabled.Remove(ctx, topicId)
 }
 
@@ -70,12 +52,6 @@ func (k *Keeper) RemoveFromGlobalWhitelist(ctx context.Context, actor ActorId) e
 	if err := types.ValidateBech32(actor); err != nil {
 		return errorsmod.Wrap(err, "error validating admin id")
 	}
-	has, err := k.globalWhitelist.Has(ctx, actor)
-	if err != nil {
-		return err
-	} else if !has {
-		return nil
-	}
 	return k.globalWhitelist.Remove(ctx, actor)
 }
 
@@ -89,12 +65,6 @@ func (k *Keeper) AddToTopicCreatorWhitelist(ctx context.Context, actor ActorId) 
 func (k *Keeper) RemoveFromTopicCreatorWhitelist(ctx context.Context, actor ActorId) error {
 	if err := types.ValidateBech32(actor); err != nil {
 		return errorsmod.Wrap(err, "error validating admin id")
-	}
-	has, err := k.topicCreatorWhitelist.Has(ctx, actor)
-	if err != nil {
-		return err
-	} else if !has {
-		return nil
 	}
 	return k.topicCreatorWhitelist.Remove(ctx, actor)
 }
@@ -112,12 +82,6 @@ func (k *Keeper) RemoveFromTopicWorkerWhitelist(ctx context.Context, topicId Top
 		return errorsmod.Wrap(err, "error validating admin id")
 	}
 	key := collections.Join(topicId, actor)
-	has, err := k.topicWorkerWhitelist.Has(ctx, key)
-	if err != nil {
-		return err
-	} else if !has {
-		return nil
-	}
 	return k.topicWorkerWhitelist.Remove(ctx, key)
 }
 
@@ -134,12 +98,6 @@ func (k *Keeper) RemoveFromTopicReputerWhitelist(ctx context.Context, topicId To
 		return errorsmod.Wrap(err, "error validating admin id")
 	}
 	key := collections.Join(topicId, actor)
-	has, err := k.topicReputerWhitelist.Has(ctx, key)
-	if err != nil {
-		return err
-	} else if !has {
-		return nil
-	}
 	return k.topicReputerWhitelist.Remove(ctx, key)
 }
 

@@ -140,8 +140,6 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayload() {
 
 	err := s.emissionsKeeper.AddToTopicWorkerWhitelist(ctx, topicId, workerMsg.WorkerDataBundle.Worker)
 	require.NoError(err)
-	err = s.emissionsKeeper.AddToTopicWorkerWhitelist(ctx, workerMsg.WorkerDataBundle.TopicId, workerMsg.WorkerDataBundle.Worker)
-	require.NoError(err)
 
 	_, err = msgServer.InsertWorkerPayload(ctx, &workerMsg)
 	require.NoError(err, "InsertWorkerPayload should not return an error")
