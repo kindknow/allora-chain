@@ -77,6 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+* [#680](https://github.com/allora-network/allora-chain/pull/680) Remove custom ProposalHandler
+
 ### Fixed
 
 * [#668](https://github.com/allora-network/allora-chain/pull/668) Add stake nil amount validation + added tests + fixed other tests
