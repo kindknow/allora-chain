@@ -383,29 +383,32 @@ func GetCalcSetNetworkRegrets(args GetCalcSetNetworkRegretsArgs) error {
 	// Get the initial topic std dev regrets
 	// If we don't have enough workers with enough experience, use the fallback regrets
 	initialTopicStdDevRegrets := fallbackRegrets
+	var updatedTopicInitialRegret alloraMath.Dec
+	var err error
 	if len(workersRegrets) >= 10 {
 		initialTopicStdDevRegrets = workersRegrets
-	}
-
-	// Recalculate topic initial regret
-	if len(initialTopicStdDevRegrets) > 0 {
-		usingFallbackRegrets := len(workersRegrets) == 0
-		updatedTopicInitialRegret, err := CalcTopicInitialRegret(
+		updatedTopicInitialRegret, err = CalcTopicInitialRegret(
 			initialTopicStdDevRegrets,
 			args.EpsilonTopic,
 			args.PNorm,
 			args.CNorm,
 			args.InitialRegretQuantile,
 			args.PNormSafeDiv,
-			usingFallbackRegrets,
 		)
 		if err != nil {
 			return errorsmod.Wrapf(err, "Error calculating topic initial regret")
 		}
-		err = args.K.UpdateTopicInitialRegret(args.Ctx, args.TopicId, updatedTopicInitialRegret)
+
+	} else {
+		updatedTopicInitialRegret, err = alloraMath.GetQuantileOfDecs(initialTopicStdDevRegrets, args.InitialRegretQuantile)
 		if err != nil {
-			return errorsmod.Wrapf(err, "Error updating topic initial regret")
+			return errorsmod.Wrapf(err, "Error calculating topic initial regret")
 		}
+	}
+
+	err = args.K.UpdateTopicInitialRegret(args.Ctx, args.TopicId, updatedTopicInitialRegret)
+	if err != nil {
+		return errorsmod.Wrapf(err, "Error updating topic initial regret")
 	}
 
 	return nil
@@ -426,20 +429,9 @@ func CalcTopicInitialRegret(
 	epsilon alloraMath.Dec,
 	pNorm alloraMath.Dec,
 	cNorm alloraMath.Dec,
-	quantileRegret alloraMath.Dec,
+	quantile alloraMath.Dec,
 	pNormDiv alloraMath.Dec,
-	usingFallbackRegrets bool,
 ) (initialRegret alloraMath.Dec, err error) {
-	quantile, err := alloraMath.GetQuantileOfDecs(regrets, quantileRegret)
-	if err != nil {
-		return alloraMath.ZeroDec(), err
-	}
-
-	// If using fallback regrets, just return the quantile
-	if usingFallbackRegrets {
-		return quantile, nil
-	}
-
 	// Normal case with experienced workers - calculate with offset and std dev
 	stdDevRegrets, err := alloraMath.StdDev(regrets)
 	if err != nil {
