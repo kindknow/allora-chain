@@ -436,18 +436,9 @@ func GetAllReputersOutput(
 	initialCoefficients []alloraMath.Dec,
 	numReputers int64,
 	params types.Params,
-	allCoefficientsZero bool,
 ) ([]alloraMath.Dec, []alloraMath.Dec, error) {
 	coefficients := make([]alloraMath.Dec, len(initialCoefficients))
 	copy(coefficients, initialCoefficients)
-
-	// Check if all coefficients are zero
-	// If so, set all coefficients to the fallback listening coefficient
-	if allCoefficientsZero {
-		for i := range coefficients {
-			coefficients[i] = params.FallbackListeningCoefficient
-		}
-	}
 
 	oldCoefficients := make([]alloraMath.Dec, numReputers)
 	var i uint64 = 0

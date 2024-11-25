@@ -735,7 +735,6 @@ func (s *RewardsTestSuite) TestGetAllReputersOutput() {
 		initialCoefficients,
 		numReputers,
 		params,
-		false,
 	)
 	require.NoError(err)
 	params.GradientDescentMaxIters = 2
@@ -745,7 +744,6 @@ func (s *RewardsTestSuite) TestGetAllReputersOutput() {
 		initialCoefficients,
 		numReputers,
 		params,
-		false,
 	)
 	require.NoError(err)
 	params.GradientDescentMaxIters = 5
@@ -755,7 +753,6 @@ func (s *RewardsTestSuite) TestGetAllReputersOutput() {
 		initialCoefficients,
 		numReputers,
 		params,
-		false,
 	)
 	require.NoError(err)
 	params.GradientDescentMaxIters = 20
@@ -765,7 +762,6 @@ func (s *RewardsTestSuite) TestGetAllReputersOutput() {
 		initialCoefficients,
 		numReputers,
 		params,
-		false,
 	)
 	require.NoError(err)
 
@@ -850,54 +846,4 @@ func (s *RewardsTestSuite) TestGetAllReputersOutput() {
 	slicesInDelta, err := alloraMath.SlicesInDelta(gotScores3, wantScores3, alloraMath.MustNewDecFromString("0.01"))
 	require.NoError(err)
 	require.True(slicesInDelta, "GetAllConsensusScores() got %v, want %v", gotScores3, wantScores3)
-}
-
-func TestGetAllReputersOutputWithOneReputerWithZeroListeningCoefficient(t *testing.T) {
-	// Set up test data
-	allLosses := [][]alloraMath.Dec{
-		{
-			alloraMath.MustNewDecFromString("3.811724449601937475281899547924191"),
-			alloraMath.MustNewDecFromString("3.811725595889419583135082803789292"),
-		},
-	}
-
-	stakes := []alloraMath.Dec{
-		alloraMath.MustNewDecFromString("1719220175183695502"),
-	}
-
-	initialCoefficients := []alloraMath.Dec{
-		alloraMath.MustNewDecFromString("0"),
-	}
-
-	// Set Parameters
-	params := emissionstypes.DefaultParams()
-	params.LearningRate = alloraMath.MustNewDecFromString("0.01")
-	params.GradientDescentMaxIters = 100
-	params.FallbackListeningCoefficient = alloraMath.MustNewDecFromString("0.5")
-	params.EpsilonReputer = alloraMath.MustNewDecFromString("0.01")
-	params.EpsilonSafeDiv = alloraMath.MustNewDecFromString("0.01")
-	params.MinStakeFraction = alloraMath.MustNewDecFromString("0.05")
-	params.MaxGradientThreshold = alloraMath.MustNewDecFromString("0.001")
-
-	numReputers := int64(1)
-
-	// Call GetAllReputersOutput
-	scores, coefficients, err := rewards.GetAllReputersOutput(
-		allLosses,
-		stakes,
-		initialCoefficients,
-		numReputers,
-		params,
-		true, // allCoefficientsZero
-	)
-
-	// Assertions
-	require.NoError(t, err)
-	require.NotNil(t, scores)
-	require.NotNil(t, coefficients)
-	require.Len(t, scores, 1)
-	require.Len(t, coefficients, 1)
-	// Check that the listening coefficient is set to 0.5 which happens
-	// when there's only one reputer and the listening coefficient is zero
-	require.True(t, coefficients[0].Equal(alloraMath.MustNewDecFromString("0.5")))
 }
