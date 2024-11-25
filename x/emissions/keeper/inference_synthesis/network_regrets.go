@@ -380,15 +380,13 @@ func GetCalcSetNetworkRegrets(args GetCalcSetNetworkRegretsArgs) error {
 		}
 	}
 
-	// Get the initial topic std dev regrets
+	// Check if we have enough workers with enough experience to calculate the topic initial regret
 	// If we don't have enough workers with enough experience, use the fallback regrets
-	initialTopicStdDevRegrets := fallbackRegrets
 	var updatedTopicInitialRegret alloraMath.Dec
 	var err error
 	if len(workersRegrets) >= 10 {
-		initialTopicStdDevRegrets = workersRegrets
 		updatedTopicInitialRegret, err = CalcTopicInitialRegret(
-			initialTopicStdDevRegrets,
+			workersRegrets,
 			args.EpsilonTopic,
 			args.PNorm,
 			args.CNorm,
@@ -398,9 +396,8 @@ func GetCalcSetNetworkRegrets(args GetCalcSetNetworkRegretsArgs) error {
 		if err != nil {
 			return errorsmod.Wrapf(err, "Error calculating topic initial regret")
 		}
-
 	} else {
-		updatedTopicInitialRegret, err = alloraMath.GetQuantileOfDecs(initialTopicStdDevRegrets, args.InitialRegretQuantile)
+		updatedTopicInitialRegret, err = alloraMath.GetQuantileOfDecs(fallbackRegrets, args.InitialRegretQuantile)
 		if err != nil {
 			return errorsmod.Wrapf(err, "Error calculating topic initial regret")
 		}
