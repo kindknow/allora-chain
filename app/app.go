@@ -409,10 +409,10 @@ func (app *AlloraApp) LastBlockHeight() int64 {
 }
 
 func (app *AlloraApp) PrepareProposal(req *abci.RequestPrepareProposal) (*abci.ResponsePrepareProposal, error) {
-	app.Logger().Info("CONSENSUS EVENT", "event", "PrepareProposal")
+	app.Logger().Debug("CONSENSUS EVENT", "event", "PrepareProposal", "module", "allora_abci_metrics")
 	startTime := time.Now()
 	defer func() {
-		app.Logger().Info("CONSENSUS EVENT", "event", "End")
+		app.Logger().Debug("CONSENSUS EVENT", "event", "End", "module", "allora_abci_metrics")
 		logMisbehaviors(req.Misbehavior, "prepare", "proposal")
 		metrics.MeasureSince([]string{"allora", "prepare", "proposal", "ms"}, startTime.UTC())
 	}()
@@ -426,10 +426,10 @@ func (app *AlloraApp) PrepareProposal(req *abci.RequestPrepareProposal) (*abci.R
 }
 
 func (app *AlloraApp) ProcessProposal(req *abci.RequestProcessProposal) (*abci.ResponseProcessProposal, error) {
-	app.Logger().Info("CONSENSUS EVENT", "event", "ProcessProposal")
+	app.Logger().Debug("CONSENSUS EVENT", "event", "ProcessProposal", "module", "allora_abci_metrics")
 	startTime := time.Now()
 	defer func() {
-		app.Logger().Info("CONSENSUS EVENT", "event", "End")
+		app.Logger().Debug("CONSENSUS EVENT", "event", "End", "module", "allora_abci_metrics")
 		logMisbehaviors(req.Misbehavior, "process", "proposal")
 		metrics.MeasureSince([]string{"allora", "process", "proposal", "ms"}, startTime.UTC())
 	}()
@@ -443,10 +443,10 @@ func (app *AlloraApp) ProcessProposal(req *abci.RequestProcessProposal) (*abci.R
 }
 
 func (app *AlloraApp) ExtendVote(ctx context.Context, req *abci.RequestExtendVote) (*abci.ResponseExtendVote, error) {
-	app.Logger().Info("CONSENSUS EVENT", "event", "ExtendVote")
+	app.Logger().Debug("CONSENSUS EVENT", "event", "ExtendVote", "module", "allora_abci_metrics")
 	startTime := time.Now()
 	defer func() {
-		app.Logger().Info("CONSENSUS EVENT", "event", "End")
+		app.Logger().Debug("CONSENSUS EVENT", "event", "End", "module", "allora_abci_metrics")
 		logMisbehaviors(req.Misbehavior, "extend", "vote")
 		metrics.MeasureSince([]string{"allora", "extend", "vote", "ms"}, startTime.UTC())
 	}()
@@ -460,10 +460,10 @@ func (app *AlloraApp) ExtendVote(ctx context.Context, req *abci.RequestExtendVot
 }
 
 func (app *AlloraApp) VerifyVoteExtension(req *abci.RequestVerifyVoteExtension) (resp *abci.ResponseVerifyVoteExtension, err error) {
-	app.Logger().Info("CONSENSUS EVENT", "event", "VerifyVoteExtension")
+	app.Logger().Debug("CONSENSUS EVENT", "event", "VerifyVoteExtension", "module", "allora_abci_metrics")
 	startTime := time.Now()
 	defer func() {
-		app.Logger().Info("CONSENSUS EVENT", "event", "End")
+		app.Logger().Debug("CONSENSUS EVENT", "event", "End", "module", "allora_abci_metrics")
 		metrics.MeasureSince([]string{"allora", "verify", "vote", "extension", "ms"}, startTime.UTC())
 	}()
 
@@ -476,10 +476,10 @@ func (app *AlloraApp) VerifyVoteExtension(req *abci.RequestVerifyVoteExtension) 
 }
 
 func (app *AlloraApp) FinalizeBlock(req *abci.RequestFinalizeBlock) (*abci.ResponseFinalizeBlock, error) {
-	app.Logger().Info("CONSENSUS EVENT", "event", "FinalizeBlock")
+	app.Logger().Debug("CONSENSUS EVENT", "event", "FinalizeBlock", "module", "allora_abci_metrics")
 	startTime := time.Now()
 	defer func() {
-		app.Logger().Info("CONSENSUS EVENT", "event", "End")
+		app.Logger().Debug("CONSENSUS EVENT", "event", "End", "module", "allora_abci_metrics")
 		logMisbehaviors(req.Misbehavior, "finalize", "block")
 		metrics.SetGauge([]string{"allora", "finalize", "block", "height"}, float32(req.Height))
 		metrics.MeasureSince([]string{"allora", "finalize", "block", "ms"}, startTime.UTC())
@@ -495,9 +495,9 @@ func (app *AlloraApp) FinalizeBlock(req *abci.RequestFinalizeBlock) (*abci.Respo
 
 func (app *AlloraApp) Commit() (*abci.ResponseCommit, error) {
 	startTime := time.Now()
-	app.Logger().Info("CONSENSUS EVENT", "event", "Commit")
+	app.Logger().Debug("CONSENSUS EVENT", "event", "Commit", "module", "allora_abci_metrics")
 	defer func() {
-		app.Logger().Info("CONSENSUS EVENT", "event", "End", "duration", time.Since(startTime).Milliseconds())
+		app.Logger().Debug("CONSENSUS EVENT", "event", "End", "duration", time.Since(startTime).Milliseconds(), "module", "allora_abci_metrics")
 		metrics.MeasureSince([]string{"allora", "commit", "ms"}, startTime.UTC())
 	}()
 
