@@ -94,26 +94,14 @@ func GenerateReputerScores(
 		return []types.Score{}, errors.Wrapf(err, "Error getting GetParams")
 	}
 
-	// Check if all coefficients are zero
-	// If so, set all coefficients to the fallback listening coefficient
-	if allCoefficientsZero {
-		for i := range reputerListeningCoefficients {
-			reputerListeningCoefficients[i] = params.FallbackListeningCoefficient
-		}
-	}
-
 	// Get reputer output
 	scores, newCoefficients, err := GetAllReputersOutput(
 		losses,
 		reputerStakes,
 		reputerListeningCoefficients,
 		int64(len(reputerStakes)),
-		params.LearningRate,
-		params.GradientDescentMaxIters,
-		params.EpsilonReputer,
-		params.EpsilonSafeDiv,
-		params.MinStakeFraction,
-		params.MaxGradientThreshold,
+		params,
+		allCoefficientsZero,
 	)
 	if err != nil {
 		return []types.Score{}, errors.Wrapf(err, "Error getting GetAllReputersOutput")

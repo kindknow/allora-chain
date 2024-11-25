@@ -174,6 +174,7 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 		PNormSafeDiv:                        nil,
 		GlobalWhitelistEnabled:              nil,
 		TopicCreatorWhitelistEnabled:        nil,
+		FallbackListeningCoefficient:        nil,
 	}
 
 	// Creating the UpdateParamsRequest message with a non-whitelisted user

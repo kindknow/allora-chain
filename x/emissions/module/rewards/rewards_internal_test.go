@@ -693,6 +693,7 @@ func (s *RewardsTestSuite) TestGetAllReputersOutput() {
 	require := s.Require()
 
 	params, err := s.emissionsKeeper.GetParams(s.ctx)
+	params.EpsilonReputer = alloraMath.MustNewDecFromString("0.01")
 	require.NoError(err)
 
 	epsilon := alloraMath.MustNewDecFromString("0.01")
@@ -726,59 +727,45 @@ func (s *RewardsTestSuite) TestGetAllReputersOutput() {
 		alloraMath.MustNewDecFromString("0.011649"),
 		alloraMath.MustNewDecFromString("0.013453"),
 	}
+
+	params.GradientDescentMaxIters = 0
 	gotScores0, gotCoefficients0, err := rewards.GetAllReputersOutput(
 		allLosses,
 		stakes,
 		initialCoefficients,
 		numReputers,
-		params.LearningRate,
-		0,
-		params.EpsilonReputer,
-		epsilon,
-		params.MinStakeFraction,
-		params.MaxGradientThreshold,
+		params,
+		false,
 	)
 	require.NoError(err)
-
+	params.GradientDescentMaxIters = 2
 	gotScores1, gotCoefficients1, err := rewards.GetAllReputersOutput(
 		allLosses,
 		stakes,
 		initialCoefficients,
 		numReputers,
-		params.LearningRate,
-		2,
-		params.EpsilonReputer,
-		epsilon,
-		params.MinStakeFraction,
-		params.MaxGradientThreshold,
+		params,
+		false,
 	)
 	require.NoError(err)
-
+	params.GradientDescentMaxIters = 5
 	gotScores2, gotCoefficients2, err := rewards.GetAllReputersOutput(
 		allLosses,
 		stakes,
 		initialCoefficients,
 		numReputers,
-		params.LearningRate,
-		5,
-		params.EpsilonReputer,
-		epsilon,
-		params.MinStakeFraction,
-		params.MaxGradientThreshold,
+		params,
+		false,
 	)
 	require.NoError(err)
-
+	params.GradientDescentMaxIters = 20
 	gotScores3, gotCoefficients3, err := rewards.GetAllReputersOutput(
 		allLosses,
 		stakes,
 		initialCoefficients,
 		numReputers,
-		params.LearningRate,
-		20,
-		params.EpsilonReputer,
-		epsilon,
-		params.MinStakeFraction,
-		params.MaxGradientThreshold,
+		params,
+		false,
 	)
 	require.NoError(err)
 
@@ -882,14 +869,17 @@ func TestGetAllReputersOutputWithOneReputerWithZeroListeningCoefficient(t *testi
 		alloraMath.MustNewDecFromString("0"),
 	}
 
-	// Parameters
+	// Set Parameters
+	params := emissionstypes.DefaultParams()
+	params.LearningRate = alloraMath.MustNewDecFromString("0.01")
+	params.GradientDescentMaxIters = 100
+	params.FallbackListeningCoefficient = alloraMath.MustNewDecFromString("0.5")
+	params.EpsilonReputer = alloraMath.MustNewDecFromString("0.01")
+	params.EpsilonSafeDiv = alloraMath.MustNewDecFromString("0.01")
+	params.MinStakeFraction = alloraMath.MustNewDecFromString("0.05")
+	params.MaxGradientThreshold = alloraMath.MustNewDecFromString("0.001")
+
 	numReputers := int64(1)
-	learningRate := alloraMath.MustNewDecFromString("0.01")
-	gradientDescentMaxIters := uint64(100)
-	epsilonReputer := alloraMath.MustNewDecFromString("0.01")
-	epsilon := alloraMath.MustNewDecFromString("0.01")
-	minStakeFraction := alloraMath.MustNewDecFromString("0.05")
-	maxGradientThreshold := alloraMath.MustNewDecFromString("0.001")
 
 	// Call GetAllReputersOutput
 	scores, coefficients, err := rewards.GetAllReputersOutput(
@@ -897,12 +887,8 @@ func TestGetAllReputersOutputWithOneReputerWithZeroListeningCoefficient(t *testi
 		stakes,
 		initialCoefficients,
 		numReputers,
-		learningRate,
-		gradientDescentMaxIters,
-		epsilonReputer,
-		epsilon,
-		minStakeFraction,
-		maxGradientThreshold,
+		params,
+		true, // allCoefficientsZero
 	)
 
 	// Assertions
