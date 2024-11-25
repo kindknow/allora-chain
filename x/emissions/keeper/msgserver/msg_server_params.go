@@ -15,11 +15,11 @@ func (ms msgServer) UpdateParams(ctx context.Context, msg *types.UpdateParamsReq
 	if err != nil {
 		return nil, err
 	}
-	isAdmin, err := ms.k.IsWhitelistAdmin(ctx, msg.Sender)
+	canUpdate, err := ms.k.CanUpdateParams(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
-	} else if !isAdmin {
-		return nil, types.ErrNotWhitelistAdmin
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateParams
 	}
 	existingParams, err := ms.k.GetParams(ctx)
 	if err != nil {
@@ -155,6 +155,12 @@ func (ms msgServer) UpdateParams(ctx context.Context, msg *types.UpdateParamsReq
 	}
 	if len(newParams.PNormSafeDiv) == 1 {
 		existingParams.PNormSafeDiv = newParams.PNormSafeDiv[0]
+	}
+	if len(newParams.GlobalWhitelistEnabled) == 1 {
+		existingParams.GlobalWhitelistEnabled = newParams.GlobalWhitelistEnabled[0]
+	}
+	if len(newParams.TopicCreatorWhitelistEnabled) == 1 {
+		existingParams.TopicCreatorWhitelistEnabled = newParams.TopicCreatorWhitelistEnabled[0]
 	}
 	err = existingParams.Validate()
 	if err != nil {

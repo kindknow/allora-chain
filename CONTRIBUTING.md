@@ -34,7 +34,7 @@ For `x/emissions`:
    3. Add validation for the new params
 2. `x/emissions/proto/emissions/v1/params.proto`
    1. Add to the `Params` proto, tracking all global params
-3. x/emissions/proto/emissions/v1/tx.proto
+3. `x/emissions/proto/emissions/v1/tx.proto`
    1. Add to the proto of the tx that allows us to set new params
 4. `x/emissions/keeper/msgserver/msg_server_params.go`
    1. Add code to the tx that allows us to set new params
@@ -63,9 +63,9 @@ __TBD__
 
 `vX` should refer to the latest version of the respective module (the version of the highest `X`).
 
-## Checklist for updating the state machine
+## Checklist for updating the state store
 
-When updating the state machine, you must update the following files:
+When updating the state store in `x/emissions`, you must update the following files:
 
 1. `x/emissions/keeper/keeper.go`
 2. `x/emissions/keeper/keeper_test.go` as needed

@@ -63,6 +63,8 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		MaxStringLength:                     []uint64{1234},
 		InitialRegretQuantile:               []alloraMath.Dec{alloraMath.ZeroDec()},
 		PNormSafeDiv:                        []alloraMath.Dec{alloraMath.ZeroDec()},
+		GlobalWhitelistEnabled:              []bool{true},
+		TopicCreatorWhitelistEnabled:        []bool{true},
 	}
 
 	updateMsg := &types.UpdateParamsRequest{
@@ -111,6 +113,8 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 	require.Equal(newParams.CRewardInference[0], updatedParams.CRewardInference)
 	require.Equal(newParams.CRewardForecast[0], updatedParams.CRewardForecast)
 	require.Equal(newParams.CNorm[0], updatedParams.CNorm)
+	require.Equal(newParams.GlobalWhitelistEnabled[0], updatedParams.GlobalWhitelistEnabled)
+	require.Equal(newParams.TopicCreatorWhitelistEnabled[0], updatedParams.TopicCreatorWhitelistEnabled)
 }
 
 func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
@@ -167,6 +171,8 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 		MaxStringLength:                     nil,
 		InitialRegretQuantile:               nil,
 		PNormSafeDiv:                        nil,
+		GlobalWhitelistEnabled:              nil,
+		TopicCreatorWhitelistEnabled:        nil,
 	}
 
 	// Creating the UpdateParamsRequest message with a non-whitelisted user
@@ -180,5 +186,5 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 
 	// Expect an error since the sender is not whitelisted
 	require.Nil(response, "Response should be nil when access is denied")
-	require.ErrorIs(err, types.ErrNotWhitelistAdmin, "Expected an error for non-whitelisted sender")
+	require.ErrorIs(err, types.ErrNotPermittedToUpdateParams, "Expected an error for non-whitelisted sender")
 }

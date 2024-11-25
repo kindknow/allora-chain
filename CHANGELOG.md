@@ -57,11 +57,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v0.7.0
+
 ### Added
 
-* [#654](https://github.com/allora-network/allora-chain/pull/654) Reorganize Linter Folder, add linter to check fuzzer state transition probabilities add to 100 percent
 * [#634](https://github.com/allora-network/allora-chain/pull/634) Add events for listening coefficients and the computationally cheapest regrets
 * [#678](https://github.com/allora-network/allora-chain/pull/678) Add optimistic execution + update CometBFT to v0.38.15
+* [#663](https://github.com/allora-network/allora-chain/pull/663) Add whitelists for admins, topic creators, workers, and reputers. Create x/emissions v6 migration and chain upgrade v0.7.0
+* [#654](https://github.com/allora-network/allora-chain/pull/654) Reorganize Linter Folder, add linter to check fuzzer state transition probabilities add to 100 percent. (Integrated as part of #653)
 
 ### Changed
 

@@ -81,6 +81,13 @@ func NewGenesisState() *GenesisState {
 		CountForecasterInclusionsInTopicActiveSet:      []*TopicIdActorIdUint64{},
 		TotalSumPreviousTopicWeights:                   alloraMath.ZeroDec(),
 		RewardCurrentBlockEmission:                     cosmosMath.ZeroInt(),
+		WhitelistAdmins:                                []string{},
+		GlobalWhitelist:                                []string{},
+		TopicCreatorWhitelist:                          []string{},
+		TopicWorkerWhitelist:                           []*TopicAndActorId{},
+		TopicReputerWhitelist:                          []*TopicAndActorId{},
+		TopicWorkerWhitelistEnabled:                    []uint64{},
+		TopicReputerWhitelistEnabled:                   []uint64{},
 	}
 }
 

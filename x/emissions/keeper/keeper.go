@@ -223,7 +223,17 @@ type Keeper struct {
 
 	/// WHITELISTS
 
-	whitelistAdmins collections.KeySet[ActorId]
+	whitelistAdmins       collections.KeySet[ActorId] // can change parameters and decide who can be included in any whitelist
+	globalWhitelist       collections.KeySet[ActorId] // actors who can create topics and participate in all topics
+	topicCreatorWhitelist collections.KeySet[ActorId] // whitelist of actors who can create topics
+	// map from topic id to whitelist of workers
+	topicWorkerWhitelist collections.KeySet[collections.Pair[TopicId, ActorId]]
+	// map from topic id to whitelist of reputers
+	topicReputerWhitelist collections.KeySet[collections.Pair[TopicId, ActorId]]
+	// map from topic id to whether the whitelist is enabled for topic workers
+	topicWorkerWhitelistEnabled collections.KeySet[TopicId]
+	// map from topic id to whether the whitelist is enabled for topic reputers
+	topicReputerWhitelistEnabled collections.KeySet[TopicId]
 
 	/// RECORD COMMITS
 
@@ -290,6 +300,12 @@ func NewKeeper(
 		latestOneOutForecasterInfererNetworkRegrets:    collections.NewMap(sb, types.LatestOneOutForecasterInfererNetworkRegretsKey, "latest_one_out_forecaster_inferer_network_regrets", collections.TripleKeyCodec(collections.Uint64Key, collections.StringKey, collections.StringKey), codec.CollValue[types.TimestampedValue](cdc)),
 		latestOneOutForecasterForecasterNetworkRegrets: collections.NewMap(sb, types.LatestOneOutForecasterForecasterNetworkRegretsKey, "latest_one_out_forecaster_forecaster_network_regrets", collections.TripleKeyCodec(collections.Uint64Key, collections.StringKey, collections.StringKey), codec.CollValue[types.TimestampedValue](cdc)),
 		whitelistAdmins:                           collections.NewKeySet(sb, types.WhitelistAdminsKey, "whitelist_admins", collections.StringKey),
+		globalWhitelist:                           collections.NewKeySet(sb, types.GlobalWhitelistKey, "global_whitelist", collections.StringKey),
+		topicCreatorWhitelist:                     collections.NewKeySet(sb, types.TopicCreatorWhitelistKey, "topic_creator_whitelist", collections.StringKey),
+		topicWorkerWhitelist:                      collections.NewKeySet(sb, types.TopicWorkerWhitelistKey, "topic_worker_whitelist", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey)),
+		topicReputerWhitelist:                     collections.NewKeySet(sb, types.TopicReputerWhitelistKey, "topic_reputer_whitelist", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey)),
+		topicWorkerWhitelistEnabled:               collections.NewKeySet(sb, types.TopicWorkerWhitelistEnabledKey, "topic_worker_whitelist_enabled", collections.Uint64Key),
+		topicReputerWhitelistEnabled:              collections.NewKeySet(sb, types.TopicReputerWhitelistEnabledKey, "topic_reputer_whitelist_enabled", collections.Uint64Key),
 		infererScoresByBlock:                      collections.NewMap(sb, types.InferenceScoresKey, "inferer_scores_by_block", collections.PairKeyCodec(collections.Uint64Key, collections.Int64Key), codec.CollValue[types.Scores](cdc)),
 		forecasterScoresByBlock:                   collections.NewMap(sb, types.ForecastScoresKey, "forecaster_scores_by_block", collections.PairKeyCodec(collections.Uint64Key, collections.Int64Key), codec.CollValue[types.Scores](cdc)),
 		infererScoreEmas:                          collections.NewMap(sb, types.InfererScoreEmasKey, "latest_inferer_scores_by_worker", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey), codec.CollValue[types.Score](cdc)),
@@ -2656,7 +2672,14 @@ func (k *Keeper) IncrementTopicId(ctx context.Context) (TopicId, error) {
 
 // Gets topic by topicId
 func (k *Keeper) GetTopic(ctx context.Context, topicId TopicId) (types.Topic, error) {
-	return k.topics.Get(ctx, topicId)
+	topic, err := k.topics.Get(ctx, topicId)
+	if err != nil {
+		if errors.Is(err, collections.ErrNotFound) {
+			return types.Topic{}, types.ErrTopicDoesNotExist
+		}
+		return types.Topic{}, err
+	}
+	return topic, nil
 }
 
 // Sets a topic config on a topicId
@@ -3454,23 +3477,6 @@ func (k *Keeper) SetPreviousPercentageRewardToStakedReputers(
 
 func (k Keeper) GetPreviousPercentageRewardToStakedReputers(ctx context.Context) (alloraMath.Dec, error) {
 	return k.previousPercentageRewardToStakedReputers.Get(ctx)
-}
-
-/// WHITELISTS
-
-func (k Keeper) IsWhitelistAdmin(ctx context.Context, admin ActorId) (bool, error) {
-	return k.whitelistAdmins.Has(ctx, admin)
-}
-
-func (k *Keeper) AddWhitelistAdmin(ctx context.Context, admin ActorId) error {
-	if err := types.ValidateBech32(admin); err != nil {
-		return errorsmod.Wrap(err, "error validating admin id")
-	}
-	return k.whitelistAdmins.Set(ctx, admin)
-}
-
-func (k *Keeper) RemoveWhitelistAdmin(ctx context.Context, admin ActorId) error {
-	return k.whitelistAdmins.Remove(ctx, admin)
 }
 
 /// BANK KEEPER WRAPPERS

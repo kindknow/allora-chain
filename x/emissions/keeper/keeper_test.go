@@ -129,6 +129,12 @@ func (s *KeeperTestSuite) SetupTest() {
 	for _, addr := range s.addrsStr {
 		err := s.emissionsKeeper.AddWhitelistAdmin(ctx, addr)
 		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToGlobalWhitelist(ctx, addr)
+		s.Require().NoError(err)
+
+		err = s.emissionsKeeper.AddToTopicCreatorWhitelist(ctx, addr)
+		s.Require().NoError(err)
 	}
 }
 
@@ -202,6 +208,8 @@ func (s *KeeperTestSuite) CreateOneTopic(epochLen int64) uint64 {
 		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
 		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
 		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
 	}
 
 	s.MintTokensToAddress(s.addrs[0], types.DefaultParams().CreateTopicFee)
@@ -2466,7 +2474,7 @@ func (s *KeeperTestSuite) TestGetTopic() {
 
 	topicId := uint64(1)
 	_, err := keeper.GetTopic(ctx, topicId)
-	s.Require().Error(err, "Retrieving a non-existent topic should result in an error")
+	s.Require().ErrorIs(err, types.ErrTopicDoesNotExist, "Retrieving a non-existent topic should result in an error")
 
 	newTopic := s.mockTopic()
 
@@ -3045,32 +3053,6 @@ func (s *KeeperTestSuite) TestSetGetPreviousPercentageRewardToStakedReputers() {
 	fetchedPercentageReward, err := keeper.GetPreviousPercentageRewardToStakedReputers(ctx)
 	s.Require().NoError(err, "Fetching previous percentage reward to staked reputers should not fail")
 	s.Require().Equal(previousPercentageReward, fetchedPercentageReward, "The fetched percentage reward should match the set value")
-}
-
-/// WHITELISTS
-
-func (s *KeeperTestSuite) TestWhitelistAdminOperations() {
-	ctx := s.ctx
-	keeper := s.emissionsKeeper
-	adminAddress := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
-
-	// Test Adding to whitelist
-	err := keeper.AddWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Adding whitelist admin should not fail")
-
-	// Test Checking whitelist
-	isAdmin, err := keeper.IsWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Checking if address is an admin should not fail")
-	s.Require().True(isAdmin, "Address should be an admin after being added")
-
-	// Test Removing from whitelist
-	err = keeper.RemoveWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Removing whitelist admin should not fail")
-
-	// Verify removal
-	isAdmin, err = keeper.IsWhitelistAdmin(ctx, adminAddress)
-	s.Require().NoError(err, "Checking admin status after removal should not fail")
-	s.Require().False(isAdmin, "Address should not be an admin after being removed")
 }
 
 /// TOPIC REWARD NONCE
@@ -3831,6 +3813,8 @@ func mockUninitializedParams() types.Params {
 		MaxStringLength:                     uint64(0),
 		InitialRegretQuantile:               alloraMath.ZeroDec(),
 		PNormSafeDiv:                        alloraMath.ZeroDec(),
+		GlobalWhitelistEnabled:              true,
+		TopicCreatorWhitelistEnabled:        true,
 	}
 }
 

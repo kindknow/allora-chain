@@ -689,17 +689,20 @@ func (k *Keeper) InitGenesis(ctx context.Context, data *types.GenesisState) erro
 			}
 		}
 	}
-	//CoreTeamAddresses []string
-	if len(data.CoreTeamAddresses) != 0 {
-		// make sure what we are storage isn't garbage
-		for _, address := range data.CoreTeamAddresses {
+	// CoreTeamAddresses, WhitelistAdmins []string
+	// This allows us to add core team addresses to the whitelist during a genesis import
+	// while still keeping the original core team addresses in the genesis file
+	if len(data.CoreTeamAddresses) != 0 || len(data.WhitelistAdmins) != 0 {
+		// make sure what we are storing is not garbage
+		for _, address := range append(data.CoreTeamAddresses, data.WhitelistAdmins...) {
 			_, err := sdk.AccAddressFromBech32(address)
 			if err != nil {
 				return errors.Wrap(err, "error converting core team address from bech32")
 			}
-		}
-		if err := k.addCoreTeamToWhitelists(ctx, data.CoreTeamAddresses); err != nil {
-			return errors.Wrap(err, "error adding core team addresses to whitelists")
+			err = k.AddWhitelistAdmin(ctx, address)
+			if err != nil {
+				return errors.Wrap(err, "error adding core team addresses to whitelists")
+			}
 		}
 	}
 	//TopicLastWorkerCommit   []*TopicIdTimestampedActorNonce
@@ -900,6 +903,64 @@ func (k *Keeper) InitGenesis(ctx context.Context, data *types.GenesisState) erro
 	} else {
 		if err := k.SetRewardCurrentBlockEmission(ctx, cosmosMath.ZeroInt()); err != nil {
 			return errors.Wrap(err, "error setting RewardCurrentBlockEmission to zero int")
+		}
+	}
+
+	// globalWhitelist
+	if len(data.GlobalWhitelist) != 0 {
+		for _, address := range data.GlobalWhitelist {
+			if err := k.AddToGlobalWhitelist(ctx, address); err != nil {
+				return errors.Wrap(err, "error setting globalWhitelist")
+			}
+		}
+	}
+
+	// topicCreatorWhitelist
+	if len(data.TopicCreatorWhitelist) != 0 {
+		for _, address := range data.TopicCreatorWhitelist {
+			if err := k.AddToTopicCreatorWhitelist(ctx, address); err != nil {
+				return errors.Wrap(err, "error setting topicCreatorWhitelist")
+			}
+		}
+	}
+
+	// topicWorkerWhitelist
+	if len(data.TopicWorkerWhitelist) != 0 {
+		for _, topicAndActorId := range data.TopicWorkerWhitelist {
+			if topicAndActorId != nil {
+				if err := k.AddToTopicWorkerWhitelist(ctx, topicAndActorId.TopicId, topicAndActorId.ActorId); err != nil {
+					return errors.Wrap(err, "error setting topicWorkerWhitelist")
+				}
+			}
+		}
+	}
+
+	// topicReputerWhitelist
+	if len(data.TopicReputerWhitelist) != 0 {
+		for _, topicAndActorId := range data.TopicReputerWhitelist {
+			if topicAndActorId != nil {
+				if err := k.AddToTopicReputerWhitelist(ctx, topicAndActorId.TopicId, topicAndActorId.ActorId); err != nil {
+					return errors.Wrap(err, "error setting topicReputerWhitelist")
+				}
+			}
+		}
+	}
+
+	// topicWorkerWhitelistEnabled
+	if len(data.TopicWorkerWhitelistEnabled) != 0 {
+		for _, topicId := range data.TopicWorkerWhitelistEnabled {
+			if err := k.EnableTopicWorkerWhitelist(ctx, topicId); err != nil {
+				return errors.Wrap(err, "error setting topicWorkerWhitelistEnabled")
+			}
+		}
+	}
+
+	// topicReputerWhitelistEnabled
+	if len(data.TopicReputerWhitelistEnabled) != 0 {
+		for _, topicId := range data.TopicReputerWhitelistEnabled {
+			if err := k.EnableTopicReputerWhitelist(ctx, topicId); err != nil {
+				return errors.Wrap(err, "error setting topicReputerWhitelistEnabled")
+			}
 		}
 	}
 
@@ -2160,6 +2221,7 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 		}
 		countForecasterInclusionsInTopicActiveSet = append(countForecasterInclusionsInTopicActiveSet, &topicIdAndUint64)
 	}
+
 	rewardCurrentBlockEmission, err := k.GetRewardCurrentBlockEmission(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get reward current block emission")
@@ -2168,6 +2230,103 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 	totalSumPreviousTopicWeights, err := k.GetTotalSumPreviousTopicWeights(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get total sum previous topic weights")
+	}
+
+	whitelistAdmins := make([]string, 0)
+	whitelistAdminsIter, err := k.whitelistAdmins.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate whitelist admins")
+	}
+	for ; whitelistAdminsIter.Valid(); whitelistAdminsIter.Next() {
+		key, err := whitelistAdminsIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: whitelistAdminsIter")
+		}
+		whitelistAdmins = append(whitelistAdmins, key)
+	}
+
+	globalWhitelist := make([]string, 0)
+	globalWhitelistIter, err := k.globalWhitelist.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate global whitelist")
+	}
+	for ; globalWhitelistIter.Valid(); globalWhitelistIter.Next() {
+		key, err := globalWhitelistIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: globalWhitelistIter")
+		}
+		globalWhitelist = append(globalWhitelist, key)
+	}
+
+	topicCreatorWhitelist := make([]string, 0)
+	topicCreatorWhitelistIter, err := k.topicCreatorWhitelist.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate topic creator whitelist")
+	}
+	for ; topicCreatorWhitelistIter.Valid(); topicCreatorWhitelistIter.Next() {
+		key, err := topicCreatorWhitelistIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: topicCreatorWhitelistIter")
+		}
+		topicCreatorWhitelist = append(topicCreatorWhitelist, key)
+	}
+
+	topicWorkerWhitelist := make([]*types.TopicAndActorId, 0)
+	topicWorkerWhitelistIter, err := k.topicWorkerWhitelist.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate topic worker whitelist")
+	}
+	for ; topicWorkerWhitelistIter.Valid(); topicWorkerWhitelistIter.Next() {
+		keyValue, err := topicWorkerWhitelistIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key value: topicWorkerWhitelistIter")
+		}
+		topicWorkerWhitelist = append(topicWorkerWhitelist, &types.TopicAndActorId{
+			TopicId: keyValue.K1(),
+			ActorId: keyValue.K2(),
+		})
+	}
+
+	topicReputerWhitelist := make([]*types.TopicAndActorId, 0)
+	topicReputerWhitelistIter, err := k.topicReputerWhitelist.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate topic reputer whitelist")
+	}
+	for ; topicReputerWhitelistIter.Valid(); topicReputerWhitelistIter.Next() {
+		keyValue, err := topicReputerWhitelistIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key value: topicReputerWhitelistIter")
+		}
+		topicReputerWhitelist = append(topicReputerWhitelist, &types.TopicAndActorId{
+			TopicId: keyValue.K1(),
+			ActorId: keyValue.K2(),
+		})
+	}
+
+	topicWorkerWhitelistEnabled := make([]uint64, 0)
+	topicWorkerWhitelistEnabledIter, err := k.topicWorkerWhitelistEnabled.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate topic whitelist enabled")
+	}
+	for ; topicWorkerWhitelistEnabledIter.Valid(); topicWorkerWhitelistEnabledIter.Next() {
+		key, err := topicWorkerWhitelistEnabledIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: topicWhitelistEnabledIter")
+		}
+		topicWorkerWhitelistEnabled = append(topicWorkerWhitelistEnabled, key)
+	}
+
+	topicReputerWhitelistEnabled := make([]uint64, 0)
+	topicReputerWhitelistEnabledIter, err := k.topicReputerWhitelistEnabled.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate topic reputer whitelist enabled")
+	}
+	for ; topicReputerWhitelistEnabledIter.Valid(); topicReputerWhitelistEnabledIter.Next() {
+		key, err := topicReputerWhitelistEnabledIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: topicReputerWhitelistEnabledIter")
+		}
+		topicReputerWhitelistEnabled = append(topicReputerWhitelistEnabled, key)
 	}
 
 	return &types.GenesisState{
@@ -2244,15 +2403,12 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 		CountForecasterInclusionsInTopicActiveSet:      countForecasterInclusionsInTopicActiveSet,
 		TotalSumPreviousTopicWeights:                   totalSumPreviousTopicWeights,
 		RewardCurrentBlockEmission:                     rewardCurrentBlockEmission,
+		WhitelistAdmins:                                whitelistAdmins,
+		GlobalWhitelist:                                globalWhitelist,
+		TopicCreatorWhitelist:                          topicCreatorWhitelist,
+		TopicWorkerWhitelist:                           topicWorkerWhitelist,
+		TopicReputerWhitelist:                          topicReputerWhitelist,
+		TopicWorkerWhitelistEnabled:                    topicWorkerWhitelistEnabled,
+		TopicReputerWhitelistEnabled:                   topicReputerWhitelistEnabled,
 	}, nil
-}
-
-func (k *Keeper) addCoreTeamToWhitelists(ctx context.Context, coreTeamAddresses []string) error {
-	for _, addr := range coreTeamAddresses {
-		err := k.AddWhitelistAdmin(ctx, addr)
-		if err != nil {
-			return errors.Wrap(err, "failed to add core team to whitelist")
-		}
-	}
-	return nil
 }

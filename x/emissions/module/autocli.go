@@ -2,14 +2,14 @@ package module
 
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	statev5 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v5"
+	statev6 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v6"
 )
 
 // AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
 func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Query: &autocliv1.ServiceCommandDescriptor{
-			Service: statev5.QueryService_ServiceDesc.ServiceName,
+			Service: statev6.QueryService_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "GetParams",
@@ -707,13 +707,114 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						{ProtoField: "forecaster"},
 					},
 				},
+				{
+					RpcMethod: "IsTopicWorkerWhitelistEnabled",
+					Use:       "is-topic-worker-whitelist-enabled [topic_id]",
+					Short:     "Check if topic-level worker whitelist is enabled for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "IsTopicReputerWhitelistEnabled",
+					Use:       "is-topic-reputer-whitelist-enabled [topic_id]",
+					Short:     "Check if topic-level reputer whitelist is enabled for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "IsWhitelistedTopicCreator",
+					Use:       "is-whitelisted-topic-creator [address]",
+					Short:     "Check if address is whitelisted as topic creator",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "IsWhitelistedGlobalActor",
+					Use:       "is-whitelist-global-actor [address]",
+					Short:     "Check if address is a member of the global whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "IsWhitelistedTopicWorker",
+					Use:       "is-whitelisted-topic-worker [topic_id] [address]",
+					Short:     "Check if address is whitelisted as worker for topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "IsWhitelistedTopicReputer",
+					Use:       "is-whitelisted-topic-reputer [topic_id] [address]",
+					Short:     "Check if address is whitelisted as reputer for topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanUpdateGlobalWhitelists",
+					Use:       "can-update-global-whitelists [address]",
+					Short:     "Check if address can update global whitelists",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanUpdateParams",
+					Use:       "can-update-params [address]",
+					Short:     "Check if address can update params",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanUpdateTopicWhitelist",
+					Use:       "can-update-topic-whitelist [topic_id] [address]",
+					Short:     "Check if address can update topic whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanCreateTopic",
+					Use:       "can-create-topic [address]",
+					Short:     "Check if address can create topics",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanSubmitWorkerPayload",
+					Use:       "can-submit-worker-payload [topic_id] [address]",
+					Short:     "Check if address can submit worker payload for topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanSubmitReputerPayload",
+					Use:       "can-submit-reputer-payload [topic_id] [address]",
+					Short:     "Check if address can submit reputer payload for topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+						{ProtoField: "address"},
+					},
+				},
 			},
 			SubCommands:          nil,
 			EnhanceCustomCommand: false,
 			Short:                "Emissions module query commands",
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
-			Service: statev5.MsgService_ServiceDesc.ServiceName,
+			Service: statev6.MsgService_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "UpdateParams",
@@ -726,7 +827,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				},
 				{
 					RpcMethod: "CreateNewTopic",
-					Use:       "create-topic [creator] [metadata] [loss_method] [epoch_length] [ground_truth_lag] [worker_submission_window] [p_norm] [alpha_regret] [allow_negative] [epsilon] [merit_sortition_alpha] [active_inferer_quantile] [active_forecaster_quantile] [active_reputer_quantile]",
+					Use:       "create-topic [creator] [metadata] [loss_method] [epoch_length] [ground_truth_lag] [worker_submission_window] [p_norm] [alpha_regret] [allow_negative] [epsilon] [merit_sortition_alpha] [active_inferer_quantile] [active_forecaster_quantile] [active_reputer_quantile] [enable_worker_whitelist] [enable_reputer_whitelist]",
 					Short:     "Add a new topic to the network",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "creator"},
@@ -743,6 +844,8 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						{ProtoField: "active_inferer_quantile"},
 						{ProtoField: "active_forecaster_quantile"},
 						{ProtoField: "active_reputer_quantile"},
+						{ProtoField: "enable_worker_whitelist"},
+						{ProtoField: "enable_reputer_whitelist"},
 					},
 				},
 				{
@@ -881,6 +984,118 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "sender"},
 						{ProtoField: "reputer_value_bundle"},
+					},
+				},
+				{
+					RpcMethod: "AddToGlobalWhitelist",
+					Use:       "add-to-global-whitelist [sender] [address]",
+					Short:     "Add an address to the global whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "RemoveFromGlobalWhitelist",
+					Use:       "remove-from-global-whitelist [sender] [address]",
+					Short:     "Remove an address from the global whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "EnableTopicWorkerWhitelist",
+					Use:       "enable-topic-worker-whitelist [sender] [topic_id]",
+					Short:     "Enable worker whitelist for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "DisableTopicWorkerWhitelist",
+					Use:       "disable-topic-worker-whitelist [sender] [topic_id]",
+					Short:     "Disable worker whitelist for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "EnableTopicReputerWhitelist",
+					Use:       "enable-topic-reputer-whitelist [sender] [topic_id]",
+					Short:     "Enable reputer whitelist for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "DisableTopicReputerWhitelist",
+					Use:       "disable-topic-reputer-whitelist [sender] [topic_id]",
+					Short:     "Disable reputer whitelist for a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "AddToTopicCreatorWhitelist",
+					Use:       "add-to-topic-creator-whitelist [sender] [address]",
+					Short:     "Add an address to the topic creator whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "RemoveFromTopicCreatorWhitelist",
+					Use:       "remove-from-topic-creator-whitelist [sender] [address]",
+					Short:     "Remove an address from the topic creator whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "AddToTopicWorkerWhitelist",
+					Use:       "add-to-topic-worker-whitelist [sender] [address] [topic_id]",
+					Short:     "Add an address to a topic's worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "RemoveFromTopicWorkerWhitelist",
+					Use:       "remove-from-topic-worker-whitelist [sender] [address] [topic_id]",
+					Short:     "Remove an address from a topic's worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "AddToTopicReputerWhitelist",
+					Use:       "add-to-topic-reputer-whitelist [sender] [address] [topic_id]",
+					Short:     "Add an address to a topic's reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "RemoveFromTopicReputerWhitelist",
+					Use:       "remove-from-topic-reputer-whitelist [sender] [address] [topic_id]",
+					Short:     "Remove an address from a topic's reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+						{ProtoField: "topic_id"},
 					},
 				},
 			},
