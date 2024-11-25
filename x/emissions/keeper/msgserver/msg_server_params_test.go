@@ -65,6 +65,7 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		PNormSafeDiv:                        []alloraMath.Dec{alloraMath.ZeroDec()},
 		GlobalWhitelistEnabled:              []bool{true},
 		TopicCreatorWhitelistEnabled:        []bool{true},
+		FallbackListeningCoefficient:        []alloraMath.Dec{alloraMath.MustNewDecFromString(".1234")},
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

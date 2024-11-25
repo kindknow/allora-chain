@@ -88,6 +88,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			PNormSafeDiv:                        nil,
 			GlobalWhitelistEnabled:              nil,
 			TopicCreatorWhitelistEnabled:        nil,
+			FallbackListeningCoefficient:        nil,
 		},
 	}
 	txResp, err := m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)
@@ -146,6 +147,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			PNormSafeDiv:                        nil,
 			GlobalWhitelistEnabled:              nil,
 			TopicCreatorWhitelistEnabled:        nil,
+			FallbackListeningCoefficient:        nil,
 		},
 	}
 	_, err = m.Client.BroadcastTx(ctx, m.BobAcc, updateParamRequest)
@@ -208,6 +210,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			PNormSafeDiv:                        nil,
 			GlobalWhitelistEnabled:              nil,
 			TopicCreatorWhitelistEnabled:        nil,
+			FallbackListeningCoefficient:        nil,
 		},
 	}
 	txResp, err = m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)
