@@ -1693,3 +1693,110 @@ func generateSimpleLossBundles(
 
 	return reputerValueBundles
 }
+
+func (s *RewardsTestSuite) TestGenerateReputerScoresWithZeroListeningCoefficients() {
+	// Create a new topic
+	newTopicMsg := &types.CreateNewTopicRequest{
+		Creator:                  s.addrs[0].String(),
+		Metadata:                 "test",
+		LossMethod:               "mse",
+		EpochLength:              10800,
+		GroundTruthLag:           10800,
+		WorkerSubmissionWindow:   10,
+		PNorm:                    alloraMath.NewDecFromInt64(3),
+		AlphaRegret:              alloraMath.MustNewDecFromString("0.1"),
+		AllowNegative:            true,
+		Epsilon:                  alloraMath.MustNewDecFromString("0.01"),
+		MeritSortitionAlpha:      alloraMath.MustNewDecFromString("0.1"),
+		ActiveInfererQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		ActiveForecasterQuantile: alloraMath.MustNewDecFromString("0.2"),
+		ActiveReputerQuantile:    alloraMath.MustNewDecFromString("0.2"),
+		EnableWorkerWhitelist:    true,
+		EnableReputerWhitelist:   true,
+	}
+	res, err := s.msgServer.CreateNewTopic(s.ctx, newTopicMsg)
+	s.Require().NoError(err)
+	topicId := res.TopicId
+	block := int64(1003)
+
+	// Set up reputer with zero listening coefficient
+	reputer := s.addrsStr[13]
+	stake := cosmosMath.NewInt(1000000000)
+
+	// Mint tokens and add stake
+	addrBech, err := sdk.AccAddressFromBech32(reputer)
+	s.Require().NoError(err)
+	s.MintTokensToAddress(addrBech, stake)
+	err = s.emissionsKeeper.AddReputerStake(s.ctx, topicId, reputer, stake)
+	s.Require().NoError(err)
+
+	// Set zero listening coefficient
+	err = s.emissionsKeeper.SetListeningCoefficient(
+		s.ctx,
+		topicId,
+		reputer,
+		types.ListeningCoefficient{Coefficient: alloraMath.ZeroDec()},
+	)
+	s.Require().NoError(err)
+
+	// Create reported losses
+	reportedLosses := types.ReputerValueBundles{
+		ReputerValueBundles: []*types.ReputerValueBundle{
+			{
+				Pubkey: s.pubKeyHexStr[13],
+				ValueBundle: &types.ValueBundle{
+					TopicId: topicId,
+					ReputerRequestNonce: &types.ReputerRequestNonce{
+						ReputerNonce: &types.Nonce{BlockHeight: block},
+					},
+					Reputer:       reputer,
+					CombinedValue: alloraMath.MustNewDecFromString("3.8"),
+					NaiveValue:    alloraMath.MustNewDecFromString("3.8"),
+					InfererValues: []*types.WorkerAttributedValue{
+						{
+							Worker: s.addrsStr[5],
+							Value:  alloraMath.MustNewDecFromString("3.81"),
+						},
+						{
+							Worker: s.addrsStr[6],
+							Value:  alloraMath.MustNewDecFromString("3.82"),
+						},
+					},
+					ForecasterValues:              nil,
+					OneOutInfererValues:           nil,
+					OneOutForecasterValues:        nil,
+					OneInForecasterValues:         nil,
+					OneOutInfererForecasterValues: nil,
+					ExtraData:                     nil,
+				},
+			},
+		},
+	}
+
+	// Sign the value bundle
+	sig, err := signValueBundle(reportedLosses.ReputerValueBundles[0].ValueBundle, s.privKeys[13])
+	s.Require().NoError(err)
+	reportedLosses.ReputerValueBundles[0].Signature = sig
+
+	// Get params and set fallback listening coefficient
+	params := types.DefaultParams()
+	params.FallbackListeningCoefficient = alloraMath.MustNewDecFromString("0.5")
+	err = s.emissionsKeeper.SetParams(s.ctx, params)
+	s.Require().NoError(err)
+
+	// Generate scores
+	scores, err := rewards.GenerateReputerScores(
+		s.ctx,
+		s.emissionsKeeper,
+		topicId,
+		block,
+		reportedLosses,
+	)
+	s.Require().NoError(err)
+	s.Require().Len(scores, 1)
+
+	// Verify that the listening coefficient was updated to fallback value
+	coefficient, err := s.emissionsKeeper.GetListeningCoefficient(s.ctx, topicId, reputer)
+	s.Require().NoError(err)
+	s.Require().True(coefficient.Coefficient.Equal(params.FallbackListeningCoefficient))
+}

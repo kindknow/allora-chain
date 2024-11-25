@@ -2216,6 +2216,7 @@ func (s *RewardsTestSuite) SetParamsForTest() {
 		PNormSafeDiv:                        nil,
 		GlobalWhitelistEnabled:              nil,
 		TopicCreatorWhitelistEnabled:        nil,
+		FallbackListeningCoefficient:        nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

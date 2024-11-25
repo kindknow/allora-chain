@@ -55,6 +55,7 @@ func TestDefaultParams(t *testing.T) {
 		PNormSafeDiv:                        alloraMath.MustNewDecFromString("8.25"),
 		GlobalWhitelistEnabled:              true,
 		TopicCreatorWhitelistEnabled:        true,
+		FallbackListeningCoefficient:        alloraMath.MustNewDecFromString("0.5"),
 	}
 
 	params := DefaultParams()
