@@ -34,7 +34,9 @@ func (app *AlloraApp) setupUpgradeHandlers() {
 
 		if upgradeInfo.Name == v0_7_0.Upgrade.UpgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 			storeUpgrades := storetypes.StoreUpgrades{
-				Added: []string{feemarkettypes.ModuleName},
+				Added:   []string{feemarkettypes.ModuleName},
+				Deleted: nil,
+				Renamed: nil,
 			}
 
 			// configure store loader that checks if version == upgradeHeight and applies store upgrades
