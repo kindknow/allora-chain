@@ -4,7 +4,6 @@ import (
 	"cosmossdk.io/core/appmodule"
 	storetypes "cosmossdk.io/store/types"
 	alloraMath "github.com/allora-network/allora-chain/math"
-	"github.com/allora-network/allora-chain/x/ibc/gmp"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -142,7 +141,6 @@ func (app *AlloraApp) registerIBCModules() {
 	var transferIBCModule porttypes.IBCModule
 	transferIBCModule = ibctransfer.NewIBCModule(app.TransferKeeper)
 	transferIBCModule = ibcfee.NewIBCMiddleware(transferIBCModule, app.IBCFeeKeeper)
-	transferIBCModule = gmp.NewIBCMiddleware(transferIBCModule)
 
 	// integration point for custom authentication modules
 	var noAuthzModule porttypes.IBCModule
