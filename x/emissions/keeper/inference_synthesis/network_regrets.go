@@ -380,32 +380,41 @@ func GetCalcSetNetworkRegrets(args GetCalcSetNetworkRegretsArgs) error {
 		}
 	}
 
-	// Check if we have enough workers with enough experience to calculate the topic initial regret
-	// If we don't have enough workers with enough experience, use the fallback regrets
-	var updatedTopicInitialRegret alloraMath.Dec
-	var err error
+	// Select which regrets to use for calculating the topic initial regret:
+	// - If we have 10 or more experienced workers, use their regrets
+	// - Otherwise, use fallback regrets which include all workers
+	regrets := fallbackRegrets
 	if len(workersRegrets) >= 10 {
-		updatedTopicInitialRegret, err = CalcTopicInitialRegret(
-			workersRegrets,
-			args.EpsilonTopic,
-			args.PNorm,
-			args.CNorm,
-			args.InitialRegretQuantile,
-			args.PNormSafeDiv,
-		)
-		if err != nil {
-			return errorsmod.Wrapf(err, "Error calculating topic initial regret")
-		}
-	} else {
-		updatedTopicInitialRegret, err = alloraMath.GetQuantileOfDecs(fallbackRegrets, args.InitialRegretQuantile)
-		if err != nil {
-			return errorsmod.Wrapf(err, "Error calculating topic initial regret")
-		}
+		regrets = workersRegrets
 	}
 
-	err = args.K.UpdateTopicInitialRegret(args.Ctx, args.TopicId, updatedTopicInitialRegret)
-	if err != nil {
-		return errorsmod.Wrapf(err, "Error updating topic initial regret")
+	// Only proceed if we have any regrets to process
+	if len(regrets) > 0 {
+		quantile, err := alloraMath.GetQuantileOfDecs(regrets, args.InitialRegretQuantile)
+		if err != nil {
+			return errorsmod.Wrapf(err, "Error calculating topic initial regret")
+		}
+
+		// Set initial value to the quantile (used when we don't have enough experienced workers)
+		updatedTopicInitialRegret := quantile
+		if len(workersRegrets) >= 10 {
+			updatedTopicInitialRegret, err = CalcTopicInitialRegret(
+				regrets,
+				args.EpsilonTopic,
+				args.PNorm,
+				args.CNorm,
+				quantile,
+				args.PNormSafeDiv,
+			)
+			if err != nil {
+				return errorsmod.Wrapf(err, "Error calculating topic initial regret")
+			}
+		}
+
+		err = args.K.UpdateTopicInitialRegret(args.Ctx, args.TopicId, updatedTopicInitialRegret)
+		if err != nil {
+			return errorsmod.Wrapf(err, "Error updating topic initial regret")
+		}
 	}
 
 	return nil

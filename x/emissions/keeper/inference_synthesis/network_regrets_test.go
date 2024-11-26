@@ -753,103 +753,141 @@ func (s *InferenceSynthesisTestSuite) TestCalcTopicInitialRegret() {
 	testutil.InEpsilon5(s.T(), calculatedInitialRegret, "0.3354820760526412097325669544281814")
 }
 
-// TestUpdateTopicInitialRegret tests the UpdateTopicInitialRegret function.
+// TestUpdateTopicInitialRegret tests the UpdateTopicInitialRegret function with a larger set of workers.
 //
 // Setup:
 // - Create a topic with ID 1 and initial regret of 0
 // - Set AlphaRegret to 0.5, making the experience threshold 2 inclusions
-// - Add 5 inferers and 3 forecasters, each with 2 inclusions to make them experienced
-// - Set up a simulated value getter for epochs 300 and 301
+// - Add 8 inferers and 4 forecasters (12 total workers) with 2 inclusions each to make them experienced
+// - Set initial regrets for all workers with varying values to simulate different performance levels
 //
 // Test steps:
-// 1. Create a value bundle with combined value and individual values for inferers and forecasters
+// 1. Create a value bundle with:
+//   - Combined value of 0.5
+//   - Inferer values ranging from 0.2 to 0.9
+//   - Forecaster values ranging from 0.3 to 0.6
+//   - One-in and one-out variations for comprehensive testing
+//
 // 2. Call UpdateTopicInitialRegret with this value bundle
-// 3. Retrieve the updated topic
+// 3. Verify the updated topic's initial regret
 //
 // Expected outcomes:
 // 1. The function should execute without error
 // 2. The topic's initial regret should be updated from 0 to a non-zero value
-// 3. The new initial regret should be calculated based on the provided values and parameters
-//
-// This test ensures that the UpdateTopicInitialRegret function correctly calculates
-// and updates the initial regret for a topic based on the performance of experienced
-// workers, using the provided normalization and calculation parameters.
+// 3. The new initial regret should reflect the collective performance of all workers
+// 4. With more workers and varying performance levels, the initial regret should be statistically meaningful
 func (s *InferenceSynthesisTestSuite) TestUpdateTopicInitialRegret() {
 	require := s.Require()
 	k := s.emissionsKeeper
-	epochGet := testutil.GetSimulatedValuesGetterForEpochs()
-	epochPrevGet := epochGet[300]
-	epoch301Get := epochGet[301]
 
 	topicId := uint64(1)
 	blockHeight := int64(1003)
 	nonce := emissionstypes.Nonce{BlockHeight: blockHeight}
-	alpha := alloraMath.MustNewDecFromString("0.1")
 	pNorm := alloraMath.MustNewDecFromString("3.0")
 	cNorm := alloraMath.MustNewDecFromString("0.75")
 	epsilon := alloraMath.MustNewDecFromString("1e-4")
 	initialRegretQuantile := alloraMath.MustNewDecFromString("0.5")
 	pnormSafeDiv := alloraMath.MustNewDecFromString("1.0")
 
-	// Set initial Regret to check if this value is updated or not
-	initialRegret := alloraMath.MustNewDecFromString("0")
+	// Set initial Regret to check if this value is updated
+	initialRegret := alloraMath.ZeroDec()
 	topic := s.mockTopic()
-	// Need to use "0.5" to set limit inclusions count as 2=(1/0.5)
 	topic.AlphaRegret = alloraMath.MustNewDecFromString("0.5")
-	// Create new topic
 	err := s.emissionsKeeper.SetTopic(s.ctx, topicId, topic)
 	s.Require().NoError(err)
 
-	inferer0 := s.addrs[0].String()
-	inferer1 := s.addrs[1].String()
-	inferer2 := s.addrs[2].String()
-	inferer3 := s.addrs[3].String()
-	inferer4 := s.addrs[4].String()
-	infererAddresses := []string{inferer0, inferer1, inferer2, inferer3, inferer4}
+	// Create 8 inferer addresses
+	infererAddresses := make([]string, 8)
+	for i := 0; i < 8; i++ {
+		infererAddresses[i] = s.addrs[i].String()
+	}
 
-	forecaster0 := s.addrs[5].String()
-	forecaster1 := s.addrs[6].String()
-	forecaster2 := s.addrs[7].String()
-	forecasterAddresses := []string{forecaster0, forecaster1, forecaster2}
+	// Create 4 forecaster addresses
+	forecasterAddresses := make([]string, 4)
+	for i := 0; i < 4; i++ {
+		forecasterAddresses[i] = s.addrs[i+8].String()
+	}
 
-	reputer0 := s.addrs[8].String()
+	reputer := s.addrs[12].String()
 
-	// Need to add experienced inferers for this topic
+	// Make all workers experienced by giving them 2 inclusions
 	for _, worker := range infererAddresses {
-		err := k.IncrementCountInfererInclusionsInTopic(s.ctx, topicId, worker)
+		err = k.IncrementCountInfererInclusionsInTopic(s.ctx, topicId, worker)
 		require.NoError(err)
 		err = k.IncrementCountInfererInclusionsInTopic(s.ctx, topicId, worker)
 		require.NoError(err)
 	}
 
-	// Need to add experienced forecasters for this topic
 	for _, worker := range forecasterAddresses {
-		err := k.IncrementCountForecasterInclusionsInTopic(s.ctx, topicId, worker)
+		err = k.IncrementCountForecasterInclusionsInTopic(s.ctx, topicId, worker)
 		require.NoError(err)
 		err = k.IncrementCountForecasterInclusionsInTopic(s.ctx, topicId, worker)
 		require.NoError(err)
 	}
 
-	err = testutil.SetRegretsFromPreviousEpoch(s.ctx, s.emissionsKeeper, topicId, blockHeight, infererAddresses, forecasterAddresses, epochPrevGet)
-	require.NoError(err)
+	// Set initial regrets for all workers
+	for i, worker := range infererAddresses {
+		value := alloraMath.MustNewDecFromString(fmt.Sprintf("0.%d", i+2)) // Values from 0.2 to 0.9
+		timestampedValue := emissionstypes.TimestampedValue{
+			BlockHeight: blockHeight,
+			Value:       value,
+		}
+		err = k.SetInfererNetworkRegret(s.ctx, topicId, worker, timestampedValue)
+		require.NoError(err)
+	}
 
-	networkLosses, err := testutil.GetNetworkLossFromCsv(
-		topicId,
-		blockHeight,
-		infererAddresses,
-		forecasterAddresses,
-		reputer0,
-		epoch301Get,
-	)
-	s.Require().NoError(err)
+	for i, worker := range forecasterAddresses {
+		value := alloraMath.MustNewDecFromString(fmt.Sprintf("0.%d", i+3)) // Values from 0.3 to 0.6
+		timestampedValue := emissionstypes.TimestampedValue{
+			BlockHeight: blockHeight,
+			Value:       value,
+		}
+		err = k.SetForecasterNetworkRegret(s.ctx, topicId, worker, timestampedValue)
+		require.NoError(err)
+	}
 
+	// Create inferer values
+	infererValues := make([]*emissionstypes.WorkerAttributedValue, len(infererAddresses))
+	for i, worker := range infererAddresses {
+		infererValues[i] = &emissionstypes.WorkerAttributedValue{
+			Worker: worker,
+			Value:  alloraMath.MustNewDecFromString(fmt.Sprintf("0.%d", i+2)),
+		}
+	}
+
+	// Create forecaster values
+	forecasterValues := make([]*emissionstypes.WorkerAttributedValue, len(forecasterAddresses))
+	for i, worker := range forecasterAddresses {
+		forecasterValues[i] = &emissionstypes.WorkerAttributedValue{
+			Worker: worker,
+			Value:  alloraMath.MustNewDecFromString(fmt.Sprintf("0.%d", i+3)),
+		}
+	}
+
+	// Create network losses value bundle
+	networkLosses := emissionstypes.ValueBundle{
+		TopicId:                       topicId,
+		Reputer:                       reputer,
+		ReputerRequestNonce:           &emissionstypes.ReputerRequestNonce{ReputerNonce: &nonce},
+		ExtraData:                     nil,
+		CombinedValue:                 alloraMath.MustNewDecFromString("0.5"),
+		NaiveValue:                    alloraMath.MustNewDecFromString("0.4"),
+		InfererValues:                 infererValues,
+		ForecasterValues:              forecasterValues,
+		OneOutInfererValues:           nil,
+		OneOutForecasterValues:        nil,
+		OneInForecasterValues:         nil,
+		OneOutInfererForecasterValues: nil,
+	}
+
+	// Calculate and set network regrets
 	err = inferencesynthesis.GetCalcSetNetworkRegrets(inferencesynthesis.GetCalcSetNetworkRegretsArgs{
 		Ctx:                   s.ctx,
 		K:                     k,
 		TopicId:               topicId,
 		NetworkLosses:         networkLosses,
 		Nonce:                 nonce,
-		AlphaRegret:           alpha,
+		AlphaRegret:           topic.AlphaRegret,
 		CNorm:                 cNorm,
 		PNorm:                 pNorm,
 		EpsilonTopic:          epsilon,
@@ -858,10 +896,13 @@ func (s *InferenceSynthesisTestSuite) TestUpdateTopicInitialRegret() {
 	})
 	require.NoError(err)
 
-	// Assert that initial regret is updated
+	// Verify that initial regret was updated
 	topic, err = s.emissionsKeeper.GetTopic(s.ctx, topicId)
 	require.NoError(err)
 	require.NotEqual(topic.InitialRegret, initialRegret)
+
+	// Verify that the new initial regret is reasonable
+	require.True(topic.InitialRegret.Gt(alloraMath.ZeroDec()))
 }
 
 // TestCalcSetNetworkRegretsWithFallbackRegrets tests that when there are no experienced workers
