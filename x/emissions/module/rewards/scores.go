@@ -95,10 +95,14 @@ func GenerateReputerScores(
 	}
 
 	// Check if all coefficients are zero
-	// If so, set all coefficients to the fallback listening coefficient
+	// If so, cap them at epsilonReputer
 	if allCoefficientsZero {
 		for i := range reputerListeningCoefficients {
-			reputerListeningCoefficients[i] = params.FallbackListeningCoefficient
+			cappedCoefficient, err := alloraMath.Max(reputerListeningCoefficients[i], params.EpsilonReputer)
+			if err != nil {
+				return []types.Score{}, errors.Wrap(err, "Error capping listening coefficient")
+			}
+			reputerListeningCoefficients[i] = cappedCoefficient
 		}
 	}
 

@@ -57,7 +57,6 @@ func DefaultParams() Params {
 		PNormSafeDiv:                        alloraMath.MustNewDecFromString("8.25"),      // pnorm divide value to calculate offset with cnorm
 		GlobalWhitelistEnabled:              true,                                         // global whitelist enabled => all global whitelisted actors can create topics and participate in all topics as workers and reputers
 		TopicCreatorWhitelistEnabled:        true,                                         // topic creator whitelist enabled => all topic creator whitelisted actors can create topics
-		FallbackListeningCoefficient:        alloraMath.MustNewDecFromString("0.5"),       // listening coefficient to be used when there's just one reputer in the topic reward epoch and it has a previous listening coefficients of zero
 	}
 }
 
@@ -191,9 +190,6 @@ func (p Params) Validate() error {
 	}
 	if err := validatePNormSafeDiv(p.PNormSafeDiv); err != nil {
 		return errorsmod.Wrap(err, "params validation failure: pnorm safe div")
-	}
-	if err := validateFallbackListeningCoefficient(p.FallbackListeningCoefficient); err != nil {
-		return errorsmod.Wrap(err, "params validation failure: fallback listening coefficient")
 	}
 	return nil
 }
@@ -603,13 +599,6 @@ func isAlloraDecZeroOrLessThanOne(a alloraMath.Dec) bool {
 func validateDataSendingFee(i cosmosMath.Int) error {
 	if err := ValidateSdkIntRepresentingMonetaryValue(i); err != nil {
 		return errorsmod.Wrap(err, ErrValidationMustBeGreaterthanZero.Error())
-	}
-	return nil
-}
-
-func validateFallbackListeningCoefficient(i alloraMath.Dec) error {
-	if err := ValidateDec(i); err != nil {
-		return err
 	}
 	return nil
 }
