@@ -3,8 +3,7 @@ package app
 import (
 	"cosmossdk.io/core/appmodule"
 	storetypes "cosmossdk.io/store/types"
-	alloraMath "github.com/allora-network/allora-chain/math"
-	"github.com/allora-network/allora-chain/x/ibc/gmp"
+	alloramath "github.com/allora-network/allora-chain/math"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -28,16 +27,16 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v8/modules/core"
 
-	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types" //nolint:staticcheck // SA1019 deprecated code breaking unit tests
-	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
+	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 )
 
-// registerIBCModules register IBC keepers and non dependency inject modules.
-func (app *AlloraApp) registerIBCModules() {
+// registerLegacyModules manually initializes and wire legacy (e.g. IBC) modules with the app.
+// The modules currently does not support dependency injection, as soon as they do, this should be removed.
+func (app *AlloraApp) registerLegacyModules() {
 	// set up non depinject support modules store keys
 	if err := app.RegisterStores(
 		storetypes.NewKVStoreKey(capabilitytypes.StoreKey),
@@ -54,7 +53,6 @@ func (app *AlloraApp) registerIBCModules() {
 
 	// register the key tables for legacy param subspaces
 	keyTable := ibcclienttypes.ParamKeyTable()
-	keyTable.RegisterParamSet(&ibcconnectiontypes.Params{MaxExpectedTimePerBlock: 25000000000})
 	app.ParamsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
 	app.ParamsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
 	app.ParamsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
@@ -62,7 +60,7 @@ func (app *AlloraApp) registerIBCModules() {
 
 	// add capability keeper and ScopeToModule for ibc module
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(
-		app.AppCodec(),
+		app.appCodec,
 		app.GetKey(capabilitytypes.StoreKey),
 		app.GetMemKey(capabilitytypes.MemStoreKey),
 	)
@@ -84,13 +82,6 @@ func (app *AlloraApp) registerIBCModules() {
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
-	//// Register the proposal types
-	//// Deprecated: Avoid adding new handlers, instead use the new proposal flow
-	//// by granting the governance module the right to execute the message.
-	//// See: https://docs.cosmos.network/main/modules/gov#proposal-messages
-	//govRouter := govv1beta1.NewRouter()
-	//govRouter.AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler)
-
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		app.appCodec, app.GetKey(ibcfeetypes.StoreKey),
 		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
@@ -103,7 +94,7 @@ func (app *AlloraApp) registerIBCModules() {
 		app.appCodec,
 		app.GetKey(ibctransfertypes.StoreKey),
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.IBCFeeKeeper,
+		app.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
 		app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
@@ -125,6 +116,8 @@ func (app *AlloraApp) registerIBCModules() {
 		app.MsgServiceRouter(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+	app.ICAHostKeeper.WithQueryRouter(app.GRPCQueryRouter())
+
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		app.appCodec,
 		app.GetKey(icacontrollertypes.StoreKey),
@@ -136,13 +129,11 @@ func (app *AlloraApp) registerIBCModules() {
 		app.MsgServiceRouter(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
-	//app.GovKeeper.SetLegacyRouter(govRouter)
 
 	// Create IBC modules
 	var transferIBCModule porttypes.IBCModule
 	transferIBCModule = ibctransfer.NewIBCModule(app.TransferKeeper)
 	transferIBCModule = ibcfee.NewIBCMiddleware(transferIBCModule, app.IBCFeeKeeper)
-	transferIBCModule = gmp.NewIBCMiddleware(transferIBCModule)
 
 	// integration point for custom authentication modules
 	var noAuthzModule porttypes.IBCModule
@@ -159,10 +150,6 @@ func (app *AlloraApp) registerIBCModules() {
 		AddRoute(icacontrollertypes.SubModuleName, icaControllerIBCModule).
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule)
 
-	//blogIBCModule := ibcfee.NewIBCMiddleware(blogmodule.NewIBCModule(app.BlogKeeper), app.IBCFeeKeeper)
-	//ibcRouter.AddRoute(blogmoduletypes.ModuleName, blogIBCModule)
-	//// this line is used by starport scaffolding # ibc/app/module
-
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	app.ScopedIBCKeeper = scopedIBCKeeper
@@ -170,7 +157,7 @@ func (app *AlloraApp) registerIBCModules() {
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 
-	// register IBC modules
+	// register legacy modules
 	if err := app.RegisterModules(
 		ibc.NewAppModule(app.IBCKeeper),
 		ibctransfer.NewAppModule(app.TransferKeeper),
@@ -183,20 +170,20 @@ func (app *AlloraApp) registerIBCModules() {
 	}
 }
 
-// Since the IBC modules don't support dependency injection, we need to
-// manually register the modules on the client side.
-// This needs to be removed after IBC supports App Wiring.
-func RegisterIBC(registry cdctypes.InterfaceRegistry) map[string]appmodule.AppModule {
+// RegisterLegacyModules manually register legacy (e.g. IBC) interfaces and returns related modules.
+// This is used on the client side only to allow the wiring with `autocli`.
+// These modules currently does not support dependency injection, as soon as they do, this should be removed.
+func RegisterLegacyModules(registry cdctypes.InterfaceRegistry) map[string]appmodule.AppModule {
 	modules := map[string]appmodule.AppModule{
+		capabilitytypes.ModuleName:  capability.AppModule{AppModuleBasic: capability.AppModuleBasic{}},
 		ibcexported.ModuleName:      ibc.AppModule{AppModuleBasic: ibc.AppModuleBasic{}},
 		ibctransfertypes.ModuleName: ibctransfer.AppModule{AppModuleBasic: ibctransfer.AppModuleBasic{}},
-		ibcfeetypes.ModuleName:      ibcfee.AppModule{AppModuleBasic: ibcfee.AppModuleBasic{}},
 		icatypes.ModuleName:         icamodule.AppModule{AppModuleBasic: icamodule.AppModuleBasic{}},
-		capabilitytypes.ModuleName:  capability.AppModule{AppModuleBasic: capability.AppModuleBasic{}},
+		ibcfeetypes.ModuleName:      ibcfee.AppModule{AppModuleBasic: ibcfee.AppModuleBasic{}},
 		ibctm.ModuleName:            ibctm.AppModule{AppModuleBasic: ibctm.AppModuleBasic{}},
 	}
 
-	sortedModuleKeys := alloraMath.GetSortedKeys(modules)
+	sortedModuleKeys := alloramath.GetSortedKeys(modules)
 	for _, key := range sortedModuleKeys {
 		if mod, ok := modules[key].(interface {
 			RegisterInterfaces(registry cdctypes.InterfaceRegistry)

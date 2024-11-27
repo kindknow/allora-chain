@@ -73,8 +73,6 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
-	ibctestingtypes "github.com/cosmos/ibc-go/v8/testing/types"
-
 	metrics "github.com/hashicorp/go-metrics"
 
 	_ "cosmossdk.io/api/cosmos/tx/config/v1" // import for side-effects
@@ -241,7 +239,7 @@ func NewAlloraApp(
 	app.App = appBuilder.Build(db, traceStore, baseAppOptions...)
 
 	// Register legacy modules
-	app.registerIBCModules()
+	app.registerLegacyModules()
 
 	// register streaming services
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
@@ -308,14 +306,6 @@ func (app *AlloraApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
-// AppCodec returns App's app codec.
-//
-// NOTE: This is solely to be used for testing purposes as it may be desirable
-// for modules to register their own custom testing types.
-func (app *AlloraApp) AppCodec() codec.Codec {
-	return app.appCodec
-}
-
 // GetKey returns the KVStoreKey for the provided store key.
 func (app *AlloraApp) GetKey(storeKey string) *storetypes.KVStoreKey {
 	sk := app.UnsafeFindStoreKey(storeKey)
@@ -376,36 +366,6 @@ func (app *AlloraApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 	if err := server.RegisterSwaggerAPI(apiSvr.ClientCtx, apiSvr.Router, apiConfig.Swagger); err != nil {
 		panic(err)
 	}
-}
-
-// ibctesting.TestingApp compatibility
-func (app *AlloraApp) GetBaseApp() *baseapp.BaseApp {
-	return app.App.BaseApp
-}
-
-// ibctesting.TestingApp compatibility
-func (app *AlloraApp) GetStakingKeeper() ibctestingtypes.StakingKeeper {
-	return app.StakingKeeper
-}
-
-// ibctesting.TestingApp compatibility
-func (app *AlloraApp) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
-	return app.ScopedIBCKeeper
-}
-
-// ibctesting.TestingApp compatibility
-func (app *AlloraApp) GetTxConfig() client.TxConfig {
-	return app.txConfig
-}
-
-// ibctesting.TestingApp compatibility
-func (app *AlloraApp) LastCommitID() storetypes.CommitID {
-	return app.BaseApp.LastCommitID()
-}
-
-// ibctesting.TestingApp compatibility
-func (app *AlloraApp) LastBlockHeight() int64 {
-	return app.BaseApp.LastBlockHeight()
 }
 
 func (app *AlloraApp) PrepareProposal(req *abci.RequestPrepareProposal) (*abci.ResponsePrepareProposal, error) {
