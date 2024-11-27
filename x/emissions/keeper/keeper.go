@@ -3671,9 +3671,9 @@ func (k *Keeper) BlockWithinWorkerSubmissionWindowOfNonce(topic types.Topic, non
 // Return true if the nonce is within the worker submission window for the topic
 // Inclusive of the start block height and of the end block height
 func (k *Keeper) BlockWithinReputerSubmissionWindowOfNonce(topic types.Topic, nonce types.ReputerRequestNonce, blockHeight int64) bool {
-	extra_lag := topic.GroundTruthLag % topic.EpochLength
+	extraLag := topic.GroundTruthLag % topic.EpochLength
 	return nonce.ReputerNonce.BlockHeight+topic.GroundTruthLag <= blockHeight &&
-		blockHeight <= nonce.ReputerNonce.BlockHeight+topic.GroundTruthLag+topic.EpochLength+extra_lag
+		blockHeight <= nonce.ReputerNonce.BlockHeight+topic.GroundTruthLag+topic.EpochLength+extraLag
 }
 
 func (k *Keeper) ValidateStringIsBech32(actor ActorId) error {

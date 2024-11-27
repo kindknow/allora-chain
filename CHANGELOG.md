@@ -81,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * [#683](https://github.com/allora-network/allora-chain/pull/683) Added new strategy for reputer listening coefficients
 * [#668](https://github.com/allora-network/allora-chain/pull/668) Add stake nil amount validation + added tests + fixed other tests
+* [#687](https://github.com/allora-network/allora-chain/pull/687) Fix reputer nonce submission boundaries
 
 ### Security
 
