@@ -13,29 +13,21 @@ import (
 
 	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/telemetry"
-	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
-
-	abci "github.com/cometbft/cometbft/abci/types"
-	dbm "github.com/cosmos/cosmos-db"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	icatypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/types"
-	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	"cosmossdk.io/core/appconfig"
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
+	abci "github.com/cometbft/cometbft/abci/types"
+	dbm "github.com/cosmos/cosmos-db"
 
 	storetypes "cosmossdk.io/store/types"
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
-	upgradetypes "cosmossdk.io/x/upgrade/types"
 	emissionsKeeper "github.com/allora-network/allora-chain/x/emissions/keeper"
-	emissions "github.com/allora-network/allora-chain/x/emissions/types"
 	mintkeeper "github.com/allora-network/allora-chain/x/mint/keeper"
-	minttypes "github.com/allora-network/allora-chain/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -53,7 +45,6 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
@@ -62,16 +53,12 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
-	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/keeper"
 	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"
 	ibcfeekeeper "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/keeper"
-	ibcfeetypes "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	metrics "github.com/hashicorp/go-metrics"
 
@@ -245,39 +232,6 @@ func NewAlloraApp(
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
 		return nil, err
 	}
-
-	/****  Module Options ****/
-	app.ModuleManager.SetOrderPreBlockers(
-		upgradetypes.ModuleName,
-	)
-
-	//begin_blockers: [capability, distribution, staking, mint, ibc, transfer, genutil, interchainaccounts, feeibc]
-	//end_blockers: [staking, ibc, transfer, capability, genutil, interchainaccounts, feeibc, emissions]
-	app.ModuleManager.SetOrderBeginBlockers(
-		capabilitytypes.ModuleName,
-		distrtypes.ModuleName,
-		slashingtypes.ModuleName,
-		stakingtypes.ModuleName,
-		upgradetypes.ModuleName,
-		minttypes.ModuleName,
-		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		genutiltypes.ModuleName,
-		authz.ModuleName,
-		icatypes.ModuleName,
-		ibcfeetypes.ModuleName,
-	)
-	app.ModuleManager.SetOrderEndBlockers(
-		govtypes.ModuleName,
-		stakingtypes.ModuleName,
-		ibcexported.ModuleName,
-		ibctransfertypes.ModuleName,
-		capabilitytypes.ModuleName,
-		genutiltypes.ModuleName,
-		icatypes.ModuleName,
-		ibcfeetypes.ModuleName,
-		emissions.ModuleName,
-	)
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	// NOTE: this is not required apps that don't use the simulator for fuzz testing transactions
