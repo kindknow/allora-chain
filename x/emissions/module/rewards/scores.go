@@ -100,7 +100,7 @@ func GenerateReputerScores(
 		for i := range reputerListeningCoefficients {
 			cappedCoefficient, err := alloraMath.Max(reputerListeningCoefficients[i], params.EpsilonReputer)
 			if err != nil {
-				return []types.Score{}, errors.Wrap(err, "GetAllReputersOutput, err taking max")
+				return []types.Score{}, errors.Wrap(err, "Error capping listening coefficient")
 			}
 			reputerListeningCoefficients[i] = cappedCoefficient
 		}
