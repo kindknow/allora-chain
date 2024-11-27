@@ -79,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#680](https://github.com/allora-network/allora-chain/pull/680) Remove custom ProposalHandler
 
 ### Fixed
-* [#673](https://github.com/allora-network/allora-chain/pull/673) Fix bug in single reputer score calculation
+* [#683](https://github.com/allora-network/allora-chain/pull/683) Added new strategy for reputer listening coefficients
 * [#668](https://github.com/allora-network/allora-chain/pull/668) Add stake nil amount validation + added tests + fixed other tests
 
 ### Security
