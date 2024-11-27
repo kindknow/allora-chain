@@ -238,9 +238,6 @@ func NewAlloraApp(
 	// Register legacy modules
 	app.registerLegacyModules()
 
-	// Register Fee Market
-	app.registerFeeMarketModule()
-
 	// register streaming services
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package app
 
 import (
 	storetypes "cosmossdk.io/store/types"
+	"cosmossdk.io/x/feegrant"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/allora-network/allora-chain/app/upgrades"
 	"github.com/allora-network/allora-chain/app/upgrades/v0_3_0"
@@ -34,7 +35,7 @@ func (app *AlloraApp) setupUpgradeHandlers() {
 
 		if upgradeInfo.Name == v0_7_0.Upgrade.UpgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 			storeUpgrades := storetypes.StoreUpgrades{
-				Added:   []string{feemarkettypes.ModuleName},
+				Added:   []string{feegrant.StoreKey, feemarkettypes.StoreKey},
 				Deleted: nil,
 				Renamed: nil,
 			}

@@ -128,3 +128,6 @@ modules:
   - name: feegrant
     config:
       "@type": cosmos.feegrant.module.v1.Module
+  - name: feemarket
+    config:
+      "@type": feemarket.feemarket.module.v1.Module
