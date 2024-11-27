@@ -1778,9 +1778,9 @@ func (s *RewardsTestSuite) TestGenerateReputerScoresWithZeroListeningCoefficient
 	s.Require().NoError(err)
 	reportedLosses.ReputerValueBundles[0].Signature = sig
 
-	// Get params and set fallback listening coefficient
+	// Get params and set epsilon reputer
 	params := types.DefaultParams()
-	params.FallbackListeningCoefficient = alloraMath.MustNewDecFromString("0.5")
+	params.EpsilonReputer = alloraMath.MustNewDecFromString("0.1")
 	err = s.emissionsKeeper.SetParams(s.ctx, params)
 	s.Require().NoError(err)
 
@@ -1795,8 +1795,8 @@ func (s *RewardsTestSuite) TestGenerateReputerScoresWithZeroListeningCoefficient
 	s.Require().NoError(err)
 	s.Require().Len(scores, 1)
 
-	// Verify that the listening coefficient was updated to fallback value
+	// Verify that the listening coefficient was updated to epsilon reputer value
 	coefficient, err := s.emissionsKeeper.GetListeningCoefficient(s.ctx, topicId, reputer)
 	s.Require().NoError(err)
-	s.Require().True(coefficient.Coefficient.Equal(params.FallbackListeningCoefficient))
+	s.Require().True(coefficient.Coefficient.Equal(params.EpsilonReputer))
 }
