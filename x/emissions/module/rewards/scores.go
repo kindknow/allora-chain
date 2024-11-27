@@ -48,16 +48,12 @@ func GenerateReputerScores(
 		return []types.Score{}, errors.Wrapf(err, "Error getting topic")
 	}
 
-	params, err := keeper.GetParams(ctx)
-	if err != nil {
-		return []types.Score{}, errors.Wrapf(err, "Error getting GetParams")
-	}
-
 	// Fetch reputers data
 	var reputers []string
 	var reputerStakes []alloraMath.Dec
 	var reputerListeningCoefficients []alloraMath.Dec
 	var losses [][]alloraMath.Dec
+	var allCoefficientsZero = true
 	for _, reportedLoss := range reportedLosses.ReputerValueBundles {
 		reputers = append(reputers, reportedLoss.ValueBundle.Reputer)
 		// Get reputer topic stake
@@ -80,19 +76,34 @@ func GenerateReputerScores(
 		if res.Coefficient.IsNaN() {
 			return []types.Score{}, errors.Wrap(types.ErrInvalidReputerData, "Error invalid reputer Stake: NaN")
 		}
-		// Cap the listening coefficient at epsilonReputer
-		cappedCoefficient, err := alloraMath.Max(res.Coefficient, params.EpsilonReputer)
-		if err != nil {
-			return []types.Score{}, errors.Wrap(err, "GetAllReputersOutput, err taking max")
+		if !res.Coefficient.IsZero() {
+			allCoefficientsZero = false
 		}
 
 		// defer addition until all errors are checked to ensure no partial data is added
 		reputerStakes = append(reputerStakes, reputerStakeDec)
-		reputerListeningCoefficients = append(reputerListeningCoefficients, cappedCoefficient)
+		reputerListeningCoefficients = append(reputerListeningCoefficients, res.Coefficient)
 
 		// Get all reported losses from bundle
 		reputerLosses := ExtractValues(reportedLoss.ValueBundle)
 		losses = append(losses, reputerLosses)
+	}
+
+	params, err := keeper.GetParams(ctx)
+	if err != nil {
+		return []types.Score{}, errors.Wrapf(err, "Error getting GetParams")
+	}
+
+	// Check if all coefficients are zero
+	// If so, cap them at epsilonReputer
+	if allCoefficientsZero {
+		for i := range reputerListeningCoefficients {
+			cappedCoefficient, err := alloraMath.Max(reputerListeningCoefficients[i], params.EpsilonReputer)
+			if err != nil {
+				return []types.Score{}, errors.Wrap(err, "GetAllReputersOutput, err taking max")
+			}
+			reputerListeningCoefficients[i] = cappedCoefficient
+		}
 	}
 
 	// Get reputer output
