@@ -66,7 +66,7 @@ func (ms msgServer) InsertReputerPayload(ctx context.Context, msg *types.InsertR
 		return nil, errorsmod.Wrapf(
 			types.ErrReputerNonceWindowNotAvailable,
 			"Reputer window not open for topic: %d, current block %d, start window: %d, end window: %d",
-			topicId, blockHeight, nonce.ReputerNonce.BlockHeight+topic.GroundTruthLag, nonce.ReputerNonce.BlockHeight+topic.GroundTruthLag*2,
+			topicId, blockHeight, nonce.ReputerNonce.BlockHeight+topic.GroundTruthLag, nonce.ReputerNonce.BlockHeight+topic.GroundTruthLag+topic.EpochLength*2,
 		)
 	}
 
