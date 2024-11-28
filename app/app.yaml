@@ -18,12 +18,14 @@ modules:
         # staking module is required if HistoricalEntries param > 0
         - staking
         - mint
+        - feemarket
         - ibc
         - authz
 
       # Only modules providing an EndBlock func are listed here.
       end_blockers:
         - gov
+        - feemarket
         # staking must come after gov.
         - staking
         - emissions
@@ -51,6 +53,7 @@ modules:
         - upgrade
         - consensus
         - circuit
+        - feemarket
         - emissions
 
       override_store_keys:
