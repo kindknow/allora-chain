@@ -48,6 +48,7 @@ func TestIBCTestSuite(t *testing.T) {
 }
 
 func InitAlloraApp() (ibctesting.TestingApp, map[string]json.RawMessage) {
+	app.UseFeeMarketDecorator = false
 	alloraApp, err := app.NewAlloraApp(
 		log.NewNopLogger(),
 		dbm.NewMemDB(),
