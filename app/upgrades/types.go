@@ -4,6 +4,7 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 
+	"github.com/allora-network/allora-chain/app/keepers"
 	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
@@ -15,7 +16,7 @@ type Upgrade struct {
 	UpgradeName string
 
 	// CreateUpgradeHandler defines the function that creates an upgrade handler
-	CreateUpgradeHandler func(mm *module.Manager, configurator module.Configurator) upgradetypes.UpgradeHandler
+	CreateUpgradeHandler func(mm *module.Manager, configurator module.Configurator, keepers *keepers.AppKeepers) upgradetypes.UpgradeHandler
 
 	// StoreUpgrades should be used for any new modules introduced, new modules deleted, or store names renamed.
 	StoreUpgrades storetypes.StoreUpgrades

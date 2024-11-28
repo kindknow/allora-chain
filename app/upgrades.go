@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
+	"github.com/allora-network/allora-chain/app/keepers"
 	"github.com/allora-network/allora-chain/app/upgrades"
 	"github.com/allora-network/allora-chain/app/upgrades/v0_3_0"
 	"github.com/allora-network/allora-chain/app/upgrades/v0_4_0"
@@ -22,10 +23,11 @@ var upgradeHandlers = []upgrades.Upgrade{
 	// ...
 }
 
-func (app *AlloraApp) setupUpgradeHandlers() {
+func (app *AlloraApp) setupUpgradeHandlers(appKeepers *keepers.AppKeepers) {
 	for _, handler := range upgradeHandlers {
 		app.UpgradeKeeper.SetUpgradeHandler(handler.UpgradeName,
-			handler.CreateUpgradeHandler(app.ModuleManager, app.Configurator()))
+			handler.CreateUpgradeHandler(app.ModuleManager, app.Configurator(), appKeepers))
+
 	}
 }
 

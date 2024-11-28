@@ -17,7 +17,6 @@ modules:
         - slashing
         # staking module is required if HistoricalEntries param > 0
         - staking
-        - feegrant
         - mint
         - feemarket
         - ibc
@@ -56,6 +55,7 @@ modules:
         - upgrade
         - consensus
         - circuit
+        # feemarket must be after genutil to allow genesis transactions with 0fees
         - feemarket
         - emissions
 

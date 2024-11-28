@@ -132,6 +132,7 @@ FAUCET_ADDRESS="${FAUCET_ADDRESS%%[[:cntrl:]]}"
 # some sample default parameters for integration tests
 dasel put 'app_state.emissions.core_team_addresses.append()' -t string -v $FAUCET_ADDRESS -f $genesisHome/config/genesis.json
 dasel put 'app_state.gov.params.expedited_voting_period' -t string -v "300s" -f $genesisHome/config/genesis.json
+dasel put 'app_state.feemarket.params.fee_denom' -t string -v "uallo" -f $genesisHome/config/genesis.json
 
 cp -f $genesisHome/config/genesis.json $COMMON_HOME_DIR
 
