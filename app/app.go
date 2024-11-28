@@ -80,6 +80,7 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/x/params"                // import for side-effects
 	_ "github.com/cosmos/cosmos-sdk/x/slashing"              // import for side-effects
 	_ "github.com/cosmos/cosmos-sdk/x/staking"               // import for side-effects
+	_ "github.com/skip-mev/feemarket/x/feemarket"            // import for side-effects
 
 	"github.com/allora-network/allora-chain/health"
 )
@@ -136,7 +137,7 @@ type AlloraApp struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
 	// Fee Market
-	FeeMarketKeeper *feemarketkeeper.Keeper
+	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// simulation manager
 	sm *module.SimulationManager
@@ -278,7 +279,7 @@ func NewAlloraApp(
 		BaseOptions:     anteHandlerOptions,
 		AccountKeeper:   app.AccountKeeper,
 		BankKeeper:      app.BankKeeper,
-		FeeMarketKeeper: app.FeeMarketKeeper,
+		FeeMarketKeeper: &app.FeeMarketKeeper,
 	}
 	anteHandler, err := NewAnteHandler(anteOptions)
 	if err != nil {
@@ -288,7 +289,7 @@ func NewAlloraApp(
 	postHandlerOptions := PostHandlerOptions{
 		AccountKeeper:   app.AccountKeeper,
 		BankKeeper:      app.BankKeeper,
-		FeeMarketKeeper: app.FeeMarketKeeper,
+		FeeMarketKeeper: &app.FeeMarketKeeper,
 	}
 	postHandler, err := NewPostHandler(postHandlerOptions)
 	if err != nil {

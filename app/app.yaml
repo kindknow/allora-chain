@@ -30,6 +30,7 @@ modules:
         # staking must come after gov.
         - staking
         - emissions
+        - feegrant
 
       # Only modules providing an InitGenesis func are listed here.
       init_genesis:
