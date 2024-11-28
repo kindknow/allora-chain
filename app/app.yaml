@@ -17,6 +17,7 @@ modules:
         - slashing
         # staking module is required if HistoricalEntries param > 0
         - staking
+        - feegrant
         - mint
         - feemarket
         - ibc
@@ -47,6 +48,7 @@ modules:
         # - after auth so that it can access the params from auth;
         - genutil
         - authz
+        - feegrant
         - transfer
         - interchainaccounts
         - feeibc
