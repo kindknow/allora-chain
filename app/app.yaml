@@ -15,6 +15,7 @@ modules:
         # pool, so as to keep the CanWithdrawInvariant invariant.
         - distribution
         - slashing
+        - evidence
         # staking module is required if HistoricalEntries param > 0
         - staking
         - mint
@@ -47,6 +48,7 @@ modules:
         # - after staking so that pools are properly initialized with tokens from genesis accounts;
         # - after auth so that it can access the params from auth;
         - genutil
+        - evidence
         - authz
         - feegrant
         - transfer
@@ -134,3 +136,6 @@ modules:
   - name: feegrant
     config:
       "@type": cosmos.feegrant.module.v1.Module
+  - name: evidence
+    config:
+      "@type": cosmos.evidence.module.v1.Module
