@@ -61,8 +61,8 @@ func ConfigureFeeMarketModule(ctx context.Context, keepers *keepers.AppKeepers) 
 
 	feeMarketParams.Enabled = true
 	feeMarketParams.FeeDenom = params.BaseCoinUnit
+	feeMarketParams.DistributeFees = true
 	feeMarketParams.MinBaseGasPrice = cosmosmath.LegacyMustNewDecFromStr("10")
-	feeMarketParams.MaxBlockUtilization = feemarkettypes.DefaultMaxBlockUtilization
 	if err := keepers.FeeMarketKeeper.SetParams(sdkCtx, feeMarketParams); err != nil {
 		return err
 	}
