@@ -249,6 +249,7 @@ func NewAlloraApp(
 	app.sm.RegisterStoreDecoders()
 
 	app.setupUpgradeHandlers()
+	app.setupUpgradeStoreLoaders()
 
 	app.SetInitChainer(func(ctx sdk.Context, req *abci.RequestInitChain) (*abci.ResponseInitChain, error) {
 		err := app.UpgradeKeeper.SetModuleVersionMap(ctx, app.ModuleManager.GetVersionMap())
