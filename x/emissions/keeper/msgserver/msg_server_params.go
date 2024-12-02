@@ -162,9 +162,6 @@ func (ms msgServer) UpdateParams(ctx context.Context, msg *types.UpdateParamsReq
 	if len(newParams.TopicCreatorWhitelistEnabled) == 1 {
 		existingParams.TopicCreatorWhitelistEnabled = newParams.TopicCreatorWhitelistEnabled[0]
 	}
-	if len(newParams.FallbackListeningCoefficient) == 1 {
-		existingParams.FallbackListeningCoefficient = newParams.FallbackListeningCoefficient[0]
-	}
 	if len(newParams.MinExperiencedWorkerRegrets) == 1 {
 		existingParams.MinExperiencedWorkerRegrets = newParams.MinExperiencedWorkerRegrets[0]
 	}

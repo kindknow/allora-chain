@@ -88,7 +88,6 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			PNormSafeDiv:                        nil,
 			GlobalWhitelistEnabled:              nil,
 			TopicCreatorWhitelistEnabled:        nil,
-			FallbackListeningCoefficient:        nil,
 			MinExperiencedWorkerRegrets:          nil,
 		},
 	}
@@ -148,7 +147,6 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			PNormSafeDiv:                        nil,
 			GlobalWhitelistEnabled:              nil,
 			TopicCreatorWhitelistEnabled:        nil,
-			FallbackListeningCoefficient:        nil,
 			MinExperiencedWorkerRegrets:          nil,
 		},
 	}
@@ -212,7 +210,6 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			PNormSafeDiv:                        nil,
 			GlobalWhitelistEnabled:              nil,
 			TopicCreatorWhitelistEnabled:        nil,
-			FallbackListeningCoefficient:        nil,
 			MinExperiencedWorkerRegrets:          nil,
 		},
 	}

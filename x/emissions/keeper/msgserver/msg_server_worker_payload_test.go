@@ -363,7 +363,6 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithFewTopElementsPerFore
 		PNormSafeDiv:                        nil,
 		GlobalWhitelistEnabled:              nil,
 		TopicCreatorWhitelistEnabled:        nil,
-		FallbackListeningCoefficient:        nil,
 		MinExperiencedWorkerRegrets:         nil,
 	}
 
@@ -764,7 +763,6 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithLowScoreForecastsAreR
 		PNormSafeDiv:                        nil,
 		GlobalWhitelistEnabled:              nil,
 		TopicCreatorWhitelistEnabled:        nil,
-		FallbackListeningCoefficient:        nil,
 		MinExperiencedWorkerRegrets:         nil,
 	}
 

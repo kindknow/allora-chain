@@ -3815,7 +3815,6 @@ func mockUninitializedParams() types.Params {
 		PNormSafeDiv:                        alloraMath.ZeroDec(),
 		GlobalWhitelistEnabled:              true,
 		TopicCreatorWhitelistEnabled:        true,
-		FallbackListeningCoefficient:        alloraMath.MustNewDecFromString("0.5"),
 		MinExperiencedWorkerRegrets:         int64(10),
 	}
 }
