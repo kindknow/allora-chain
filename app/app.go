@@ -61,7 +61,6 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/x/params"                // import for side-effects
 	_ "github.com/cosmos/cosmos-sdk/x/slashing"              // import for side-effects
 	_ "github.com/cosmos/cosmos-sdk/x/staking"               // import for side-effects
-	_ "github.com/skip-mev/feemarket/x/feemarket"            // import for side-effects
 
 	"github.com/allora-network/allora-chain/health"
 )
@@ -179,7 +178,6 @@ func NewAlloraApp(
 		&app.ParamsKeeper,
 		&app.AuthzKeeper,
 		&app.CircuitBreakerKeeper,
-		&app.FeeMarketKeeper,
 	); err != nil {
 		return nil, err
 	}
@@ -189,6 +187,9 @@ func NewAlloraApp(
 
 	// Register legacy modules
 	app.registerLegacyModules()
+
+	// Register feemarket module
+	app.registerFeeMarketModule()
 
 	// register streaming services
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
@@ -227,7 +228,7 @@ func NewAlloraApp(
 		BaseOptions:     anteHandlerOptions,
 		AccountKeeper:   app.AccountKeeper,
 		BankKeeper:      app.BankKeeper,
-		FeeMarketKeeper: &app.FeeMarketKeeper,
+		FeeMarketKeeper: app.FeeMarketKeeper,
 	}
 	anteHandler, err := NewAnteHandler(anteOptions)
 	if err != nil {
@@ -237,7 +238,7 @@ func NewAlloraApp(
 	postHandlerOptions := PostHandlerOptions{
 		AccountKeeper:   app.AccountKeeper,
 		BankKeeper:      app.BankKeeper,
-		FeeMarketKeeper: &app.FeeMarketKeeper,
+		FeeMarketKeeper: app.FeeMarketKeeper,
 	}
 	postHandler, err := NewPostHandler(postHandlerOptions)
 	if err != nil {

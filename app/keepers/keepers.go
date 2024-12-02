@@ -56,5 +56,5 @@ type AppKeepers struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
 	// Fee Market
-	FeeMarketKeeper feemarketkeeper.Keeper
+	FeeMarketKeeper *feemarketkeeper.Keeper
 }
