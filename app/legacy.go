@@ -203,6 +203,7 @@ func (app *AlloraApp) registerFeeMarketModule() {
 // These modules currently does not support dependency injection, as soon as they do, this should be removed.
 func RegisterLegacyModules(registry cdctypes.InterfaceRegistry) map[string]appmodule.AppModule {
 	modules := map[string]appmodule.AppModule{
+		feemarkettypes.ModuleName:   feemarket.AppModule{AppModuleBasic: feemarket.AppModuleBasic{}},
 		capabilitytypes.ModuleName:  capability.AppModule{AppModuleBasic: capability.AppModuleBasic{}},
 		ibcexported.ModuleName:      ibc.AppModule{AppModuleBasic: ibc.AppModuleBasic{}},
 		ibctransfertypes.ModuleName: ibctransfer.AppModule{AppModuleBasic: ibctransfer.AppModuleBasic{}},
