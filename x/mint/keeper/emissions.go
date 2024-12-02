@@ -17,12 +17,12 @@ func GetLockedVestingTokens(
 	blocksPerMonth uint64,
 	blockHeight math.Int,
 	params types.Params,
-) (total, preseedInvestors, investors, team math.Int) {
+	monthsUnlocked math.LegacyDec,
+) (total, preseedInvestors, investors, team math.Int, updatedMonthsUnlocked math.Int) {
 	// foundation is unlocked from genesis
 	// participants are unlocked from genesis
 	// investors and team tokens are locked on a 1 year cliff three year vesting schedule
 	blocksInAYear := math.NewIntFromUint64(blocksPerMonth * 12)
-	blocksInThreeYears := blocksInAYear.Mul(math.NewInt(3))
 	maxSupply := params.MaxSupply.ToLegacyDec()
 	percentInvestors := params.InvestorsPercentOfTotalSupply
 	percentPreseedInvestors := params.InvestorsPreseedPercentOfTotalSupply
@@ -30,26 +30,31 @@ func GetLockedVestingTokens(
 	fullInvestors := percentInvestors.Mul(maxSupply).TruncateInt()
 	fullPreseedInvestors := percentPreseedInvestors.Mul(maxSupply).TruncateInt()
 	fullTeam := percentTeam.Mul(maxSupply).TruncateInt()
-	if blockHeight.LT(blocksInAYear) {
+	if blockHeight.LT(blocksInAYear) && monthsUnlocked.IsZero() {
 		// less than a year, completely locked
 		investors = fullInvestors
 		preseedInvestors = fullPreseedInvestors
 		team = fullTeam
-	} else if blockHeight.GTE(blocksInAYear) && blockHeight.LT(blocksInThreeYears) {
+	} else {
 		// between 1 and 3 years, investors and team tokens are vesting and partially unlocked
+		// after 3 years, all tokens are unlocked
 		thirtySix := math.LegacyNewDec(36)
-		monthsUnlocked := blockHeight.Quo(math.NewIntFromUint64(blocksPerMonth)).ToLegacyDec()
+		// calculate whether the number of months unlocked should be allowed to increase
+		calcMonthsUnlocked := blockHeight.Quo(math.NewIntFromUint64(blocksPerMonth)).ToLegacyDec()
+		if calcMonthsUnlocked.GT(thirtySix) {
+			calcMonthsUnlocked = thirtySix
+		}
+		if calcMonthsUnlocked.GT(monthsUnlocked) {
+			monthsUnlocked = calcMonthsUnlocked
+		}
+		// use the value from the keeper for monthsLocked if it's greater than the calculated value
+		// otherwise use the calculated value
 		monthsLocked := thirtySix.Sub(monthsUnlocked)
 		investors = monthsLocked.Quo(thirtySix).Mul(fullInvestors.ToLegacyDec()).TruncateInt()
 		preseedInvestors = monthsLocked.Quo(thirtySix).Mul(fullPreseedInvestors.ToLegacyDec()).TruncateInt()
 		team = monthsLocked.Quo(thirtySix).Mul(fullTeam.ToLegacyDec()).TruncateInt()
-	} else {
-		// greater than 3 years, all investor, team tokens are unlocked
-		investors = math.ZeroInt()
-		preseedInvestors = math.ZeroInt()
-		team = math.ZeroInt()
 	}
-	return preseedInvestors.Add(investors).Add(team), preseedInvestors, investors, team
+	return preseedInvestors.Add(investors).Add(team), preseedInvestors, investors, team, monthsUnlocked.TruncateInt()
 }
 
 // helper function to get the number of staked tokens on the network
@@ -74,30 +79,33 @@ func GetCirculatingSupply(
 	params types.Params,
 	blockHeight uint64,
 	blocksPerMonth uint64,
+	monthsUnlocked math.Int,
 ) (
 	circulatingSupply,
 	totalSupply,
 	lockedVestingTokens,
 	ecosystemLocked math.Int,
+	updatedMonthsUnlocked math.Int,
 	err error,
 ) {
 	ecosystemBalance, err := k.GetEcosystemBalance(ctx, params.MintDenom)
 	if err != nil {
-		return math.Int{}, math.Int{}, math.Int{}, math.Int{}, err
+		return math.Int{}, math.Int{}, math.Int{}, math.Int{}, math.Int{}, err
 	}
 	totalSupply = params.MaxSupply
-	lockedVestingTokens, _, _, _ = GetLockedVestingTokens(
+	lockedVestingTokens, _, _, _, updatedMonthsUnlocked = GetLockedVestingTokens(
 		blocksPerMonth,
 		math.NewIntFromUint64(blockHeight),
 		params,
+		monthsUnlocked.ToLegacyDec(),
 	)
 	ecosystemMintSupplyRemaining, err := k.GetEcosystemMintSupplyRemaining(ctx, params)
 	if err != nil {
-		return math.Int{}, math.Int{}, math.Int{}, math.Int{}, err
+		return math.Int{}, math.Int{}, math.Int{}, math.Int{}, math.Int{}, err
 	}
 	ecosystemLocked = ecosystemBalance.Add(ecosystemMintSupplyRemaining)
 	circulatingSupply = totalSupply.Sub(lockedVestingTokens).Sub(ecosystemLocked)
-	return circulatingSupply, totalSupply, lockedVestingTokens, ecosystemLocked, nil
+	return circulatingSupply, totalSupply, lockedVestingTokens, ecosystemLocked, updatedMonthsUnlocked, nil
 }
 
 // The total amount of tokens emitted for a full month
@@ -235,6 +243,7 @@ func (k Keeper) GetEcosystemMintSupplyRemaining(
 // PreviousRewardEmissionPerUnitStakedToken and PreviousBlockEmission
 // Then it calculates the new target emission rate
 // returns that, and the block emission we should mint/send for this block
+// it also updates the months unlocked if it has changed into the store
 func RecalculateTargetEmission(
 	ctx sdk.Context,
 	k Keeper,
@@ -249,7 +258,8 @@ func RecalculateTargetEmission(
 	emissionPerUnitStakedToke math.LegacyDec, // e_i in the whitepaper
 	err error,
 ) {
-	emissionPerMonth, emissionPerUnitStakedToken, err := GetEmissionPerMonth(
+	monthsUnlocked := k.GetMonthsUnlocked(ctx)
+	emissionPerMonth, emissionPerUnitStakedToken, updatedMonthsUnlocked, err := GetEmissionPerMonth(
 		ctx,
 		k,
 		blockHeight,
@@ -258,9 +268,16 @@ func RecalculateTargetEmission(
 		ecosystemBalance,
 		ecosystemMintSupplyRemaining,
 		validatorsPercent,
+		monthsUnlocked,
 	)
 	if err != nil {
 		return math.Int{}, math.LegacyDec{}, err
+	}
+	if updatedMonthsUnlocked.GT(monthsUnlocked) {
+		err = k.SetMonthsUnlocked(ctx, updatedMonthsUnlocked)
+		if err != nil {
+			return math.Int{}, math.LegacyDec{}, err
+		}
 	}
 	// emission/block = (emission/month) / (block/month)
 	blockEmission = emissionPerMonth.
@@ -294,23 +311,26 @@ func GetEmissionPerMonth(
 	ecosystemBalance math.Int,
 	ecosystemMintSupplyRemaining math.Int,
 	validatorsPercent math.LegacyDec,
+	monthsUnlocked math.Int,
 ) (
 	emissionPerMonth math.Int,
 	emissionPerUnitStakedToken math.LegacyDec,
+	updatedMonthsUnlocked math.Int,
 	err error,
 ) {
 	// Get the expected amount of emissions this block
 	networkStaked, err := GetNumStakedTokens(ctx, k)
 	if err != nil {
-		return math.Int{}, math.LegacyDec{}, err
+		return math.Int{}, math.LegacyDec{}, math.Int{}, err
 	}
 	circulatingSupply,
 		totalSupply,
 		lockedVestingTokens,
 		ecosystemLocked,
-		err := GetCirculatingSupply(ctx, k, params, blockHeight, blocksPerMonth)
+		updatedMonthsUnlocked,
+		err := GetCirculatingSupply(ctx, k, params, blockHeight, blocksPerMonth, monthsUnlocked)
 	if err != nil {
-		return math.Int{}, math.LegacyDec{}, err
+		return math.Int{}, math.LegacyDec{}, math.Int{}, err
 	}
 	if circulatingSupply.IsNegative() {
 		ctx.Logger().Error(
@@ -321,7 +341,7 @@ func GetEmissionPerMonth(
 			"circulatingSupply", circulatingSupply.String(),
 		)
 
-		return math.Int{}, math.LegacyDec{}, types.ErrNegativeCirculatingSupply
+		return math.Int{}, math.LegacyDec{}, math.Int{}, types.ErrNegativeCirculatingSupply
 	}
 	// T_{total,i} = ecosystemLocked
 	// N_{staked,i} = networkStaked
@@ -356,11 +376,11 @@ func GetEmissionPerMonth(
 		params.MaxSupply,
 	)
 	if err != nil {
-		return math.Int{}, math.LegacyDec{}, err
+		return math.Int{}, math.LegacyDec{}, math.Int{}, err
 	}
 	reputersPercent, err := k.GetPreviousPercentageRewardToStakedReputers(ctx)
 	if err != nil {
-		return math.Int{}, math.LegacyDec{}, err
+		return math.Int{}, math.LegacyDec{}, math.Int{}, err
 	}
 	maximumMonthlyEmissionPerUnitStakedToken := GetMaximumMonthlyEmissionPerUnitStakedToken(
 		params.MaximumMonthlyPercentageYield,
@@ -378,7 +398,7 @@ func GetEmissionPerMonth(
 	} else {
 		previousRewardEmissionPerUnitStakedToken, err = k.GetPreviousRewardEmissionPerUnitStakedToken(ctx)
 		if err != nil {
-			return math.Int{}, math.LegacyDec{}, err
+			return math.Int{}, math.LegacyDec{}, math.Int{}, err
 		}
 	}
 	emissionPerUnitStakedToken = GetExponentialMovingAverage(
@@ -390,5 +410,5 @@ func GetEmissionPerMonth(
 
 	// Emit event for updating tokenomic data
 	types.EmitNewTokenomicsSetEvent(ctx, networkStaked, circulatingSupply, emissionPerMonth)
-	return emissionPerMonth, emissionPerUnitStakedToken, nil
+	return emissionPerMonth, emissionPerUnitStakedToken, updatedMonthsUnlocked, nil
 }

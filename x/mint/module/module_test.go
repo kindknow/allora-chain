@@ -208,8 +208,9 @@ func (s *MintModuleTestSuite) TestTotalStakeGoUpTargetEmissionPerUnitStakeGoDown
 	emissionsParams, err := s.emissionsKeeper.GetParams(s.ctx)
 	s.Require().NoError(err)
 	blocksPerMonth := emissionsParams.BlocksPerMonth
+	monthsUnlocked := cosmosMath.NewIntFromUint64(uint64(0))
 
-	_, emissionPerUnitStakedTokenBefore, err := keeper.GetEmissionPerMonth(
+	_, emissionPerUnitStakedTokenBefore, updatedMonthsUnlocked, err := keeper.GetEmissionPerMonth(
 		s.ctx,
 		s.mintKeeper,
 		uint64(s.ctx.BlockHeight()),
@@ -218,8 +219,10 @@ func (s *MintModuleTestSuite) TestTotalStakeGoUpTargetEmissionPerUnitStakeGoDown
 		cosmosMath.ZeroInt(),
 		ecosystemMintSupplyRemaining,
 		cosmosMath.LegacyMustNewDecFromStr("0.25"),
+		monthsUnlocked,
 	)
 	s.Require().NoError(err)
+	s.Require().Equal(monthsUnlocked, updatedMonthsUnlocked)
 
 	stake, ok = cosmosMath.NewIntFromString("400000000000000000000000000")
 	s.Require().True(ok)
@@ -232,7 +235,7 @@ func (s *MintModuleTestSuite) TestTotalStakeGoUpTargetEmissionPerUnitStakeGoDown
 	)
 	s.Require().NoError(err)
 
-	_, emissionPerUnitStakedTokenAfter, err := keeper.GetEmissionPerMonth(
+	_, emissionPerUnitStakedTokenAfter, updatedMonthsUnlocked, err := keeper.GetEmissionPerMonth(
 		s.ctx,
 		s.mintKeeper,
 		uint64(s.ctx.BlockHeight()),
@@ -241,8 +244,10 @@ func (s *MintModuleTestSuite) TestTotalStakeGoUpTargetEmissionPerUnitStakeGoDown
 		cosmosMath.ZeroInt(),
 		ecosystemMintSupplyRemaining,
 		cosmosMath.LegacyMustNewDecFromStr("0.25"),
+		monthsUnlocked,
 	)
 	s.Require().NoError(err)
+	s.Require().Equal(monthsUnlocked, updatedMonthsUnlocked)
 
 	s.Require().True(
 		emissionPerUnitStakedTokenBefore.GT(emissionPerUnitStakedTokenAfter),

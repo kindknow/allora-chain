@@ -54,4 +54,6 @@ type MintKeeper interface {
 	GetPreviousRewardEmissionPerUnitStakedToken(ctx context.Context) (math.LegacyDec, error)
 	GetEcosystemMintSupplyRemaining(ctx context.Context, params Params) (math.Int, error)
 	GetEcosystemBalance(ctx context.Context, mintDenom string) (math.Int, error)
+	GetMonthsUnlocked(ctx context.Context) math.Int
+	SetMonthsUnlocked(ctx context.Context, monthsUnlocked math.Int) error
 }
