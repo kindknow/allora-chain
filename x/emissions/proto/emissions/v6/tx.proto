@@ -208,7 +208,7 @@ message OptionalParams {
   ];
   repeated bool global_whitelist_enabled = 50;
   repeated bool topic_creator_whitelist_enabled = 51;
-  repeated int64 min_experienced_worker_regrets  = 52;
+  repeated int64 min_experienced_worker_regrets = 52;
 }
 
 message UpdateParamsRequest {
