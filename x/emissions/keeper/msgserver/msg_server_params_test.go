@@ -65,6 +65,8 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		PNormSafeDiv:                        []alloraMath.Dec{alloraMath.ZeroDec()},
 		GlobalWhitelistEnabled:              []bool{true},
 		TopicCreatorWhitelistEnabled:        []bool{true},
+		FallbackListeningCoefficient:        []alloraMath.Dec{alloraMath.MustNewDecFromString(".1234")},
+		MinExperiencedWorkerRegrets:         []int64{1234},
 	}
 
 	updateMsg := &types.UpdateParamsRequest{
@@ -173,6 +175,8 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 		PNormSafeDiv:                        nil,
 		GlobalWhitelistEnabled:              nil,
 		TopicCreatorWhitelistEnabled:        nil,
+		FallbackListeningCoefficient:        nil,
+		MinExperiencedWorkerRegrets:         nil,
 	}
 
 	// Creating the UpdateParamsRequest message with a non-whitelisted user

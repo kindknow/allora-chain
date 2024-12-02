@@ -57,6 +57,8 @@ func DefaultParams() Params {
 		PNormSafeDiv:                        alloraMath.MustNewDecFromString("8.25"),      // pnorm divide value to calculate offset with cnorm
 		GlobalWhitelistEnabled:              true,                                         // global whitelist enabled => all global whitelisted actors can create topics and participate in all topics as workers and reputers
 		TopicCreatorWhitelistEnabled:        true,                                         // topic creator whitelist enabled => all topic creator whitelisted actors can create topics
+		FallbackListeningCoefficient:        alloraMath.MustNewDecFromString("0.5"),       // listening coefficient to be used when there's just one reputer in the topic reward epoch and it has a previous listening coefficients of zero
+		MinExperiencedWorkerRegrets:         int64(10),                                    // minimum number of experienced workers required to use their regrets for calculating the topic initial regret
 	}
 }
 
@@ -190,6 +192,12 @@ func (p Params) Validate() error {
 	}
 	if err := validatePNormSafeDiv(p.PNormSafeDiv); err != nil {
 		return errorsmod.Wrap(err, "params validation failure: pnorm safe div")
+	}
+	if err := validateFallbackListeningCoefficient(p.FallbackListeningCoefficient); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: fallback listening coefficient")
+	}
+	if err := validateMinExperiencedWorkerRegrets(p.MinExperiencedWorkerRegrets); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: min experienced worker regrets")
 	}
 	return nil
 }
@@ -599,6 +607,20 @@ func isAlloraDecZeroOrLessThanOne(a alloraMath.Dec) bool {
 func validateDataSendingFee(i cosmosMath.Int) error {
 	if err := ValidateSdkIntRepresentingMonetaryValue(i); err != nil {
 		return errorsmod.Wrap(err, ErrValidationMustBeGreaterthanZero.Error())
+	}
+	return nil
+}
+
+func validateFallbackListeningCoefficient(i alloraMath.Dec) error {
+	if err := ValidateDec(i); err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateMinExperiencedWorkerRegrets(i int64) error {
+	if i < 0 {
+		return ErrValidationMustBeGreaterthanZero
 	}
 	return nil
 }
