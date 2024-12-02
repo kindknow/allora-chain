@@ -1,11 +1,14 @@
 package keepers
 
 import (
+	"fmt"
+
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
 	emissionsKeeper "github.com/allora-network/allora-chain/x/emissions/keeper"
 	mintkeeper "github.com/allora-network/allora-chain/x/mint/keeper"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -57,4 +60,18 @@ type AppKeepers struct {
 
 	// Fee Market
 	FeeMarketKeeper *feemarketkeeper.Keeper
+}
+
+type DefaultFeemarketDenomResolver struct{}
+
+func (r *DefaultFeemarketDenomResolver) ConvertToDenom(_ sdk.Context, coin sdk.DecCoin, denom string) (sdk.DecCoin, error) {
+	if coin.Denom == denom {
+		return coin, nil
+	}
+
+	return sdk.DecCoin{}, fmt.Errorf("error resolving denom: the only denom supported is %s", coin.Denom)
+}
+
+func (r *DefaultFeemarketDenomResolver) ExtraDenoms(_ sdk.Context) ([]string, error) {
+	return []string{}, nil
 }
