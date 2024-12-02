@@ -179,6 +179,7 @@ func NewAlloraApp(
 		&app.ParamsKeeper,
 		&app.AuthzKeeper,
 		&app.CircuitBreakerKeeper,
+		&app.EvidenceKeeper,
 	); err != nil {
 		return nil, err
 	}
