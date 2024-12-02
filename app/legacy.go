@@ -3,6 +3,7 @@ package app
 import (
 	"cosmossdk.io/core/appmodule"
 	storetypes "cosmossdk.io/store/types"
+	"github.com/allora-network/allora-chain/app/keepers"
 	alloramath "github.com/allora-network/allora-chain/math"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -32,6 +33,10 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
+
+	feemarket "github.com/skip-mev/feemarket/x/feemarket"
+	feemarketkeeper "github.com/skip-mev/feemarket/x/feemarket/keeper"
+	feemarkettypes "github.com/skip-mev/feemarket/x/feemarket/types"
 )
 
 // registerLegacyModules manually initializes and wire legacy (e.g. IBC) modules with the app.
@@ -170,11 +175,35 @@ func (app *AlloraApp) registerLegacyModules() {
 	}
 }
 
+// registerFeeMarketModule registers the feemarket module.
+func (app *AlloraApp) registerFeeMarketModule() {
+	if err := app.RegisterStores(
+		storetypes.NewKVStoreKey(feemarkettypes.StoreKey),
+	); err != nil {
+		panic(err)
+	}
+
+	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
+		app.appCodec,
+		app.GetKey(feemarkettypes.StoreKey),
+		app.AccountKeeper,
+		&keepers.DefaultFeemarketDenomResolver{},
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
+	if err := app.RegisterModules(
+		feemarket.NewAppModule(app.appCodec, *app.FeeMarketKeeper),
+	); err != nil {
+		panic(err)
+	}
+}
+
 // RegisterLegacyModules manually register legacy (e.g. IBC) interfaces and returns related modules.
 // This is used on the client side only to allow the wiring with `autocli`.
 // These modules currently does not support dependency injection, as soon as they do, this should be removed.
 func RegisterLegacyModules(registry cdctypes.InterfaceRegistry) map[string]appmodule.AppModule {
 	modules := map[string]appmodule.AppModule{
+		feemarkettypes.ModuleName:   feemarket.AppModule{AppModuleBasic: feemarket.AppModuleBasic{}},
 		capabilitytypes.ModuleName:  capability.AppModule{AppModuleBasic: capability.AppModuleBasic{}},
 		ibcexported.ModuleName:      ibc.AppModule{AppModuleBasic: ibc.AppModuleBasic{}},
 		ibctransfertypes.ModuleName: ibctransfer.AppModule{AppModuleBasic: ibctransfer.AppModuleBasic{}},

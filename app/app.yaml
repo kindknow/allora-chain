@@ -18,15 +18,18 @@ modules:
         # staking module is required if HistoricalEntries param > 0
         - staking
         - mint
+        - feemarket
         - ibc
         - authz
 
       # Only modules providing an EndBlock func are listed here.
       end_blockers:
         - gov
+        - feemarket
         # staking must come after gov.
         - staking
         - emissions
+        - feegrant
 
       # Only modules providing an InitGenesis func are listed here.
       init_genesis:
@@ -45,12 +48,15 @@ modules:
         # - after auth so that it can access the params from auth;
         - genutil
         - authz
+        - feegrant
         - transfer
         - interchainaccounts
         - feeibc
         - upgrade
         - consensus
         - circuit
+        # feemarket must be after genutil to allow genesis transactions with 0fees
+        - feemarket
         - emissions
 
       override_store_keys:
@@ -79,6 +85,8 @@ modules:
         - account: interchainaccounts
         - account: gov
           permissions: [burner]
+        - account: feemarket-fee-collector
+        - account: feemarket
   - name: gov
     config:
       "@type": cosmos.gov.module.v1.Module
@@ -123,3 +131,6 @@ modules:
   - name: slashing
     config:
       "@type": cosmos.slashing.module.v1.Module
+  - name: feegrant
+    config:
+      "@type": cosmos.feegrant.module.v1.Module

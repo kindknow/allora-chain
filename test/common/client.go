@@ -81,6 +81,7 @@ func NewClient(
 			cosmosclient.WithHome(alloraHomeDir),
 			cosmosclient.WithGas("auto"),
 			cosmosclient.WithGasAdjustment(1.2),
+			cosmosclient.WithFees("10000000uallo"),
 		)
 		require.NoError(t, err)
 		ccCtx := cosmosClient.Context()

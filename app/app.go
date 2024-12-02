@@ -13,6 +13,7 @@ import (
 
 	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/telemetry"
+	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 
@@ -24,46 +25,30 @@ import (
 	dbm "github.com/cosmos/cosmos-db"
 
 	storetypes "cosmossdk.io/store/types"
-	circuitkeeper "cosmossdk.io/x/circuit/keeper"
-	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
-	emissionsKeeper "github.com/allora-network/allora-chain/x/emissions/keeper"
-	mintkeeper "github.com/allora-network/allora-chain/x/mint/keeper"
+	"github.com/allora-network/allora-chain/app/keepers"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
-	icacontrollerkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/keeper"
-	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"
-	ibcfeekeeper "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/keeper"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	metrics "github.com/hashicorp/go-metrics"
 
 	_ "cosmossdk.io/api/cosmos/tx/config/v1" // import for side-effects
 	_ "cosmossdk.io/x/circuit"               // import for side-effects
+	_ "cosmossdk.io/x/feegrant/module"       // import for side-effects
 	_ "cosmossdk.io/x/upgrade"
 	_ "github.com/allora-network/allora-chain/x/emissions/module"
 	_ "github.com/allora-network/allora-chain/x/mint/module" // import for side-effects
@@ -96,39 +81,12 @@ var (
 // capabilities aren't needed for testing.
 type AlloraApp struct {
 	*runtime.App
+	keepers.AppKeepers
+
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec
 	txConfig          client.TxConfig
 	interfaceRegistry codectypes.InterfaceRegistry
-
-	// keepers
-	AccountKeeper         authkeeper.AccountKeeper
-	AuthzKeeper           authzkeeper.Keeper
-	CircuitBreakerKeeper  circuitkeeper.Keeper
-	BankKeeper            bankkeeper.Keeper
-	StakingKeeper         *stakingkeeper.Keeper
-	DistrKeeper           distrkeeper.Keeper
-	ConsensusParamsKeeper consensuskeeper.Keeper
-	MintKeeper            mintkeeper.Keeper
-	GovKeeper             *govkeeper.Keeper
-	EmissionsKeeper       emissionsKeeper.Keeper
-	ParamsKeeper          paramskeeper.Keeper
-	UpgradeKeeper         *upgradekeeper.Keeper
-	SlashingKeeper        slashingkeeper.Keeper
-
-	// IBC
-	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	CapabilityKeeper    *capabilitykeeper.Keeper
-	IBCFeeKeeper        ibcfeekeeper.Keeper
-	ICAControllerKeeper icacontrollerkeeper.Keeper
-	ICAHostKeeper       icahostkeeper.Keeper
-	TransferKeeper      ibctransferkeeper.Keeper
-
-	// Scoped IBC
-	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
-	ScopedIBCTransferKeeper   capabilitykeeper.ScopedKeeper
-	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
-	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
 	// simulation manager
 	sm *module.SimulationManager
@@ -200,6 +158,7 @@ func NewAlloraApp(
 				appOpts,
 			),
 		),
+
 		&appBuilder,
 		&app.appCodec,
 		&app.legacyAmino,
@@ -207,6 +166,7 @@ func NewAlloraApp(
 		&app.interfaceRegistry,
 		&app.AccountKeeper,
 		&app.BankKeeper,
+		&app.FeeGrantKeeper,
 		&app.StakingKeeper,
 		&app.SlashingKeeper,
 		&app.DistrKeeper,
@@ -228,6 +188,9 @@ func NewAlloraApp(
 	// Register legacy modules
 	app.registerLegacyModules()
 
+	// Register feemarket module
+	app.registerFeeMarketModule()
+
 	// register streaming services
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
 		return nil, err
@@ -238,7 +201,8 @@ func NewAlloraApp(
 	app.sm = module.NewSimulationManagerFromAppModules(app.ModuleManager.Modules, make(map[string]module.AppModuleSimulation, 0))
 	app.sm.RegisterStoreDecoders()
 
-	app.setupUpgradeHandlers()
+	app.setupUpgradeHandlers(&app.AppKeepers)
+	app.setupUpgradeStoreLoaders()
 
 	app.SetInitChainer(func(ctx sdk.Context, req *abci.RequestInitChain) (*abci.ResponseInitChain, error) {
 		err := app.UpgradeKeeper.SetModuleVersionMap(ctx, app.ModuleManager.GetVersionMap())
@@ -247,6 +211,43 @@ func NewAlloraApp(
 		}
 		return app.App.InitChainer(ctx, req)
 	})
+
+	// Create a global ante handler that will be called on each transaction when
+	// proposals are being built and verified.
+	anteHandlerOptions := ante.HandlerOptions{
+		AccountKeeper:          app.AccountKeeper,
+		BankKeeper:             app.BankKeeper,
+		FeegrantKeeper:         app.FeeGrantKeeper,
+		SigGasConsumer:         ante.DefaultSigVerificationGasConsumer,
+		SignModeHandler:        app.txConfig.SignModeHandler(),
+		TxFeeChecker:           nil,
+		ExtensionOptionChecker: nil,
+	}
+
+	anteOptions := AnteHandlerOptions{
+		BaseOptions:     anteHandlerOptions,
+		AccountKeeper:   app.AccountKeeper,
+		BankKeeper:      app.BankKeeper,
+		FeeMarketKeeper: app.FeeMarketKeeper,
+	}
+	anteHandler, err := NewAnteHandler(anteOptions)
+	if err != nil {
+		panic(err)
+	}
+
+	postHandlerOptions := PostHandlerOptions{
+		AccountKeeper:   app.AccountKeeper,
+		BankKeeper:      app.BankKeeper,
+		FeeMarketKeeper: app.FeeMarketKeeper,
+	}
+	postHandler, err := NewPostHandler(postHandlerOptions)
+	if err != nil {
+		panic(err)
+	}
+
+	// set ante and post handlers
+	app.SetAnteHandler(anteHandler)
+	app.SetPostHandler(postHandler)
 
 	if err := app.Load(loadLatest); err != nil {
 		return nil, err
