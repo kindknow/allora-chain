@@ -229,6 +229,7 @@ func NewAlloraApp(
 		AccountKeeper:   app.AccountKeeper,
 		BankKeeper:      app.BankKeeper,
 		FeeMarketKeeper: app.FeeMarketKeeper,
+		CircuitKeeper:   &app.CircuitBreakerKeeper,
 	}
 	anteHandler, err := NewAnteHandler(anteOptions)
 	if err != nil {
