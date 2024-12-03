@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
+	evidencekeeper "cosmossdk.io/x/evidence/keeper"
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
 	emissionsKeeper "github.com/allora-network/allora-chain/x/emissions/keeper"
@@ -43,6 +44,7 @@ type AppKeepers struct {
 	UpgradeKeeper         *upgradekeeper.Keeper
 	SlashingKeeper        slashingkeeper.Keeper
 	FeeGrantKeeper        feegrantkeeper.Keeper
+	EvidenceKeeper        evidencekeeper.Keeper
 
 	// IBC
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly

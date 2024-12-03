@@ -46,21 +46,22 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 	metrics "github.com/hashicorp/go-metrics"
 
-	_ "cosmossdk.io/api/cosmos/tx/config/v1" // import for side-effects
-	_ "cosmossdk.io/x/circuit"               // import for side-effects
-	_ "cosmossdk.io/x/feegrant/module"       // import for side-effects
-	_ "cosmossdk.io/x/upgrade"
-	_ "github.com/allora-network/allora-chain/x/emissions/module"
-	_ "github.com/allora-network/allora-chain/x/mint/module" // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/auth"                  // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config"        // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/authz/module"          // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/bank"                  // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/consensus"             // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/distribution"          // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/params"                // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/slashing"              // import for side-effects
-	_ "github.com/cosmos/cosmos-sdk/x/staking"               // import for side-effects
+	_ "cosmossdk.io/api/cosmos/tx/config/v1"                      // import for side-effects
+	_ "cosmossdk.io/x/circuit"                                    // import for side-effects
+	_ "cosmossdk.io/x/evidence"                                   // import for side-effects
+	_ "cosmossdk.io/x/feegrant/module"                            // import for side-effects
+	_ "cosmossdk.io/x/upgrade"                                    // import for side-effects
+	_ "github.com/allora-network/allora-chain/x/emissions/module" // import for side-effects
+	_ "github.com/allora-network/allora-chain/x/mint/module"      // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/auth"                       // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config"             // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/authz/module"               // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/bank"                       // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/consensus"                  // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/distribution"               // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/params"                     // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/slashing"                   // import for side-effects
+	_ "github.com/cosmos/cosmos-sdk/x/staking"                    // import for side-effects
 
 	"github.com/allora-network/allora-chain/health"
 )
@@ -178,6 +179,7 @@ func NewAlloraApp(
 		&app.ParamsKeeper,
 		&app.AuthzKeeper,
 		&app.CircuitBreakerKeeper,
+		&app.EvidenceKeeper,
 	); err != nil {
 		return nil, err
 	}

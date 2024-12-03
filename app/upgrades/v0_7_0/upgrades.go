@@ -5,6 +5,7 @@ import (
 
 	cosmosmath "cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
+	evidencetypes "cosmossdk.io/x/evidence/types"
 	"cosmossdk.io/x/feegrant"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/allora-network/allora-chain/app/keepers"
@@ -24,7 +25,9 @@ var Upgrade = upgrades.Upgrade{
 	CreateUpgradeHandler: CreateUpgradeHandler,
 	StoreUpgrades: storetypes.StoreUpgrades{
 		Added: []string{
-			feegrant.StoreKey, feemarkettypes.StoreKey,
+			feegrant.StoreKey,
+			feemarkettypes.StoreKey,
+			evidencetypes.StoreKey,
 		},
 		Renamed: nil,
 		Deleted: nil,

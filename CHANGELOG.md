@@ -116,6 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * [612](https://github.com/allora-network/allora-chain/pull/612) Load testnet state into local fork via in-place-testnet command 
+* [688](https://github.com/allora-network/allora-chain/pull/688) Add the `evidence` module.
 
 ### Security
 
