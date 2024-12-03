@@ -65,7 +65,7 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		PNormSafeDiv:                        []alloraMath.Dec{alloraMath.ZeroDec()},
 		GlobalWhitelistEnabled:              []bool{true},
 		TopicCreatorWhitelistEnabled:        []bool{true},
-		MinExperiencedWorkerRegrets:         []int64{1234},
+		MinExperiencedWorkerRegrets:         []uint64{1234},
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

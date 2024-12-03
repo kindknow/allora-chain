@@ -2090,7 +2090,7 @@ func (x *_OptionalParams_51_list) IsValid() bool {
 var _ protoreflect.List = (*_OptionalParams_52_list)(nil)
 
 type _OptionalParams_52_list struct {
-	list *[]int64
+	list *[]uint64
 }
 
 func (x *_OptionalParams_52_list) Len() int {
@@ -2101,17 +2101,17 @@ func (x *_OptionalParams_52_list) Len() int {
 }
 
 func (x *_OptionalParams_52_list) Get(i int) protoreflect.Value {
-	return protoreflect.ValueOfInt64((*x.list)[i])
+	return protoreflect.ValueOfUint64((*x.list)[i])
 }
 
 func (x *_OptionalParams_52_list) Set(i int, value protoreflect.Value) {
-	valueUnwrapped := value.Int()
+	valueUnwrapped := value.Uint()
 	concreteValue := valueUnwrapped
 	(*x.list)[i] = concreteValue
 }
 
 func (x *_OptionalParams_52_list) Append(value protoreflect.Value) {
-	valueUnwrapped := value.Int()
+	valueUnwrapped := value.Uint()
 	concreteValue := valueUnwrapped
 	*x.list = append(*x.list, concreteValue)
 }
@@ -2125,8 +2125,8 @@ func (x *_OptionalParams_52_list) Truncate(n int) {
 }
 
 func (x *_OptionalParams_52_list) NewElement() protoreflect.Value {
-	v := int64(0)
-	return protoreflect.ValueOfInt64(v)
+	v := uint64(0)
+	return protoreflect.ValueOfUint64(v)
 }
 
 func (x *_OptionalParams_52_list) IsValid() bool {
@@ -3578,7 +3578,7 @@ func (x *fastReflection_OptionalParams) Mutable(fd protoreflect.FieldDescriptor)
 		return protoreflect.ValueOfList(value)
 	case "emissions.v6.OptionalParams.min_experienced_worker_regrets":
 		if x.MinExperiencedWorkerRegrets == nil {
-			x.MinExperiencedWorkerRegrets = []int64{}
+			x.MinExperiencedWorkerRegrets = []uint64{}
 		}
 		value := &_OptionalParams_52_list{list: &x.MinExperiencedWorkerRegrets}
 		return protoreflect.ValueOfList(value)
@@ -3731,7 +3731,7 @@ func (x *fastReflection_OptionalParams) NewField(fd protoreflect.FieldDescriptor
 		list := []bool{}
 		return protoreflect.ValueOfList(&_OptionalParams_51_list{list: &list})
 	case "emissions.v6.OptionalParams.min_experienced_worker_regrets":
-		list := []int64{}
+		list := []uint64{}
 		return protoreflect.ValueOfList(&_OptionalParams_52_list{list: &list})
 	default:
 		if fd.IsExtension() {
@@ -4127,8 +4127,7 @@ func (x *fastReflection_OptionalParams) ProtoMethods() *protoiface.Methods {
 			}
 			i -= pksize2
 			j1 := i
-			for _, num1 := range x.MinExperiencedWorkerRegrets {
-				num := uint64(num1)
+			for _, num := range x.MinExperiencedWorkerRegrets {
 				for num >= 1<<7 {
 					dAtA[j1] = uint8(uint64(num)&0x7f | 0x80)
 					num >>= 7
@@ -7181,7 +7180,7 @@ func (x *fastReflection_OptionalParams) ProtoMethods() *protoiface.Methods {
 				}
 			case 52:
 				if wireType == 0 {
-					var v int64
+					var v uint64
 					for shift := uint(0); ; shift += 7 {
 						if shift >= 64 {
 							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
@@ -7191,7 +7190,7 @@ func (x *fastReflection_OptionalParams) ProtoMethods() *protoiface.Methods {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= int64(b&0x7F) << shift
+						v |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -7232,10 +7231,10 @@ func (x *fastReflection_OptionalParams) ProtoMethods() *protoiface.Methods {
 					}
 					elementCount = count
 					if elementCount != 0 && len(x.MinExperiencedWorkerRegrets) == 0 {
-						x.MinExperiencedWorkerRegrets = make([]int64, 0, elementCount)
+						x.MinExperiencedWorkerRegrets = make([]uint64, 0, elementCount)
 					}
 					for iNdEx < postIndex {
-						var v int64
+						var v uint64
 						for shift := uint(0); ; shift += 7 {
 							if shift >= 64 {
 								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
@@ -7245,7 +7244,7 @@ func (x *fastReflection_OptionalParams) ProtoMethods() *protoiface.Methods {
 							}
 							b := dAtA[iNdEx]
 							iNdEx++
-							v |= int64(b&0x7F) << shift
+							v |= uint64(b&0x7F) << shift
 							if b < 0x80 {
 								break
 							}
@@ -32816,7 +32815,7 @@ type OptionalParams struct {
 	PNormSafeDiv                        []string `protobuf:"bytes,49,rep,name=p_norm_safe_div,json=pNormSafeDiv,proto3" json:"p_norm_safe_div,omitempty"`
 	GlobalWhitelistEnabled              []bool   `protobuf:"varint,50,rep,packed,name=global_whitelist_enabled,json=globalWhitelistEnabled,proto3" json:"global_whitelist_enabled,omitempty"`
 	TopicCreatorWhitelistEnabled        []bool   `protobuf:"varint,51,rep,packed,name=topic_creator_whitelist_enabled,json=topicCreatorWhitelistEnabled,proto3" json:"topic_creator_whitelist_enabled,omitempty"`
-	MinExperiencedWorkerRegrets         []int64  `protobuf:"varint,52,rep,packed,name=min_experienced_worker_regrets,json=minExperiencedWorkerRegrets,proto3" json:"min_experienced_worker_regrets,omitempty"`
+	MinExperiencedWorkerRegrets         []uint64 `protobuf:"varint,52,rep,packed,name=min_experienced_worker_regrets,json=minExperiencedWorkerRegrets,proto3" json:"min_experienced_worker_regrets,omitempty"`
 }
 
 func (x *OptionalParams) Reset() {
@@ -33154,7 +33153,7 @@ func (x *OptionalParams) GetTopicCreatorWhitelistEnabled() []bool {
 	return nil
 }
 
-func (x *OptionalParams) GetMinExperiencedWorkerRegrets() []int64 {
+func (x *OptionalParams) GetMinExperiencedWorkerRegrets() []uint64 {
 	if x != nil {
 		return x.MinExperiencedWorkerRegrets
 	}
@@ -35635,7 +35634,7 @@ var file_emissions_v6_tx_proto_rawDesc = []byte{
 	0x6f, 0x72, 0x57, 0x68, 0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x61, 0x62, 0x6c,
 	0x65, 0x64, 0x12, 0x43, 0x0a, 0x1e, 0x6d, 0x69, 0x6e, 0x5f, 0x65, 0x78, 0x70, 0x65, 0x72, 0x69,
 	0x65, 0x6e, 0x63, 0x65, 0x64, 0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x5f, 0x72, 0x65, 0x67,
-	0x72, 0x65, 0x74, 0x73, 0x18, 0x34, 0x20, 0x03, 0x28, 0x03, 0x52, 0x1b, 0x6d, 0x69, 0x6e, 0x45,
+	0x72, 0x65, 0x74, 0x73, 0x18, 0x34, 0x20, 0x03, 0x28, 0x04, 0x52, 0x1b, 0x6d, 0x69, 0x6e, 0x45,
 	0x78, 0x70, 0x65, 0x72, 0x69, 0x65, 0x6e, 0x63, 0x65, 0x64, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72,
 	0x52, 0x65, 0x67, 0x72, 0x65, 0x74, 0x73, 0x4a, 0x04, 0x08, 0x04, 0x10, 0x05, 0x4a, 0x04, 0x08,
 	0x1a, 0x10, 0x1b, 0x4a, 0x04, 0x08, 0x1b, 0x10, 0x1c, 0x4a, 0x04, 0x08, 0x27, 0x10, 0x28, 0x4a,

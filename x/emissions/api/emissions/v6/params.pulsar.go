@@ -451,8 +451,8 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
-	if x.MinExperiencedWorkerRegrets != int64(0) {
-		value := protoreflect.ValueOfInt64(x.MinExperiencedWorkerRegrets)
+	if x.MinExperiencedWorkerRegrets != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.MinExperiencedWorkerRegrets)
 		if !f(fd_Params_min_experienced_worker_regrets, value) {
 			return
 		}
@@ -563,7 +563,7 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 	case "emissions.v6.Params.topic_creator_whitelist_enabled":
 		return x.TopicCreatorWhitelistEnabled != false
 	case "emissions.v6.Params.min_experienced_worker_regrets":
-		return x.MinExperiencedWorkerRegrets != int64(0)
+		return x.MinExperiencedWorkerRegrets != uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: emissions.v6.Params"))
@@ -671,7 +671,7 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 	case "emissions.v6.Params.topic_creator_whitelist_enabled":
 		x.TopicCreatorWhitelistEnabled = false
 	case "emissions.v6.Params.min_experienced_worker_regrets":
-		x.MinExperiencedWorkerRegrets = int64(0)
+		x.MinExperiencedWorkerRegrets = uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: emissions.v6.Params"))
@@ -825,7 +825,7 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 		return protoreflect.ValueOfBool(value)
 	case "emissions.v6.Params.min_experienced_worker_regrets":
 		value := x.MinExperiencedWorkerRegrets
-		return protoreflect.ValueOfInt64(value)
+		return protoreflect.ValueOfUint64(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: emissions.v6.Params"))
@@ -937,7 +937,7 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 	case "emissions.v6.Params.topic_creator_whitelist_enabled":
 		x.TopicCreatorWhitelistEnabled = value.Bool()
 	case "emissions.v6.Params.min_experienced_worker_regrets":
-		x.MinExperiencedWorkerRegrets = value.Int()
+		x.MinExperiencedWorkerRegrets = value.Uint()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: emissions.v6.Params"))
@@ -1154,7 +1154,7 @@ func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protor
 	case "emissions.v6.Params.topic_creator_whitelist_enabled":
 		return protoreflect.ValueOfBool(false)
 	case "emissions.v6.Params.min_experienced_worker_regrets":
-		return protoreflect.ValueOfInt64(int64(0))
+		return protoreflect.ValueOfUint64(uint64(0))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: emissions.v6.Params"))
@@ -3017,7 +3017,7 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					x.MinExperiencedWorkerRegrets |= int64(b&0x7F) << shift
+					x.MinExperiencedWorkerRegrets |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3138,8 +3138,8 @@ type Params struct {
 	PNormSafeDiv            string `protobuf:"bytes,49,opt,name=p_norm_safe_div,json=pNormSafeDiv,proto3" json:"p_norm_safe_div,omitempty"`
 	GlobalWhitelistEnabled  bool   `protobuf:"varint,50,opt,name=global_whitelist_enabled,json=globalWhitelistEnabled,proto3" json:"global_whitelist_enabled,omitempty"` // global whitelist enabled => all global whitelisted actors can create topics
 	// and participate in all topics as workers and reputers
-	TopicCreatorWhitelistEnabled bool  `protobuf:"varint,51,opt,name=topic_creator_whitelist_enabled,json=topicCreatorWhitelistEnabled,proto3" json:"topic_creator_whitelist_enabled,omitempty"` // topic creator whitelist enabled => only topic creator whitelisted actors can create topics
-	MinExperiencedWorkerRegrets  int64 `protobuf:"varint,52,opt,name=min_experienced_worker_regrets,json=minExperiencedWorkerRegrets,proto3" json:"min_experienced_worker_regrets,omitempty"`    // minimum number of experienced workers required to use their regrets for calculating the topic initial regret
+	TopicCreatorWhitelistEnabled bool   `protobuf:"varint,51,opt,name=topic_creator_whitelist_enabled,json=topicCreatorWhitelistEnabled,proto3" json:"topic_creator_whitelist_enabled,omitempty"` // topic creator whitelist enabled => only topic creator whitelisted actors can create topics
+	MinExperiencedWorkerRegrets  uint64 `protobuf:"varint,52,opt,name=min_experienced_worker_regrets,json=minExperiencedWorkerRegrets,proto3" json:"min_experienced_worker_regrets,omitempty"`    // minimum number of experienced workers required to use their regrets
 }
 
 func (x *Params) Reset() {
@@ -3477,7 +3477,7 @@ func (x *Params) GetTopicCreatorWhitelistEnabled() bool {
 	return false
 }
 
-func (x *Params) GetMinExperiencedWorkerRegrets() int64 {
+func (x *Params) GetMinExperiencedWorkerRegrets() uint64 {
 	if x != nil {
 		return x.MinExperiencedWorkerRegrets
 	}
@@ -3727,7 +3727,7 @@ var file_emissions_v6_params_proto_rawDesc = []byte{
 	0x69, 0x74, 0x65, 0x6c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x64, 0x12, 0x43,
 	0x0a, 0x1e, 0x6d, 0x69, 0x6e, 0x5f, 0x65, 0x78, 0x70, 0x65, 0x72, 0x69, 0x65, 0x6e, 0x63, 0x65,
 	0x64, 0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x5f, 0x72, 0x65, 0x67, 0x72, 0x65, 0x74, 0x73,
-	0x18, 0x34, 0x20, 0x01, 0x28, 0x03, 0x52, 0x1b, 0x6d, 0x69, 0x6e, 0x45, 0x78, 0x70, 0x65, 0x72,
+	0x18, 0x34, 0x20, 0x01, 0x28, 0x04, 0x52, 0x1b, 0x6d, 0x69, 0x6e, 0x45, 0x78, 0x70, 0x65, 0x72,
 	0x69, 0x65, 0x6e, 0x63, 0x65, 0x64, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x67, 0x72,
 	0x65, 0x74, 0x73, 0x4a, 0x04, 0x08, 0x04, 0x10, 0x05, 0x4a, 0x04, 0x08, 0x1a, 0x10, 0x1b, 0x4a,
 	0x04, 0x08, 0x1b, 0x10, 0x1c, 0x4a, 0x04, 0x08, 0x27, 0x10, 0x28, 0x4a, 0x04, 0x08, 0x29, 0x10,

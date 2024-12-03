@@ -3815,7 +3815,7 @@ func mockUninitializedParams() types.Params {
 		PNormSafeDiv:                        alloraMath.ZeroDec(),
 		GlobalWhitelistEnabled:              true,
 		TopicCreatorWhitelistEnabled:        true,
-		MinExperiencedWorkerRegrets:         int64(10),
+		MinExperiencedWorkerRegrets:         uint64(10),
 	}
 }
 
