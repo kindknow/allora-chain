@@ -57,11 +57,27 @@ func simulateSetUp(
 	registeredReputersMapRand := rand.New(rand.NewSource(int64(seed)))
 	reputerStakesMapRand := rand.New(rand.NewSource(int64(seed)))
 	delegatorStakesMapRand := rand.New(rand.NewSource(int64(seed)))
+	topicCreatorsMapRand := rand.New(rand.NewSource(int64(seed)))
+	adminWhitelistMapRand := rand.New(rand.NewSource(int64(seed)))
+	globalWhitelistMapRand := rand.New(rand.NewSource(int64(seed)))
+	topicCreatorsWhitelistMapRand := rand.New(rand.NewSource(int64(seed)))
+	topicWorkersWhitelistEnabledMapRand := rand.New(rand.NewSource(int64(seed)))
+	topicReputersWhitelistEnabledMapRand := rand.New(rand.NewSource(int64(seed)))
+	topicWorkersWhitelistMapRand := rand.New(rand.NewSource(int64(seed)))
+	topicReputersWhitelistMapRand := rand.New(rand.NewSource(int64(seed)))
 
 	registeredWorkers := testcommon.NewRandomKeyMap[Registration, struct{}](registeredWorkersMapRand)
 	registeredReputers := testcommon.NewRandomKeyMap[Registration, struct{}](registeredReputersMapRand)
 	reputerStakes := testcommon.NewRandomKeyMap[Registration, struct{}](reputerStakesMapRand)
 	delegatorStakes := testcommon.NewRandomKeyMap[Delegation, struct{}](delegatorStakesMapRand)
+	topicCreators := testcommon.NewRandomKeyMap[uint64, Actor](topicCreatorsMapRand)
+	adminWhitelist := testcommon.NewRandomKeyMap[Actor, struct{}](adminWhitelistMapRand)
+	globalWhitelist := testcommon.NewRandomKeyMap[Actor, struct{}](globalWhitelistMapRand)
+	topicCreatorsWhitelist := testcommon.NewRandomKeyMap[Actor, struct{}](topicCreatorsWhitelistMapRand)
+	topicWorkersWhitelistEnabled := testcommon.NewRandomKeyMap[uint64, struct{}](topicWorkersWhitelistEnabledMapRand)
+	topicReputersWhitelistEnabled := testcommon.NewRandomKeyMap[uint64, struct{}](topicReputersWhitelistEnabledMapRand)
+	topicWorkersWhitelist := testcommon.NewRandomKeyMap[TopicWhitelistEntry, struct{}](topicWorkersWhitelistMapRand)
+	topicReputersWhitelist := testcommon.NewRandomKeyMap[TopicWhitelistEntry, struct{}](topicReputersWhitelistMapRand)
 
 	data := SimulationData{
 		epochLength: int64(epochLength),
@@ -82,12 +98,21 @@ func simulateSetUp(
 			collectDelegatorRewards:    0,
 			doInferenceAndReputation:   0,
 		},
-		registeredWorkers:  registeredWorkers,
-		registeredReputers: registeredReputers,
-		reputerStakes:      reputerStakes,
-		delegatorStakes:    delegatorStakes,
-		mode:               mode,
-		failOnErr:          false,
+		registeredWorkers:             registeredWorkers,
+		registeredReputers:            registeredReputers,
+		reputerStakes:                 reputerStakes,
+		delegatorStakes:               delegatorStakes,
+		topicCreators:                 topicCreators,
+		adminWhitelist:                adminWhitelist,
+		globalWhitelist:               globalWhitelist,
+		topicCreatorsWhitelist:        topicCreatorsWhitelist,
+		topicWorkersWhitelistEnabled:  topicWorkersWhitelistEnabled,
+		topicReputersWhitelistEnabled: topicReputersWhitelistEnabled,
+		topicWorkersWhitelist:         topicWorkersWhitelist,
+		topicReputersWhitelist:        topicReputersWhitelist,
+
+		mode:      mode,
+		failOnErr: false,
 	}
 	// if we're in manual mode or behaving mode we want to fail on errors
 	if mode == fuzzcommon.Manual || mode == fuzzcommon.Behave {
@@ -517,15 +542,21 @@ func simulateAutomaticInitialState(
 
 	// additive actions
 
-	// create two topics
+	// create two topics with both reputers and workers whitelist enabled
 	success := createTopic(m, faucet, UnusedActor, nil, 0, data, iterationCount)
 	require.True(m.T, success)
 	iterationCount++
 	success = createTopic(m, faucet, UnusedActor, nil, 0, data, iterationCount)
 	require.True(m.T, success)
 	iterationCount++
-	// pick 4 reputers, 4 workers, and 2 delegators
+	// pick 4 reputers, 5 workers, and 2 delegators
 	startReputers, startWorkers, startDelegators := pickAutoSetupActors(m, data)
+
+	// put 2 reputers & 2 workers & 1 delegator in global whitelist
+	// put other reputers & workers in related topics whitelists
+	// add 2 reputers in admin whitelist
+	// add 3 workers & 1 delegator to create topic whitelist
+
 	// register all 4 reputers on both topics
 	iterationCount = startRegisterReputers(m, data, startReputers, listTopics, iterationCount)
 	// register all 5 workers on both topics

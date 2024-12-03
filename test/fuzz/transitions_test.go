@@ -374,6 +374,12 @@ func pickActorAndTopicIdForStateTransition(
 			return true, UnusedActor, UnusedActor, nil, topicId
 		}
 		return false, UnusedActor, UnusedActor, nil, 0
+	case "createTopic":
+		creator, err := data.pickRandomTopicCreator(m)
+		if err != nil {
+			return false, UnusedActor, UnusedActor, nil, 0
+		}
+		return true, creator, UnusedActor, nil, 0
 	default:
 		return pickFullRandomValues(m, data)
 	}
