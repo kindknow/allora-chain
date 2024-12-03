@@ -67,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#654](https://github.com/allora-network/allora-chain/pull/654) Reorganize Linter Folder, add linter to check fuzzer state transition probabilities add to 100 percent. (Integrated as part of #653)
 * [#685](https://github.com/allora-network/allora-chain/pull/685) Add burner permission to gov module
 * [#627](https://github.com/allora-network/allora-chain/pull/627) Add fee market and fee grant module
+* [#689](https://github.com/allora-network/allora-chain/pull/689) Add the `CircuitBreakerDecorator` to the `AnteHandler`
 
 ### Changed
 * [#670](https://github.com/allora-network/allora-chain/pull/670) Adjust topic initial regret initialization 

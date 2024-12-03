@@ -3,6 +3,7 @@ package app
 import (
 	errorsmod "cosmossdk.io/errors"
 
+	circuitante "cosmossdk.io/x/circuit/ante"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -19,6 +20,7 @@ type AnteHandlerOptions struct {
 	BankKeeper      feemarketante.BankKeeper
 	AccountKeeper   feemarketante.AccountKeeper
 	FeeMarketKeeper feemarketante.FeeMarketKeeper
+	CircuitKeeper   circuitante.CircuitBreaker
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
@@ -47,6 +49,7 @@ func NewAnteHandler(options AnteHandlerOptions) (sdk.AnteHandler, error) {
 
 	anteDecorators := []sdk.AnteDecorator{
 		authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		circuitante.NewCircuitBreakerDecorator(options.CircuitKeeper),
 		authante.NewExtensionOptionsDecorator(options.BaseOptions.ExtensionOptionChecker),
 		authante.NewValidateBasicDecorator(),
 		authante.NewTxTimeoutHeightDecorator(),
