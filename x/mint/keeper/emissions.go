@@ -30,7 +30,8 @@ func GetLockedVestingTokens(
 	fullInvestors := percentInvestors.Mul(maxSupply).TruncateInt()
 	fullPreseedInvestors := percentPreseedInvestors.Mul(maxSupply).TruncateInt()
 	fullTeam := percentTeam.Mul(maxSupply).TruncateInt()
-	if blockHeight.LT(blocksInAYear) && monthsUnlocked.IsZero() {
+	twelve := math.LegacyNewDec(12)
+	if blockHeight.LT(blocksInAYear) && monthsUnlocked.LT(twelve) {
 		// less than a year, completely locked
 		investors = fullInvestors
 		preseedInvestors = fullPreseedInvestors
@@ -41,8 +42,11 @@ func GetLockedVestingTokens(
 		thirtySix := math.LegacyNewDec(36)
 		// calculate whether the number of months unlocked should be allowed to increase
 		calcMonthsUnlocked := blockHeight.Quo(math.NewIntFromUint64(blocksPerMonth)).ToLegacyDec()
-		if calcMonthsUnlocked.GT(thirtySix) {
+		if calcMonthsUnlocked.GTE(thirtySix) {
 			calcMonthsUnlocked = thirtySix
+		}
+		if monthsUnlocked.GTE(thirtySix) {
+			monthsUnlocked = thirtySix
 		}
 		if calcMonthsUnlocked.GT(monthsUnlocked) {
 			monthsUnlocked = calcMonthsUnlocked

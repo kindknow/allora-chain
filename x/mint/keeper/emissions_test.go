@@ -273,7 +273,11 @@ func (s *MintKeeperTestSuite) TestGetLockedVestingTokens() {
 			types.DefaultParams(),
 			monthsUnlocked.ToLegacyDec(),
 		)
-		s.Require().Equal(monthsUnlocked, updatedMonthsUnlocked)
+		if i > 36 {
+			s.Require().True(updatedMonthsUnlocked.Equal(cosmosMath.NewIntFromUint64(uint64(36))))
+		} else {
+			s.Require().True(monthsUnlocked.Equal(updatedMonthsUnlocked), "expected %s, got %s", monthsUnlocked, updatedMonthsUnlocked)
+		}
 		resultPreseedDec, err := alloraMath.NewDecFromSdkInt(resultPreseed)
 		s.Require().NoError(err)
 		resultSeedDec, err := alloraMath.NewDecFromSdkInt(resultSeed)
