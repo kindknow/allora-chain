@@ -390,7 +390,7 @@ func GetCalcSetNetworkRegrets(args GetCalcSetNetworkRegretsArgs) error {
 	// - If we have 10 or more experienced workers, use their regrets
 	// - Otherwise, use fallback regrets which include all workers
 	regrets := fallbackRegrets
-	if len(workersRegrets) >= int(params.MinExperiencedWorkerRegrets) {
+	if uint64(len(workersRegrets)) >= params.MinExperiencedWorkerRegrets {
 		regrets = workersRegrets
 	}
 
@@ -403,7 +403,7 @@ func GetCalcSetNetworkRegrets(args GetCalcSetNetworkRegretsArgs) error {
 
 		// Set initial value to the quantile (used when we don't have enough experienced workers)
 		updatedTopicInitialRegret := quantile
-		if len(workersRegrets) >= int(params.MinExperiencedWorkerRegrets) {
+		if uint64(len(workersRegrets)) >= params.MinExperiencedWorkerRegrets {
 			updatedTopicInitialRegret, err = CalcTopicInitialRegret(
 				regrets,
 				args.EpsilonTopic,
