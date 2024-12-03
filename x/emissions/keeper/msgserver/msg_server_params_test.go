@@ -65,6 +65,7 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		PNormSafeDiv:                        []alloraMath.Dec{alloraMath.ZeroDec()},
 		GlobalWhitelistEnabled:              []bool{true},
 		TopicCreatorWhitelistEnabled:        []bool{true},
+		MinExperiencedWorkerRegrets:         []uint64{1234},
 	}
 
 	updateMsg := &types.UpdateParamsRequest{
@@ -173,6 +174,7 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 		PNormSafeDiv:                        nil,
 		GlobalWhitelistEnabled:              nil,
 		TopicCreatorWhitelistEnabled:        nil,
+		MinExperiencedWorkerRegrets:         nil,
 	}
 
 	// Creating the UpdateParamsRequest message with a non-whitelisted user

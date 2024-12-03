@@ -108,6 +108,7 @@ func MigrateParams(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 		// NEW PARAMS
 		GlobalWhitelistEnabled:       defaultParams.GlobalWhitelistEnabled,
 		TopicCreatorWhitelistEnabled: defaultParams.TopicCreatorWhitelistEnabled,
+		MinExperiencedWorkerRegrets:  defaultParams.MinExperiencedWorkerRegrets,
 	}
 
 	store.Delete(emissionstypes.ParamsKey)

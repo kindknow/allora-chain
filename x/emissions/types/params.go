@@ -57,6 +57,7 @@ func DefaultParams() Params {
 		PNormSafeDiv:                        alloraMath.MustNewDecFromString("8.25"),      // pnorm divide value to calculate offset with cnorm
 		GlobalWhitelistEnabled:              true,                                         // global whitelist enabled => all global whitelisted actors can create topics and participate in all topics as workers and reputers
 		TopicCreatorWhitelistEnabled:        true,                                         // topic creator whitelist enabled => all topic creator whitelisted actors can create topics
+		MinExperiencedWorkerRegrets:         uint64(10),                                   // minimum number of experienced workers required to use their regrets for calculating the topic initial regret
 	}
 }
 
@@ -190,6 +191,9 @@ func (p Params) Validate() error {
 	}
 	if err := validatePNormSafeDiv(p.PNormSafeDiv); err != nil {
 		return errorsmod.Wrap(err, "params validation failure: pnorm safe div")
+	}
+	if err := validateMinExperiencedWorkerRegrets(p.MinExperiencedWorkerRegrets); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: min experienced worker regrets")
 	}
 	return nil
 }
@@ -600,5 +604,10 @@ func validateDataSendingFee(i cosmosMath.Int) error {
 	if err := ValidateSdkIntRepresentingMonetaryValue(i); err != nil {
 		return errorsmod.Wrap(err, ErrValidationMustBeGreaterthanZero.Error())
 	}
+	return nil
+}
+
+// No validation needed as it is a uint
+func validateMinExperiencedWorkerRegrets(i uint64) error {
 	return nil
 }

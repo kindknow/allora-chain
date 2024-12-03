@@ -55,6 +55,7 @@ func TestDefaultParams(t *testing.T) {
 		PNormSafeDiv:                        alloraMath.MustNewDecFromString("8.25"),
 		GlobalWhitelistEnabled:              true,
 		TopicCreatorWhitelistEnabled:        true,
+		MinExperiencedWorkerRegrets:         uint64(10),
 	}
 
 	params := DefaultParams()
