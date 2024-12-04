@@ -338,6 +338,8 @@ func isValidTransition(m *testcommon.TestConfig, transition StateTransition, act
 			return false
 		}
 		return true
+	case "stakeAsReputer":
+		return data.isReputerRegisteredInTopic(topicId, actor1) && data.isReputerWhitelistedInTopic(topicId, actor1)
 	default:
 		return true
 	}
