@@ -196,7 +196,7 @@ message QueryServiceEmissionInfoResponse {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
-  string months_unlocked = 27 [
+  string months_already_unlocked = 27 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false,

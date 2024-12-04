@@ -54,7 +54,7 @@ func (q queryServer) Inflation(ctx context.Context, _ *types.QueryServiceInflati
 		Mul(math.NewIntFromUint64(blocksPerMonth)).
 		Mul(math.NewInt(12)).
 		ToLegacyDec()
-	monthsUnlocked := q.k.GetMonthsUnlocked(ctx)
+	monthsUnlocked := q.k.GetMonthsAlreadyUnlocked(ctx)
 	circulatingSupply, _, _, _, _, err := GetCirculatingSupply(ctx, q.k, moduleParams, blockHeight, blocksPerMonth, monthsUnlocked)
 	if err != nil {
 		return nil, err
@@ -104,20 +104,20 @@ func (q queryServer) EmissionInfo(ctx context.Context, _ *types.QueryServiceEmis
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get number of staked tokens")
 	}
-	monthsUnlocked := q.k.GetMonthsUnlocked(ctx)
+	monthsAlreadyUnlocked := q.k.GetMonthsAlreadyUnlocked(ctx)
 	_, lockedVestingTokensPreseed,
 		lockedVestingTokensSeed, lockedVestingTokensTeam, _ := GetLockedVestingTokens(
 		blocksPerMonth,
 		math.NewIntFromUint64(blockHeight),
 		moduleParams,
-		monthsUnlocked.ToLegacyDec(),
+		monthsAlreadyUnlocked.ToLegacyDec(),
 	)
 	circulatingSupply,
 		totalSupply,
 		lockedVestingTokensTotal,
 		ecosystemLocked,
 		updatedMonthsUnlocked,
-		err := GetCirculatingSupply(ctx, q.k, moduleParams, blockHeight, blocksPerMonth, monthsUnlocked)
+		err := GetCirculatingSupply(ctx, q.k, moduleParams, blockHeight, blocksPerMonth, monthsAlreadyUnlocked)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get circulating supply")
 	}
@@ -201,7 +201,7 @@ func (q queryServer) EmissionInfo(ctx context.Context, _ *types.QueryServiceEmis
 		ValidatorCut:                             validatorCut,
 		AlloraRewardsCut:                         alloraRewardsCut,
 		PreviousRewardEmissionPerUnitStakedToken: previousRewardEmissionPerUnitStakedToken,
-		MonthsUnlocked:                           monthsUnlocked,
+		MonthsAlreadyUnlocked:                    monthsAlreadyUnlocked,
 		UpdatedMonthsUnlocked:                    updatedMonthsUnlocked,
 	}, nil
 }

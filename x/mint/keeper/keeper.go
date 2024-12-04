@@ -105,7 +105,7 @@ func (k Keeper) AddEcosystemTokensMinted(ctx context.Context, minted math.Int) e
 
 // Setter for the number of months unlocked
 // this function coerces values to be between 0 and 36
-func (k Keeper) SetMonthsUnlocked(ctx context.Context, months math.Int) error {
+func (k Keeper) SetMonthsAlreadyUnlocked(ctx context.Context, months math.Int) error {
 	if months.IsNegative() {
 		months = math.ZeroInt()
 	}
@@ -271,7 +271,7 @@ func (k Keeper) SetRewardCurrentBlockEmission(ctx context.Context, emission math
 // Getter for the number of months unlocked
 // this Getter coerces values to be between 0 and 36
 // rather than throwing errors for invalid values stored in the keeper
-func (k Keeper) GetMonthsUnlocked(ctx context.Context) math.Int {
+func (k Keeper) GetMonthsAlreadyUnlocked(ctx context.Context) math.Int {
 	// 36 months is the maximum number of months that can be unlocked,
 	// since tokens are on a three year vesting cycle
 	thirtySix := math.NewInt(36)

@@ -17,7 +17,7 @@ func GetLockedVestingTokens(
 	blocksPerMonth uint64,
 	blockHeight math.Int,
 	params types.Params,
-	monthsUnlocked math.LegacyDec,
+	monthsAlreadyUnlocked math.LegacyDec,
 ) (total, preseedInvestors, investors, team math.Int, updatedMonthsUnlocked math.Int) {
 	// foundation is unlocked from genesis
 	// participants are unlocked from genesis
@@ -31,7 +31,7 @@ func GetLockedVestingTokens(
 	fullPreseedInvestors := percentPreseedInvestors.Mul(maxSupply).TruncateInt()
 	fullTeam := percentTeam.Mul(maxSupply).TruncateInt()
 	twelve := math.LegacyNewDec(12)
-	if blockHeight.LT(blocksInAYear) && monthsUnlocked.LT(twelve) {
+	if blockHeight.LT(blocksInAYear) && monthsAlreadyUnlocked.LT(twelve) {
 		// less than a year, completely locked
 		investors = fullInvestors
 		preseedInvestors = fullPreseedInvestors
@@ -45,20 +45,20 @@ func GetLockedVestingTokens(
 		if calcMonthsUnlocked.GTE(thirtySix) {
 			calcMonthsUnlocked = thirtySix
 		}
-		if monthsUnlocked.GTE(thirtySix) {
-			monthsUnlocked = thirtySix
+		if monthsAlreadyUnlocked.GTE(thirtySix) {
+			monthsAlreadyUnlocked = thirtySix
 		}
-		if calcMonthsUnlocked.GT(monthsUnlocked) {
-			monthsUnlocked = calcMonthsUnlocked
+		if calcMonthsUnlocked.GT(monthsAlreadyUnlocked) {
+			monthsAlreadyUnlocked = calcMonthsUnlocked
 		}
 		// use the value from the keeper for monthsLocked if it's greater than the calculated value
 		// otherwise use the calculated value
-		monthsLocked := thirtySix.Sub(monthsUnlocked)
+		monthsLocked := thirtySix.Sub(monthsAlreadyUnlocked)
 		investors = monthsLocked.Quo(thirtySix).Mul(fullInvestors.ToLegacyDec()).TruncateInt()
 		preseedInvestors = monthsLocked.Quo(thirtySix).Mul(fullPreseedInvestors.ToLegacyDec()).TruncateInt()
 		team = monthsLocked.Quo(thirtySix).Mul(fullTeam.ToLegacyDec()).TruncateInt()
 	}
-	return preseedInvestors.Add(investors).Add(team), preseedInvestors, investors, team, monthsUnlocked.TruncateInt()
+	return preseedInvestors.Add(investors).Add(team), preseedInvestors, investors, team, monthsAlreadyUnlocked.TruncateInt()
 }
 
 // helper function to get the number of staked tokens on the network
@@ -83,7 +83,7 @@ func GetCirculatingSupply(
 	params types.Params,
 	blockHeight uint64,
 	blocksPerMonth uint64,
-	monthsUnlocked math.Int,
+	monthsAlreadyUnlocked math.Int,
 ) (
 	circulatingSupply,
 	totalSupply,
@@ -101,7 +101,7 @@ func GetCirculatingSupply(
 		blocksPerMonth,
 		math.NewIntFromUint64(blockHeight),
 		params,
-		monthsUnlocked.ToLegacyDec(),
+		monthsAlreadyUnlocked.ToLegacyDec(),
 	)
 	ecosystemMintSupplyRemaining, err := k.GetEcosystemMintSupplyRemaining(ctx, params)
 	if err != nil {
@@ -262,7 +262,7 @@ func RecalculateTargetEmission(
 	emissionPerUnitStakedToke math.LegacyDec, // e_i in the whitepaper
 	err error,
 ) {
-	monthsUnlocked := k.GetMonthsUnlocked(ctx)
+	monthsAlreadyUnlocked := k.GetMonthsAlreadyUnlocked(ctx)
 	emissionPerMonth, emissionPerUnitStakedToken, updatedMonthsUnlocked, err := GetEmissionPerMonth(
 		ctx,
 		k,
@@ -272,13 +272,13 @@ func RecalculateTargetEmission(
 		ecosystemBalance,
 		ecosystemMintSupplyRemaining,
 		validatorsPercent,
-		monthsUnlocked,
+		monthsAlreadyUnlocked,
 	)
 	if err != nil {
 		return math.Int{}, math.LegacyDec{}, err
 	}
-	if updatedMonthsUnlocked.GT(monthsUnlocked) {
-		err = k.SetMonthsUnlocked(ctx, updatedMonthsUnlocked)
+	if updatedMonthsUnlocked.GT(monthsAlreadyUnlocked) {
+		err = k.SetMonthsAlreadyUnlocked(ctx, updatedMonthsUnlocked)
 		if err != nil {
 			return math.Int{}, math.LegacyDec{}, err
 		}
@@ -315,7 +315,7 @@ func GetEmissionPerMonth(
 	ecosystemBalance math.Int,
 	ecosystemMintSupplyRemaining math.Int,
 	validatorsPercent math.LegacyDec,
-	monthsUnlocked math.Int,
+	monthsAlreadyUnlocked math.Int,
 ) (
 	emissionPerMonth math.Int,
 	emissionPerUnitStakedToken math.LegacyDec,
@@ -332,7 +332,7 @@ func GetEmissionPerMonth(
 		lockedVestingTokens,
 		ecosystemLocked,
 		updatedMonthsUnlocked,
-		err := GetCirculatingSupply(ctx, k, params, blockHeight, blocksPerMonth, monthsUnlocked)
+		err := GetCirculatingSupply(ctx, k, params, blockHeight, blocksPerMonth, monthsAlreadyUnlocked)
 	if err != nil {
 		return math.Int{}, math.LegacyDec{}, math.Int{}, err
 	}
