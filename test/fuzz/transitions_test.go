@@ -124,6 +124,76 @@ func allTransitions(f *fuzzcommon.FuzzConfig) []StateTransition {
 		weight: transitionWeights.UndelegateStake,
 		follow: &transitionCancelDelegateStakeRemoval, followWeight: 50,
 	}
+	transitionAddToAdminWhitelist := StateTransition{
+		name: "addToAdminWhitelist", f: addToAdminWhitelist,
+		weight: transitionWeights.AddToAdminWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionRemoveFromAdminWhitelist := StateTransition{
+		name: "removeFromAdminWhitelist", f: removeFromAdminWhitelist,
+		weight: transitionWeights.RemoveFromAdminWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionAddToGlobalWhitelist := StateTransition{
+		name: "addToGlobalWhitelist", f: addToGlobalWhitelist,
+		weight: transitionWeights.AddToGlobalWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionRemoveFromGlobalWhitelist := StateTransition{
+		name: "removeFromGlobalWhitelist", f: removeFromGlobalWhitelist,
+		weight: transitionWeights.RemoveFromGlobalWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionAddToTopicCreatorWhitelist := StateTransition{
+		name: "addToTopicCreatorWhitelist", f: addToTopicCreatorWhitelist,
+		weight: transitionWeights.AddToTopicCreatorWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionRemoveFromTopicCreatorWhitelist := StateTransition{
+		name: "removeFromTopicCreatorWhitelist", f: removeFromTopicCreatorWhitelist,
+		weight: transitionWeights.RemoveFromTopicCreatorWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionEnableTopicWorkerWhitelist := StateTransition{
+		name: "enableTopicWorkerWhitelist", f: enableTopicWorkerWhitelist,
+		weight: transitionWeights.EnableTopicWorkerWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionDisableTopicWorkerWhitelist := StateTransition{
+		name: "disableTopicWorkerWhitelist", f: disableTopicWorkerWhitelist,
+		weight: transitionWeights.DisableTopicWorkerWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionEnableTopicReputerWhitelist := StateTransition{
+		name: "enableTopicReputerWhitelist", f: enableTopicReputerWhitelist,
+		weight: transitionWeights.EnableTopicReputerWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionDisableTopicReputerWhitelist := StateTransition{
+		name: "disableTopicReputerWhitelist", f: disableTopicReputerWhitelist,
+		weight: transitionWeights.DisableTopicReputerWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionAddToTopicWorkerWhitelist := StateTransition{
+		name: "addToTopicWorkerWhitelist", f: addToTopicWorkerWhitelist,
+		weight: transitionWeights.AddToTopicWorkerWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionRemoveFromTopicWorkerWhitelist := StateTransition{
+		name: "removeFromTopicWorkerWhitelist", f: removeFromTopicWorkerWhitelist,
+		weight: transitionWeights.RemoveFromTopicWorkerWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionAddToTopicReputerWhitelist := StateTransition{
+		name: "addToTopicReputerWhitelist", f: addToTopicReputerWhitelist,
+		weight: transitionWeights.AddToTopicReputerWhitelist,
+		follow: nil, followWeight: 0,
+	}
+	transitionRemoveFromTopicReputerWhitelist := StateTransition{
+		name: "removeFromTopicReputerWhitelist", f: removeFromTopicReputerWhitelist,
+		weight: transitionWeights.RemoveFromTopicReputerWhitelist,
+		follow: nil, followWeight: 0,
+	}
 
 	return []StateTransition{
 		transitionCreateTopic,
@@ -140,6 +210,20 @@ func allTransitions(f *fuzzcommon.FuzzConfig) []StateTransition {
 		transitionUndelegateStake,
 		transitionCancelStakeRemoval,
 		transitionCancelDelegateStakeRemoval,
+		transitionAddToAdminWhitelist,
+		transitionRemoveFromAdminWhitelist,
+		transitionAddToGlobalWhitelist,
+		transitionRemoveFromGlobalWhitelist,
+		transitionAddToTopicCreatorWhitelist,
+		transitionRemoveFromTopicCreatorWhitelist,
+		transitionEnableTopicWorkerWhitelist,
+		transitionDisableTopicWorkerWhitelist,
+		transitionEnableTopicReputerWhitelist,
+		transitionDisableTopicReputerWhitelist,
+		transitionAddToTopicWorkerWhitelist,
+		transitionRemoveFromTopicWorkerWhitelist,
+		transitionAddToTopicReputerWhitelist,
+		transitionRemoveFromTopicReputerWhitelist,
 	}
 }
 

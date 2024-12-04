@@ -21,20 +21,34 @@ const (
 
 // full list of all possible transitions
 type TransitionWeights struct {
-	CreateTopic                uint8 `json:"createTopic"`
-	FundTopic                  uint8 `json:"fundTopic"`
-	RegisterWorker             uint8 `json:"registerWorker"`
-	RegisterReputer            uint8 `json:"registerReputer"`
-	StakeAsReputer             uint8 `json:"stakeAsReputer"`
-	DelegateStake              uint8 `json:"delegateStake"`
-	CollectDelegatorRewards    uint8 `json:"collectDelegatorRewards"`
-	DoInferenceAndReputation   uint8 `json:"doInferenceAndReputation"`
-	UnregisterWorker           uint8 `json:"unregisterWorker"`
-	UnregisterReputer          uint8 `json:"unregisterReputer"`
-	UnstakeAsReputer           uint8 `json:"unstakeAsReputer"`
-	UndelegateStake            uint8 `json:"undelegateStake"`
-	CancelStakeRemoval         uint8 `json:"cancelStakeRemoval"`
-	CancelDelegateStakeRemoval uint8 `json:"cancelDelegateStakeRemoval"`
+	CreateTopic                     uint8 `json:"createTopic"`
+	FundTopic                       uint8 `json:"fundTopic"`
+	RegisterWorker                  uint8 `json:"registerWorker"`
+	RegisterReputer                 uint8 `json:"registerReputer"`
+	StakeAsReputer                  uint8 `json:"stakeAsReputer"`
+	DelegateStake                   uint8 `json:"delegateStake"`
+	CollectDelegatorRewards         uint8 `json:"collectDelegatorRewards"`
+	DoInferenceAndReputation        uint8 `json:"doInferenceAndReputation"`
+	UnregisterWorker                uint8 `json:"unregisterWorker"`
+	UnregisterReputer               uint8 `json:"unregisterReputer"`
+	UnstakeAsReputer                uint8 `json:"unstakeAsReputer"`
+	UndelegateStake                 uint8 `json:"undelegateStake"`
+	CancelStakeRemoval              uint8 `json:"cancelStakeRemoval"`
+	CancelDelegateStakeRemoval      uint8 `json:"cancelDelegateStakeRemoval"`
+	AddToAdminWhitelist             uint8 `json:"addToAdminWhitelist"`
+	RemoveFromAdminWhitelist        uint8 `json:"removeFromAdminWhitelist"`
+	AddToGlobalWhitelist            uint8 `json:"addToGlobalWhitelist"`
+	RemoveFromGlobalWhitelist       uint8 `json:"removeFromGlobalWhitelist"`
+	AddToTopicCreatorWhitelist      uint8 `json:"addToTopicCreatorWhitelist"`
+	RemoveFromTopicCreatorWhitelist uint8 `json:"removeFromTopicCreatorWhitelist"`
+	EnableTopicWorkerWhitelist      uint8 `json:"enableTopicWorkerWhitelist"`
+	DisableTopicWorkerWhitelist     uint8 `json:"disableTopicWorkerWhitelist"`
+	EnableTopicReputerWhitelist     uint8 `json:"enableTopicReputerWhitelist"`
+	DisableTopicReputerWhitelist    uint8 `json:"disableTopicReputerWhitelist"`
+	AddToTopicWorkerWhitelist       uint8 `json:"addToTopicWorkerWhitelist"`
+	RemoveFromTopicWorkerWhitelist  uint8 `json:"removeFromTopicWorkerWhitelist"`
+	AddToTopicReputerWhitelist      uint8 `json:"addToTopicReputerWhitelist"`
+	RemoveFromTopicReputerWhitelist uint8 `json:"removeFromTopicReputerWhitelist"`
 }
 
 // struct that holds config from test/fuzz/.config.json
