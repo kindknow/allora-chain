@@ -8,7 +8,6 @@ import (
 
 	cosmossdk_io_math "cosmossdk.io/math"
 	testcommon "github.com/allora-network/allora-chain/test/common"
-	emissionstypes "github.com/allora-network/allora-chain/x/emissions/types"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/gogoproto/proto"
 	"github.com/ignite/cli/v28/ignite/pkg/cosmosaccount"
@@ -66,21 +65,6 @@ func getFaucetName(seed int) string {
 // generates an actors name from seed and index
 func getActorName(seed int, actorIndex int) string {
 	return "run" + strconv.Itoa(seed) + "_actor" + strconv.Itoa(actorIndex)
-}
-
-// pick a random topic id that is between 1 and the number of topics
-func pickRandomTopicId(m *testcommon.TestConfig) (uint64, error) {
-	ctx := context.Background()
-	numTopicsResponse, err := m.Client.QueryEmissions().
-		GetNextTopicId(ctx, &emissionstypes.GetNextTopicIdRequest{})
-	if err != nil {
-		return 1, err
-	}
-	ret := m.Client.Rand.Uint64() % numTopicsResponse.NextTopicId
-	if ret == 0 {
-		ret = 1
-	}
-	return ret, nil
 }
 
 // pick a random balance that is less than half of the actors balance

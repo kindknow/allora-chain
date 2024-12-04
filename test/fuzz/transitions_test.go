@@ -379,7 +379,7 @@ func pickFullRandomValues(
 	m *testcommon.TestConfig,
 	data *SimulationData,
 ) (bool, Actor, Actor, *cosmossdk_io_math.Int, uint64) {
-	randomTopicId, err := pickRandomTopicId(m)
+	randomTopicId, err := data.pickRandomTopicId()
 	failIfOnErr(m.T, data.failOnErr, err)
 	randomActor1 := pickRandomActor(m, data)
 	randomActor2 := pickRandomActor(m, data)
@@ -481,7 +481,7 @@ func pickActorAndTopicIdForStateTransition(
 		"disableTopicWorkerWhitelist",
 		"enableTopicReputerWhitelist",
 		"disableTopicReputerWhitelist":
-		topicId, err := pickRandomTopicId(m)
+		topicId, err := data.pickRandomTopicId()
 		if err != nil {
 			return false, UnusedActor, UnusedActor, nil, 0
 		}
@@ -492,7 +492,7 @@ func pickActorAndTopicIdForStateTransition(
 		return true, admin, UnusedActor, nil, topicId
 	case "addToTopicWorkerWhitelist",
 		"removeFromTopicWorkerWhitelist":
-		topicId, err := pickRandomTopicId(m)
+		topicId, err := data.pickRandomTopicId()
 		if err != nil {
 			return false, UnusedActor, UnusedActor, nil, 0
 		}
@@ -503,7 +503,7 @@ func pickActorAndTopicIdForStateTransition(
 		return true, admin, pickRandomActor(m, data), nil, topicId
 	case "addToTopicReputerWhitelist",
 		"removeFromTopicReputerWhitelist":
-		topicId, err := pickRandomTopicId(m)
+		topicId, err := data.pickRandomTopicId()
 		if err != nil {
 			return false, UnusedActor, UnusedActor, nil, 0
 		}

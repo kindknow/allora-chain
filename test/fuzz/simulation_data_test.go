@@ -221,8 +221,18 @@ func (s *SimulationData) disableTopicReputersWhitelist(topicId uint64) {
 	s.topicReputersWhitelistEnabled.Delete(topicId)
 }
 
+// getTopics returns all the topics in the simulation data
 func (s *SimulationData) getTopics() []uint64 {
 	return s.topicCreators.GetKeys()
+}
+
+// pickRandomTopicId picks a random topic id in the simulation data
+func (s *SimulationData) pickRandomTopicId() (uint64, error) {
+	t, err := s.topicCreators.RandomKey()
+	if err != nil {
+		return 0, err
+	}
+	return *t, nil
 }
 
 // pickRandomRegisteredWorker picks a random worker that is currently registered
