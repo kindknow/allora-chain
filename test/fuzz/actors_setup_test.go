@@ -642,7 +642,7 @@ func simulateAutomaticInitialState(
 	iterationCount++
 
 	listTopics := data.getTopics()
-	require.Equal(m.T, len(listTopics), 2)
+	require.Len(m.T, listTopics, 2)
 
 	// put 2 reputers & 2 workers in one topic whitelists
 	iterationCount = startAddToTopicWorkerWhitelist(m, data, faucet, startWorkers[2:], listTopics[1], iterationCount)
