@@ -175,7 +175,7 @@ func UpgradeChecks(m testCommon.TestConfig) {
 	m.T.Log("--- Getting Emissions Module Version After Upgrade ---")
 	emissionsVersionAfter := getEmissionsVersion(m)
 	m.T.Log("--- Checking Emissions Module Version Has Been Upgraded ---")
-	require.Equal(m.T, emissionsVersionAfter, emissionsVersionBefore)
+	require.Greater(m.T, emissionsVersionAfter, emissionsVersionBefore)
 	height := getAppliedVersionHeight(m, versionName)
 	m.T.Log("--- Checking upgrade has been applied at the proposed height ---")
 	require.Equal(m.T, proposalHeight, height)
