@@ -90,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#668](https://github.com/allora-network/allora-chain/pull/668) Add stake nil amount validation + added tests + fixed other tests
 * [#687](https://github.com/allora-network/allora-chain/pull/687) Fix reputer nonce submission boundaries
 * [#690](https://github.com/allora-network/allora-chain/pull/690) Make investor token unlock amounts strictly monotonically increasing
+* [#695](https://github.com/allora-network/allora-chain/pull/695) Mint module GenesisState, proto, and v3 no-op migration (follow-on PR to 690)
 
 ### Security
 
