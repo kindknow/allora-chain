@@ -616,7 +616,6 @@ func simulateAutomaticInitialState(
 	data *SimulationData,
 ) (iterationCountAfter int) {
 	iterationCount := 0
-	listTopics := []uint64{1, 2}
 
 	// make sure that the setup always fails on error
 	failOnErrWanted := data.failOnErr
@@ -642,9 +641,12 @@ func simulateAutomaticInitialState(
 	require.True(m.T, success)
 	iterationCount++
 
-	// put 2 reputers & 2 workers in second topic whitelists
-	iterationCount = startAddToTopicWorkerWhitelist(m, data, faucet, startWorkers[2:], 2, iterationCount)
-	iterationCount = startAddToTopicReputerWhitelist(m, data, faucet, startReputers[2:], 2, iterationCount)
+	listTopics := data.getTopics()
+	require.Equal(m.T, len(listTopics), 2)
+
+	// put 2 reputers & 2 workers in one topic whitelists
+	iterationCount = startAddToTopicWorkerWhitelist(m, data, faucet, startWorkers[2:], listTopics[1], iterationCount)
+	iterationCount = startAddToTopicReputerWhitelist(m, data, faucet, startReputers[2:], listTopics[1], iterationCount)
 
 	// register all 4 reputers on both topics
 	iterationCount = startRegisterReputers(m, data, startReputers, listTopics, iterationCount)
@@ -668,7 +670,7 @@ func simulateAutomaticInitialState(
 	unStakeDelegator := []Actor{startDelegators[0]}
 	unStakeDelegatorReputer := []Actor{startReputers[0]}
 
-	justFirstTopic := []uint64{1}
+	justFirstTopic := listTopics[:1]
 
 	// unregister 2 workers from topic 1
 	iterationCount = startUnregisterWorkers(m, data, unregisterWorkers, justFirstTopic, iterationCount)

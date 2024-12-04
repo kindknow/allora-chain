@@ -221,6 +221,10 @@ func (s *SimulationData) disableTopicReputersWhitelist(topicId uint64) {
 	s.topicReputersWhitelistEnabled.Delete(topicId)
 }
 
+func (s *SimulationData) getTopics() []uint64 {
+	return s.topicCreators.GetKeys()
+}
+
 // pickRandomRegisteredWorker picks a random worker that is currently registered
 func (s *SimulationData) pickRandomRegisteredWorker() (Actor, uint64, error) {
 	ret, err := s.registeredWorkers.RandomKey()
@@ -332,7 +336,7 @@ func mayPickOneOfTwo[T any](rand *rand.Rand, opt1, opt2 *T) (*T, error) {
 	if opt1 == nil {
 		return opt2, nil
 	}
-	if opt2 != nil {
+	if opt2 == nil {
 		return opt1, nil
 	}
 	// if neither are nil, pick one at random
@@ -340,6 +344,11 @@ func mayPickOneOfTwo[T any](rand *rand.Rand, opt1, opt2 *T) (*T, error) {
 		return opt1, nil
 	}
 	return opt2, nil
+}
+
+func (s *SimulationData) hasTopic(topicId uint64) bool {
+	_, exists := s.topicCreators.Get(topicId)
+	return exists
 }
 
 // isWorkerRegisteredInTopic checks if a worker is registered in a topic
