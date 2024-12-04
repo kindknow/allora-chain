@@ -294,17 +294,38 @@ func pickPercentOf(rand *rand.Rand, stake cosmossdk_io_math.Int) cosmossdk_io_ma
 	}
 }
 
-func (s *SimulationData) pickRandomTopicCreator(m *testcommon.TestConfig) (Actor, error) {
-	opt1, _ := s.globalWhitelist.RandomKey()
-	opt2, _ := s.topicCreatorsWhitelist.RandomKey()
-	actor, err := tryPickOneOfTwo(m.Client.Rand, opt1, opt2)
+func (s *SimulationData) pickRandomAdmin() (Actor, error) {
+	a, err := s.adminWhitelist.RandomKey()
+	if err != nil {
+		return Actor{}, err
+	}
+	return *a, nil
+}
+
+func (s *SimulationData) pickRandomTopicAdmin(m *testcommon.TestConfig, topicId uint64) (Actor, error) {
+	opt1, _ := s.adminWhitelist.RandomKey()
+	var opt2 *Actor
+	if opt, ok := s.topicCreators.Get(topicId); ok {
+		opt2 = &opt
+	}
+	actor, err := mayPickOneOfTwo(m.Client.Rand, opt1, opt2)
 	if err != nil {
 		return Actor{}, fmt.Errorf("no topic creator found")
 	}
 	return *actor, nil
 }
 
-func tryPickOneOfTwo[T any](rand *rand.Rand, opt1, opt2 *T) (*T, error) {
+func (s *SimulationData) pickRandomTopicCreator(m *testcommon.TestConfig) (Actor, error) {
+	opt1, _ := s.globalWhitelist.RandomKey()
+	opt2, _ := s.topicCreatorsWhitelist.RandomKey()
+	actor, err := mayPickOneOfTwo(m.Client.Rand, opt1, opt2)
+	if err != nil {
+		return Actor{}, fmt.Errorf("no topic creator found")
+	}
+	return *actor, nil
+}
+
+func mayPickOneOfTwo[T any](rand *rand.Rand, opt1, opt2 *T) (*T, error) {
 	if opt1 == nil && opt2 == nil {
 		return nil, fmt.Errorf("both options are nil")
 	}
