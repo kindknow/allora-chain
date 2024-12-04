@@ -22,7 +22,9 @@ func GetLockedVestingTokens(
 	// foundation is unlocked from genesis
 	// participants are unlocked from genesis
 	// investors and team tokens are locked on a 1 year cliff three year vesting schedule
-	blocksInAYear := math.NewIntFromUint64(blocksPerMonth * 12)
+	// before 1 year, all tokens are locked
+	// between 1 and 3 years, investors and team tokens are vesting and partially unlocked
+	// after 3 years, all tokens are unlocked
 	maxSupply := params.MaxSupply.ToLegacyDec()
 	percentInvestors := params.InvestorsPercentOfTotalSupply
 	percentPreseedInvestors := params.InvestorsPreseedPercentOfTotalSupply
@@ -30,34 +32,24 @@ func GetLockedVestingTokens(
 	fullInvestors := percentInvestors.Mul(maxSupply).TruncateInt()
 	fullPreseedInvestors := percentPreseedInvestors.Mul(maxSupply).TruncateInt()
 	fullTeam := percentTeam.Mul(maxSupply).TruncateInt()
-	twelve := math.LegacyNewDec(12)
-	if blockHeight.LT(blocksInAYear) && monthsAlreadyUnlocked.LT(twelve) {
-		// less than a year, completely locked
-		investors = fullInvestors
-		preseedInvestors = fullPreseedInvestors
-		team = fullTeam
-	} else {
-		// between 1 and 3 years, investors and team tokens are vesting and partially unlocked
-		// after 3 years, all tokens are unlocked
-		thirtySix := math.LegacyNewDec(36)
-		// calculate whether the number of months unlocked should be allowed to increase
-		calcMonthsUnlocked := blockHeight.Quo(math.NewIntFromUint64(blocksPerMonth)).ToLegacyDec()
-		if calcMonthsUnlocked.GTE(thirtySix) {
-			calcMonthsUnlocked = thirtySix
-		}
-		if monthsAlreadyUnlocked.GTE(thirtySix) {
-			monthsAlreadyUnlocked = thirtySix
-		}
-		if calcMonthsUnlocked.GT(monthsAlreadyUnlocked) {
-			monthsAlreadyUnlocked = calcMonthsUnlocked
-		}
-		// use the value from the keeper for monthsLocked if it's greater than the calculated value
-		// otherwise use the calculated value
-		monthsLocked := thirtySix.Sub(monthsAlreadyUnlocked)
-		investors = monthsLocked.Quo(thirtySix).Mul(fullInvestors.ToLegacyDec()).TruncateInt()
-		preseedInvestors = monthsLocked.Quo(thirtySix).Mul(fullPreseedInvestors.ToLegacyDec()).TruncateInt()
-		team = monthsLocked.Quo(thirtySix).Mul(fullTeam.ToLegacyDec()).TruncateInt()
+	thirtySix := math.LegacyNewDec(36)
+	// calculate whether the number of months unlocked should be allowed to increase
+	calcMonthsUnlocked := blockHeight.Quo(math.NewIntFromUint64(blocksPerMonth)).ToLegacyDec()
+	if calcMonthsUnlocked.GTE(thirtySix) {
+		calcMonthsUnlocked = thirtySix
 	}
+	if monthsAlreadyUnlocked.GTE(thirtySix) {
+		monthsAlreadyUnlocked = thirtySix
+	}
+	if calcMonthsUnlocked.GT(monthsAlreadyUnlocked) {
+		monthsAlreadyUnlocked = calcMonthsUnlocked
+	}
+	// use the value from the keeper for monthsLocked if it's greater than the calculated value
+	// otherwise use the calculated value
+	monthsLocked := thirtySix.Sub(monthsAlreadyUnlocked)
+	investors = monthsLocked.Quo(thirtySix).Mul(fullInvestors.ToLegacyDec()).TruncateInt()
+	preseedInvestors = monthsLocked.Quo(thirtySix).Mul(fullPreseedInvestors.ToLegacyDec()).TruncateInt()
+	team = monthsLocked.Quo(thirtySix).Mul(fullTeam.ToLegacyDec()).TruncateInt()
 	return preseedInvestors.Add(investors).Add(team), preseedInvestors, investors, team, monthsAlreadyUnlocked.TruncateInt()
 }
 
