@@ -9,6 +9,8 @@ import (
 	cosmossdk_io_math "cosmossdk.io/math"
 	testcommon "github.com/allora-network/allora-chain/test/common"
 	emissionstypes "github.com/allora-network/allora-chain/x/emissions/types"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/ignite/cli/v28/ignite/pkg/cosmosaccount"
 	"github.com/stretchr/testify/require"
 )
@@ -100,4 +102,40 @@ func pickRandomBalanceLessThanHalf(
 	divisor := m.Client.Rand.Int63()%1000 + 1
 	randomBal := halfBal.QuoRaw(divisor)
 	return randomBal, nil
+}
+
+func broadcastTxAndWait(
+	m *testcommon.TestConfig,
+	iteration int,
+	failOnErr bool,
+	sender Actor,
+	msg types.Msg,
+	resp proto.Message,
+	beginMsg, failMsg, successMsg string,
+) bool {
+	iterLog(m.T, iteration, beginMsg)
+	ctx := context.Background()
+	txResp, err := m.Client.BroadcastTx(ctx, sender.acc, msg)
+	failIfOnErr(m.T, failOnErr, err)
+	if err != nil {
+		iterFailLog(m.T, iteration, failMsg, ": tx broadcast error", err)
+		return false
+	}
+
+	_, err = m.Client.WaitForTx(ctx, txResp.TxHash)
+	failIfOnErr(m.T, failOnErr, err)
+	if err != nil {
+		iterFailLog(m.T, iteration, failMsg, ": tx wait error", err)
+		return false
+	}
+
+	err = txResp.Decode(resp)
+	failIfOnErr(m.T, failOnErr, err)
+	if err != nil {
+		iterFailLog(m.T, iteration, failMsg, ": tx decode error", err)
+		return false
+	}
+
+	iterSuccessLog(m.T, iteration, successMsg)
+	return true
 }
