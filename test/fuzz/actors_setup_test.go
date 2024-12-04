@@ -286,6 +286,88 @@ func pickAutoSetupActors(m *testcommon.TestConfig, data *SimulationData) (repute
 	return reputers, workers, delegators
 }
 
+func startAddToAdminWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	startActors []Actor,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, actor := range startActors {
+		success := addToAdminWhitelist(m, sender, actor, nil, 0, data, iterationCount)
+		require.True(m.T, success)
+		iterationCount++
+	}
+	return iterationCount
+}
+
+func startAddToGlobalWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	startActors []Actor,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, actor := range startActors {
+		success := addToGlobalWhitelist(m, sender, actor, nil, 0, data, iterationCount)
+		require.True(m.T, success)
+		iterationCount++
+	}
+	return iterationCount
+}
+
+func startAddToTopicCreatorWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	startActors []Actor,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, actor := range startActors {
+		success := addToTopicCreatorWhitelist(m, sender, actor, nil, 0, data, iterationCount)
+		require.True(m.T, success)
+		iterationCount++
+	}
+	return iterationCount
+}
+
+func startAddToTopicWorkerWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	workers []Actor,
+	topicId uint64,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, worker := range workers {
+		success := addToTopicWorkerWhitelist(m, sender, worker, nil, topicId, data, iterationCount)
+		require.True(m.T, success)
+		iterationCount++
+	}
+	return iterationCount
+}
+
+func startAddToTopicReputerWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	reputers []Actor,
+	topicId uint64,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, reputer := range reputers {
+		success := addToTopicReputerWhitelist(m, sender, reputer, nil, topicId, data, iterationCount)
+		require.True(m.T, success)
+		iterationCount++
+	}
+	return iterationCount
+}
+
 // startRegisterReputers registers and then stakes a list of reputers to a list of topics.
 func startRegisterReputers(
 	m *testcommon.TestConfig,
@@ -542,20 +624,27 @@ func simulateAutomaticInitialState(
 
 	// additive actions
 
-	// create two topics with both reputers and workers whitelist enabled
-	success := createTopic(m, faucet, UnusedActor, nil, 0, data, iterationCount)
-	require.True(m.T, success)
-	iterationCount++
-	success = createTopic(m, faucet, UnusedActor, nil, 0, data, iterationCount)
-	require.True(m.T, success)
-	iterationCount++
 	// pick 4 reputers, 5 workers, and 2 delegators
 	startReputers, startWorkers, startDelegators := pickAutoSetupActors(m, data)
 
-	// put 2 reputers & 2 workers & 1 delegator in global whitelist
-	// put other reputers & workers in related topics whitelists
 	// add 2 reputers in admin whitelist
-	// add 3 workers & 1 delegator to create topic whitelist
+	iterationCount = startAddToAdminWhitelist(m, data, faucet, startReputers[2:], iterationCount)
+	// put 2 reputers & 2 workers in global whitelist
+	iterationCount = startAddToGlobalWhitelist(m, data, faucet, append(startReputers[:2], startWorkers[:2]...), iterationCount)
+	// add 2 delegators to create topic whitelist
+	iterationCount = startAddToTopicCreatorWhitelist(m, data, faucet, startDelegators, iterationCount)
+
+	// create two topics with both reputers and workers whitelist enabled
+	success := createTopic(m, startDelegators[0], UnusedActor, nil, 0, data, iterationCount)
+	require.True(m.T, success)
+	iterationCount++
+	success = createTopic(m, startDelegators[1], UnusedActor, nil, 0, data, iterationCount)
+	require.True(m.T, success)
+	iterationCount++
+
+	// put 2 reputers & 2 workers in second topic whitelists
+	iterationCount = startAddToTopicWorkerWhitelist(m, data, faucet, startWorkers[2:], 2, iterationCount)
+	iterationCount = startAddToTopicReputerWhitelist(m, data, faucet, startReputers[2:], 2, iterationCount)
 
 	// register all 4 reputers on both topics
 	iterationCount = startRegisterReputers(m, data, startReputers, listTopics, iterationCount)
