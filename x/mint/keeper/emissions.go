@@ -44,6 +44,12 @@ func GetLockedVestingTokens(
 	if calcMonthsUnlocked.GT(monthsAlreadyUnlocked) {
 		monthsAlreadyUnlocked = calcMonthsUnlocked
 	}
+	// one year cliff
+	twelve := math.LegacyNewDec(12)
+	if monthsAlreadyUnlocked.LT(twelve) {
+		allLocked := fullPreseedInvestors.Add(fullInvestors).Add(fullTeam)
+		return allLocked, fullPreseedInvestors, fullInvestors, fullTeam, monthsAlreadyUnlocked.TruncateInt()
+	}
 	// use the value from the keeper for monthsLocked if it's greater than the calculated value
 	// otherwise use the calculated value
 	monthsLocked := thirtySix.Sub(monthsAlreadyUnlocked)
