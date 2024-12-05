@@ -4,9 +4,8 @@ import (
 	"context"
 	"time"
 
+	"cosmossdk.io/errors"
 	"github.com/allora-network/allora-chain/x/emissions/metrics"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/allora-network/allora-chain/x/emissions/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -21,7 +20,7 @@ func (qs queryServer) IsWhitelistAdmin(ctx context.Context, req *types.IsWhiteli
 
 	isAdmin, err := qs.k.IsWhitelistAdmin(ctx, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting whitelist admin")
 	}
 
 	return &types.IsWhitelistAdminResponse{IsAdmin: isAdmin}, nil
@@ -32,7 +31,7 @@ func (qs queryServer) IsTopicWorkerWhitelistEnabled(ctx context.Context, req *ty
 
 	val, err := qs.k.IsTopicWorkerWhitelistEnabled(ctx, req.TopicId)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting topic worker whitelist enabled")
 	}
 
 	return &types.IsTopicWorkerWhitelistEnabledResponse{IsTopicWorkerWhitelistEnabled: val}, nil
@@ -43,7 +42,7 @@ func (qs queryServer) IsTopicReputerWhitelistEnabled(ctx context.Context, req *t
 
 	val, err := qs.k.IsTopicReputerWhitelistEnabled(ctx, req.TopicId)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting topic reputer whitelist enabled")
 	}
 
 	return &types.IsTopicReputerWhitelistEnabledResponse{IsTopicReputerWhitelistEnabled: val}, nil
@@ -57,7 +56,7 @@ func (qs queryServer) IsWhitelistedTopicCreator(ctx context.Context, req *types.
 
 	val, err := qs.k.IsWhitelistedTopicCreator(ctx, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting whitelisted topic creator")
 	}
 
 	return &types.IsWhitelistedTopicCreatorResponse{IsWhitelistedTopicCreator: val}, nil
@@ -71,7 +70,7 @@ func (qs queryServer) IsWhitelistedGlobalActor(ctx context.Context, req *types.I
 
 	val, err := qs.k.IsWhitelistedGlobalActor(ctx, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting whitelisted global actor")
 	}
 
 	return &types.IsWhitelistedGlobalActorResponse{IsWhitelistedGlobalActor: val}, nil
@@ -85,7 +84,7 @@ func (qs queryServer) IsWhitelistedTopicWorker(ctx context.Context, req *types.I
 
 	val, err := qs.k.IsWhitelistedTopicWorker(ctx, req.TopicId, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting whitelisted topic worker")
 	}
 
 	return &types.IsWhitelistedTopicWorkerResponse{IsWhitelistedTopicWorker: val}, nil
@@ -99,7 +98,7 @@ func (qs queryServer) IsWhitelistedTopicReputer(ctx context.Context, req *types.
 
 	val, err := qs.k.IsWhitelistedTopicReputer(ctx, req.TopicId, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting whitelisted topic reputer")
 	}
 
 	return &types.IsWhitelistedTopicReputerResponse{IsWhitelistedTopicReputer: val}, nil
@@ -113,7 +112,7 @@ func (qs queryServer) CanUpdateGlobalWhitelists(ctx context.Context, req *types.
 
 	val, err := qs.k.CanUpdateGlobalWhitelists(ctx, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting can update global whitelists")
 	}
 
 	return &types.CanUpdateGlobalWhitelistsResponse{CanUpdateGlobalWhitelists: val}, nil
@@ -127,7 +126,7 @@ func (qs queryServer) CanUpdateParams(ctx context.Context, req *types.CanUpdateP
 
 	val, err := qs.k.CanUpdateParams(ctx, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting can update params")
 	}
 
 	return &types.CanUpdateParamsResponse{CanUpdateParams: val}, nil
@@ -141,7 +140,7 @@ func (qs queryServer) CanUpdateTopicWhitelist(ctx context.Context, req *types.Ca
 
 	val, err := qs.k.CanUpdateTopicWhitelist(ctx, req.TopicId, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting can update topic whitelist")
 	}
 
 	return &types.CanUpdateTopicWhitelistResponse{CanUpdateTopicWhitelist: val}, nil
@@ -155,7 +154,7 @@ func (qs queryServer) CanCreateTopic(ctx context.Context, req *types.CanCreateTo
 
 	val, err := qs.k.CanCreateTopic(ctx, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting can create topic")
 	}
 
 	return &types.CanCreateTopicResponse{CanCreateTopic: val}, nil
@@ -169,7 +168,7 @@ func (qs queryServer) CanSubmitWorkerPayload(ctx context.Context, req *types.Can
 
 	val, err := qs.k.CanSubmitWorkerPayload(ctx, req.TopicId, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting can submit worker payload")
 	}
 
 	return &types.CanSubmitWorkerPayloadResponse{CanSubmitWorkerPayload: val}, nil
@@ -183,7 +182,7 @@ func (qs queryServer) CanSubmitReputerPayload(ctx context.Context, req *types.Ca
 
 	val, err := qs.k.CanSubmitReputerPayload(ctx, req.TopicId, req.Address)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errors.Wrapf(err, "error getting can submit reputer payload")
 	}
 
 	return &types.CanSubmitReputerPayloadResponse{CanSubmitReputerPayload: val}, nil
