@@ -395,11 +395,12 @@ func EnsureWorkerPresence(reportedLosses types.ReputerValueBundles) types.Repute
 		bundle.ValueBundle.OneInForecasterValues = EnsureAllWorkersPresent(bundle.ValueBundle.OneInForecasterValues, allWorkersOneInForecaster)
 
 		// Ensure all forecasters and their associated workers are present
-		for forecaster, workers := range allForecastersOneOutInferer {
+		sortedForecasters := alloraMath.GetSortedKeys(allForecastersOneOutInferer)
+		for _, forecaster := range sortedForecasters {
 			found := false
 			for _, forecasterValue := range bundle.ValueBundle.OneOutInfererForecasterValues {
 				if forecasterValue.Forecaster == forecaster {
-					forecasterValue.OneOutInfererValues = EnsureAllWorkersPresentWithheld(forecasterValue.OneOutInfererValues, workers)
+					forecasterValue.OneOutInfererValues = EnsureAllWorkersPresentWithheld(forecasterValue.OneOutInfererValues, allForecastersOneOutInferer[forecaster])
 					found = true
 					break
 				}
@@ -408,7 +409,7 @@ func EnsureWorkerPresence(reportedLosses types.ReputerValueBundles) types.Repute
 			if !found {
 				newForecasterValue := types.OneOutInfererForecasterValues{
 					Forecaster:          forecaster,
-					OneOutInfererValues: createNaNWithheldValues(workers),
+					OneOutInfererValues: createNaNWithheldValues(allForecastersOneOutInferer[forecaster]),
 				}
 				bundle.ValueBundle.OneOutInfererForecasterValues = append(bundle.ValueBundle.OneOutInfererForecasterValues, &newForecasterValue)
 			}
@@ -421,7 +422,8 @@ func EnsureWorkerPresence(reportedLosses types.ReputerValueBundles) types.Repute
 // Helper function to create NaN values for missing workers
 func createNaNWithheldValues(workers map[string]struct{}) []*types.WithheldWorkerAttributedValue {
 	var values []*types.WithheldWorkerAttributedValue
-	for worker := range workers {
+	sortedWorkers := alloraMath.GetSortedKeys(workers)
+	for _, worker := range sortedWorkers {
 		values = append(values, &types.WithheldWorkerAttributedValue{
 			Worker: worker,
 			Value:  alloraMath.NewNaN(),
