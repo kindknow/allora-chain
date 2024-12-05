@@ -496,7 +496,7 @@ message IsTopicWorkerWhitelistEnabledRequest {
 }
 
 message IsTopicWorkerWhitelistEnabledResponse {
-  bool is_topic_worker_whitelist_enabled = 1;
+  bool is_topic_worker_whitelist_enabled = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsTopicReputerWhitelistEnabledRequest {
@@ -504,7 +504,7 @@ message IsTopicReputerWhitelistEnabledRequest {
 }
 
 message IsTopicReputerWhitelistEnabledResponse {
-  bool is_topic_reputer_whitelist_enabled = 1;
+  bool is_topic_reputer_whitelist_enabled = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsWhitelistedTopicCreatorRequest {
@@ -512,7 +512,7 @@ message IsWhitelistedTopicCreatorRequest {
 }
 
 message IsWhitelistedTopicCreatorResponse {
-  bool is_whitelisted_topic_creator = 1;
+  bool is_whitelisted_topic_creator = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsWhitelistedGlobalActorRequest {
@@ -520,7 +520,7 @@ message IsWhitelistedGlobalActorRequest {
 }
 
 message IsWhitelistedGlobalActorResponse {
-  bool is_whitelisted_global_actor = 1;
+  bool is_whitelisted_global_actor = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsWhitelistedTopicWorkerRequest {
@@ -529,7 +529,7 @@ message IsWhitelistedTopicWorkerRequest {
 }
 
 message IsWhitelistedTopicWorkerResponse {
-  bool is_whitelisted_topic_worker = 1;
+  bool is_whitelisted_topic_worker = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsWhitelistedTopicReputerRequest {
@@ -538,7 +538,7 @@ message IsWhitelistedTopicReputerRequest {
 }
 
 message IsWhitelistedTopicReputerResponse {
-  bool is_whitelisted_topic_reputer = 1;
+  bool is_whitelisted_topic_reputer = 1 [(amino.dont_omitempty) = true];
 }
 
 message CanUpdateGlobalWhitelistsRequest {
@@ -546,7 +546,7 @@ message CanUpdateGlobalWhitelistsRequest {
 }
 
 message CanUpdateGlobalWhitelistsResponse {
-  bool can_update_global_whitelists = 1;
+  bool can_update_global_whitelists = 1 [(amino.dont_omitempty) = true];
 }
 
 message CanUpdateParamsRequest {
@@ -554,7 +554,7 @@ message CanUpdateParamsRequest {
 }
 
 message CanUpdateParamsResponse {
-  bool can_update_params = 1;
+  bool can_update_params = 1 [(amino.dont_omitempty) = true];
 }
 
 message CanUpdateTopicWhitelistRequest {
@@ -563,7 +563,7 @@ message CanUpdateTopicWhitelistRequest {
 }
 
 message CanUpdateTopicWhitelistResponse {
-  bool can_update_topic_whitelist = 1;
+  bool can_update_topic_whitelist = 1 [(amino.dont_omitempty) = true];
 }
 
 message CanCreateTopicRequest {
@@ -571,7 +571,7 @@ message CanCreateTopicRequest {
 }
 
 message CanCreateTopicResponse {
-  bool can_create_topic = 1;
+  bool can_create_topic = 1 [(amino.dont_omitempty) = true];
 }
 
 message CanSubmitWorkerPayloadRequest {
@@ -580,7 +580,7 @@ message CanSubmitWorkerPayloadRequest {
 }
 
 message CanSubmitWorkerPayloadResponse {
-  bool can_submit_worker_payload = 1;
+  bool can_submit_worker_payload = 1 [(amino.dont_omitempty) = true];
 }
 
 message CanSubmitReputerPayloadRequest {
@@ -589,7 +589,7 @@ message CanSubmitReputerPayloadRequest {
 }
 
 message CanSubmitReputerPayloadResponse {
-  bool can_submit_reputer_payload = 1;
+  bool can_submit_reputer_payload = 1 [(amino.dont_omitempty) = true];
 }
 
 message GetCountInfererInclusionsInTopicRequest {
