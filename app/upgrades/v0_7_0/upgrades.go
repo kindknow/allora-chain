@@ -2,6 +2,7 @@ package v0_7_0 //nolint:revive // var-naming: don't use an underscore in package
 
 import (
 	"context"
+	"fmt"
 
 	cosmosmath "cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
@@ -95,7 +96,11 @@ func ConfigureFeeMarketModule(ctx sdk.Context, keepers *keepers.AppKeepers) erro
 
 func AddBurnerPermissionToGovModule(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 	govAccount := ak.GetModuleAccount(ctx, govtypes.ModuleName)
-	macc := govAccount.(*authtypes.ModuleAccount)
+	macc, ok := govAccount.(*authtypes.ModuleAccount)
+	if !ok {
+		ctx.Logger().Error("FAILED TO GET MODULE ACCOUNT")
+		return fmt.Errorf("failed to get module account")
+	}
 
 	// Check if the permission already exists to avoid duplicates
 	for _, perm := range macc.Permissions {
