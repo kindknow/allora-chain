@@ -86,10 +86,11 @@ Upgrades will typically involve changing something about at least one of the cha
 2. Register the migration below ^that, in the same file
 3. Add the protobuf types as a new folder in `x/MODULE/module/vX/EXAMPLE.proto` 
 4. Update the paths of all endpoints at `x/MODULE/proto/MODULE/vX/query.proto` 
-5. If changes to state or to logic that eventually affects state are involved, be sure to write a heavily-logged migration in `x/MODULE/migrations/vX/migrate.go`
+5. Add the updated service to the query and/or message servers of `x/MODULE/module/autocli.go` (`Query.Service` and/or `Msg.Service`)
+6. If changes to state or to logic that eventually affects state are involved, be sure to write a heavily-logged migration in `x/MODULE/migrations/vX/migrate.go`
    1. You will likely need to add the previous version's types to the adjacent `oldtypes` folder in order to manipulate preexisting state.
-6. Create the upgrade handler for the chain at `app/upgrades/vA_B_C/upgrades.go`
-7. Add the upgrade handler you created above to `app/upgrades.go`
+7. Create the upgrade handler for the chain at `app/upgrades/vA_B_C/upgrades.go`
+8. Add the upgrade handler you created above to `app/upgrades.go`
 
 ## Secondary Limitations To Keep In Mind
 
