@@ -88,11 +88,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#680](https://github.com/allora-network/allora-chain/pull/680) Remove custom ProposalHandler
 
 ### Fixed
+
 * [#683](https://github.com/allora-network/allora-chain/pull/683) Added new strategy for reputer listening coefficients
 * [#668](https://github.com/allora-network/allora-chain/pull/668) Add stake nil amount validation + added tests + fixed other tests
 * [#687](https://github.com/allora-network/allora-chain/pull/687) Fix reputer nonce submission boundaries
 * [#690](https://github.com/allora-network/allora-chain/pull/690) Make investor token unlock amounts strictly monotonically increasing
 * [#695](https://github.com/allora-network/allora-chain/pull/695) Mint module GenesisState, proto, and v3 no-op migration (follow-on PR to 690)
+* [#698](https://github.com/allora-network/allora-chain/pull/698) Added docs to CONTRIBUTING.md; Fix `x/mint` version for query autocli; Fix `x/emissions` v6 migration such that `x/gov` actually gets burner permissions; Add props to whitelist-related return protos to ensure 
 
 ### Security
 
