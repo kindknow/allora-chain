@@ -74,6 +74,22 @@ When updating the state store in `x/emissions`, you must update the following fi
 5. `x/emissions/keeper/genesis_test.go`
 6. `x/emissions/proto/emissions/v1/genesis.proto`
 
+## Checklist for adding a new upgrade and migration
+
+> At time of writing, we use a simple, incrementing versioning system per module e.g. `x/emissions` `v6`  that is incremented upon every breaking change independently of chain or other module versioning.
+>
+> Meanwhile, the chain abides by SemVer.
+
+Upgrades will typically involve changing something about at least one of the chain's constituent modules, which in turn requires an upgrade of the chain itself. We first discuss what to do in a PR to "upgrade a module," then discuss how to "upgrade the chain."
+
+1. Update `ConsensusVersion` var at top of `x/MODULE/module/module.go`
+2. Register the migration below ^that, in the same file
+3. Add the protobuf types as a new folder in `x/MODULE/module/vX/EXAMPLE.proto` 
+4. Update the paths of all endpoints at `x/MODULE/proto/MODULE/vX/query.proto` 
+5. If changes to state or to logic that eventually affects state are involved, be sure to write a heavily-logged migration in `x/MODULE/migrations/vX/migrate.go`
+   1. You will likely need to add the previous version's types to the adjacent `oldtypes` folder in order to manipulate preexisting state.
+6. Create the upgrade handler for the chain at `app/upgrades/vA_B_C/upgrades.go`
+7. Add the upgrade handler you created above to `app/upgrades.go`
 
 ## Secondary Limitations To Keep In Mind
 
