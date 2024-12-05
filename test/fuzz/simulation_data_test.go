@@ -235,6 +235,22 @@ func (s *SimulationData) pickRandomTopicId() (uint64, error) {
 	return *t, nil
 }
 
+// pickNRandomActors picks n random actors in the simulation data
+// panics if n is negative or less than the number of actors
+func (s *SimulationData) pickNRandomActors(m *testcommon.TestConfig, n int) []Actor {
+	if n < 0 || n > len(s.actors) {
+		panic("invalid number of actors")
+	}
+
+	shuffled := make([]Actor, n)
+	perm := m.Client.Rand.Perm(len(s.actors))
+	for i := range n {
+		shuffled[i] = s.actors[perm[i]]
+	}
+
+	return shuffled
+}
+
 // pickRandomRegisteredWorker picks a random worker that is currently registered
 func (s *SimulationData) pickRandomRegisteredWorker() (Actor, uint64, error) {
 	ret, err := s.registeredWorkers.RandomKey()

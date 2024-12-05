@@ -38,5 +38,10 @@
 	"mode": "alternate",
 	"alternateWeight": 20,
 	"numActors": 12,
-	"epochLength": 12
+	"epochLength": 12,
+	"initialSetup": {
+        "numAdminWhitelist": 2,
+        "numGlobalWhitelist": 4,
+        "numTopicCreatorWhitelist": 2
+    }
 }

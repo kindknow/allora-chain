@@ -51,6 +51,13 @@ type TransitionWeights struct {
 	RemoveFromTopicReputerWhitelist uint8 `json:"removeFromTopicReputerWhitelist"`
 }
 
+// InitialSetup holds configuration elements for the initial setup
+type InitialSetup struct {
+	NumAdminWhitelist        int `json:"numAdminWhitelist"`
+	NumGlobalWhitelist       int `json:"numGlobalWhitelist"`
+	NumTopicCreatorWhitelist int `json:"numTopicCreatorWhitelist"`
+}
+
 // struct that holds config from test/fuzz/.config.json
 type FuzzConfigJson struct {
 	TransitionWeights TransitionWeights `json:"transitionWeights"`
@@ -62,6 +69,7 @@ type FuzzConfigJson struct {
 	AlternateWeight   int               `json:"alternateWeight"`
 	NumActors         int               `json:"numActors"`
 	EpochLength       int               `json:"epochLength"`
+	InitialSetup      InitialSetup      `json:"initialSetup"`
 }
 
 // struct that holds the config for fuzz tests
@@ -77,6 +85,7 @@ type FuzzConfig struct {
 	AlternateWeight   int
 	TestConfig        *testcommon.TestConfig
 	TransitionWeights TransitionWeights
+	InitialSetup      InitialSetup
 }
 
 // helper function to look up the simulation mode from the environment variable key
@@ -136,6 +145,14 @@ func GetHardCodedTransitionWeights() TransitionWeights {
 	}
 }
 
+func GetHardCodedInitialSetup() InitialSetup {
+	return InitialSetup{
+		NumAdminWhitelist:        2,
+		NumGlobalWhitelist:       4,
+		NumTopicCreatorWhitelist: 2,
+	}
+}
+
 // Iterate over a struct and check that the sum of its fields is 100
 func IterateAndCheckSum(structToCheck interface{}) (fieldsSum uint64, ok bool) {
 	vw := reflect.ValueOf(structToCheck)
@@ -168,6 +185,7 @@ func GetFuzzConfig(t *testing.T) FuzzConfig {
 	mode := Alternate
 	alternateWeight := 20
 	transitionWeights := GetHardCodedTransitionWeights()
+	initialSetup := GetHardCodedInitialSetup()
 
 	// get values from config.json
 	var jsonConfig *FuzzConfigJson = nil
@@ -197,6 +215,7 @@ func GetFuzzConfig(t *testing.T) FuzzConfig {
 		mode = jsonConfig.Mode
 		alternateWeight = jsonConfig.AlternateWeight
 		transitionWeights = jsonConfig.TransitionWeights
+		initialSetup = jsonConfig.InitialSetup
 	} else {
 		t.Log("No config.json found, proceeding without config.json values")
 	}
@@ -260,6 +279,7 @@ func GetFuzzConfig(t *testing.T) FuzzConfig {
 		AlternateWeight:   alternateWeight,
 		TestConfig:        &testCommonConfig,
 		TransitionWeights: transitionWeights,
+		InitialSetup:      initialSetup,
 	}
 
 }

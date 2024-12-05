@@ -339,14 +339,16 @@ func startAddToTopicWorkerWhitelist(
 	data *SimulationData,
 	sender Actor,
 	workers []Actor,
-	topicId uint64,
+	topics []uint64,
 	iterationCountStart int,
 ) (iterationCountAfter int) {
 	iterationCount := iterationCountStart
-	for _, worker := range workers {
-		success := addToTopicWorkerWhitelist(m, sender, worker, nil, topicId, data, iterationCount)
-		require.True(m.T, success)
-		iterationCount++
+	for _, topicId := range topics {
+		for _, worker := range workers {
+			success := addToTopicWorkerWhitelist(m, sender, worker, nil, topicId, data, iterationCount)
+			require.True(m.T, success)
+			iterationCount++
+		}
 	}
 	return iterationCount
 }
@@ -356,14 +358,102 @@ func startAddToTopicReputerWhitelist(
 	data *SimulationData,
 	sender Actor,
 	reputers []Actor,
-	topicId uint64,
+	topics []uint64,
 	iterationCountStart int,
 ) (iterationCountAfter int) {
 	iterationCount := iterationCountStart
-	for _, reputer := range reputers {
-		success := addToTopicReputerWhitelist(m, sender, reputer, nil, topicId, data, iterationCount)
+	for _, topicId := range topics {
+		for _, reputer := range reputers {
+			success := addToTopicReputerWhitelist(m, sender, reputer, nil, topicId, data, iterationCount)
+			require.True(m.T, success)
+			iterationCount++
+		}
+	}
+	return iterationCount
+}
+
+func startRemoveFromAdminWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	startActors []Actor,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, actor := range startActors {
+		success := removeFromAdminWhitelist(m, sender, actor, nil, 0, data, iterationCount)
 		require.True(m.T, success)
 		iterationCount++
+	}
+	return iterationCount
+}
+
+func startRemoveFromGlobalWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	startActors []Actor,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, actor := range startActors {
+		success := removeFromGlobalWhitelist(m, sender, actor, nil, 0, data, iterationCount)
+		require.True(m.T, success)
+		iterationCount++
+	}
+	return iterationCount
+}
+
+func startRemoveFromTopicCreatorWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	startActors []Actor,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, actor := range startActors {
+		success := removeFromTopicCreatorWhitelist(m, sender, actor, nil, 0, data, iterationCount)
+		require.True(m.T, success)
+		iterationCount++
+	}
+	return iterationCount
+}
+
+func startRemoveFromTopicWorkerWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	workers []Actor,
+	topics []uint64,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, topicId := range topics {
+		for _, worker := range workers {
+			success := removeFromTopicWorkerWhitelist(m, sender, worker, nil, topicId, data, iterationCount)
+			require.True(m.T, success)
+			iterationCount++
+		}
+	}
+	return iterationCount
+}
+
+func startRemoveFromTopicReputerWhitelist(
+	m *testcommon.TestConfig,
+	data *SimulationData,
+	sender Actor,
+	reputers []Actor,
+	topics []uint64,
+	iterationCountStart int,
+) (iterationCountAfter int) {
+	iterationCount := iterationCountStart
+	for _, topicId := range topics {
+		for _, reputer := range reputers {
+			success := removeFromTopicReputerWhitelist(m, sender, reputer, nil, topicId, data, iterationCount)
+			require.True(m.T, success)
+			iterationCount++
+		}
 	}
 	return iterationCount
 }
@@ -611,10 +701,11 @@ func startCancelDelegateStakeRemoval(
 
 // run every state transition, at least once.
 func simulateAutomaticInitialState(
-	m *testcommon.TestConfig,
+	f *fuzzcommon.FuzzConfig,
 	faucet Actor,
 	data *SimulationData,
 ) (iterationCountAfter int) {
+	m := f.TestConfig
 	iterationCount := 0
 
 	// make sure that the setup always fails on error
@@ -626,27 +717,35 @@ func simulateAutomaticInitialState(
 	// pick 4 reputers, 5 workers, and 2 delegators
 	startReputers, startWorkers, startDelegators := pickAutoSetupActors(m, data)
 
-	// add 2 reputers in admin whitelist
-	iterationCount = startAddToAdminWhitelist(m, data, faucet, startReputers[2:], iterationCount)
-	// put 2 reputers & 2 workers in global whitelist
-	iterationCount = startAddToGlobalWhitelist(m, data, faucet, append(startReputers[:2], startWorkers[:2]...), iterationCount)
-	// add 2 delegators to create topic whitelist
-	iterationCount = startAddToTopicCreatorWhitelist(m, data, faucet, startDelegators, iterationCount)
+	// add 1 delegator to all global whitelists
+	iterationCount = startAddToAdminWhitelist(m, data, faucet, startDelegators[:1], iterationCount)
+	iterationCount = startAddToGlobalWhitelist(m, data, faucet, startDelegators[:1], iterationCount)
+	iterationCount = startAddToTopicCreatorWhitelist(m, data, faucet, startDelegators[:1], iterationCount)
 
 	// create two topics with both reputers and workers whitelist enabled
 	success := createTopic(m, startDelegators[0], UnusedActor, nil, 0, data, iterationCount)
 	require.True(m.T, success)
 	iterationCount++
-	success = createTopic(m, startDelegators[1], UnusedActor, nil, 0, data, iterationCount)
+	success = createTopic(m, startDelegators[0], UnusedActor, nil, 0, data, iterationCount)
 	require.True(m.T, success)
 	iterationCount++
 
 	listTopics := data.getTopics()
 	require.Len(m.T, listTopics, 2)
 
-	// put 2 reputers & 2 workers in one topic whitelists
-	iterationCount = startAddToTopicWorkerWhitelist(m, data, faucet, startWorkers[2:], listTopics[1], iterationCount)
-	iterationCount = startAddToTopicReputerWhitelist(m, data, faucet, startReputers[2:], listTopics[1], iterationCount)
+	// disable whitelists for topic 1
+	require.True(m.T,
+		disableTopicWorkerWhitelist(m, startDelegators[0], UnusedActor, nil, listTopics[0], data, iterationCount),
+	)
+	iterationCount++
+	require.True(m.T,
+		disableTopicReputerWhitelist(m, startDelegators[0], UnusedActor, nil, listTopics[0], data, iterationCount),
+	)
+	iterationCount++
+
+	// put reputers & workers in topic whitelists
+	iterationCount = startAddToTopicWorkerWhitelist(m, data, faucet, startWorkers, listTopics, iterationCount)
+	iterationCount = startAddToTopicReputerWhitelist(m, data, faucet, startReputers, listTopics, iterationCount)
 
 	// register all 4 reputers on both topics
 	iterationCount = startRegisterReputers(m, data, startReputers, listTopics, iterationCount)
@@ -685,6 +784,30 @@ func simulateAutomaticInitialState(
 	iterationCount = startCancelStakeRemoval(m, data, unStakeReputer, justFirstTopic, iterationCount)
 	// cancel the removal of delegated stake from 1 delegator on reputer 1 on topic 1
 	iterationCount = startCancelDelegateStakeRemoval(m, data, unStakeDelegator, unStakeDelegatorReputer, justFirstTopic, iterationCount)
+
+	// enable whitelists for topic 1
+	require.True(m.T,
+		enableTopicWorkerWhitelist(m, startDelegators[0], UnusedActor, nil, listTopics[0], data, iterationCount),
+	)
+	iterationCount++
+	require.True(m.T,
+		enableTopicReputerWhitelist(m, startDelegators[0], UnusedActor, nil, listTopics[0], data, iterationCount),
+	)
+	iterationCount++
+
+	// remove 2 reputers & 3 workers from topic 1 topic whitelists
+	iterationCount = startRemoveFromTopicWorkerWhitelist(m, data, faucet, startWorkers[:3], justFirstTopic, iterationCount)
+	iterationCount = startRemoveFromTopicReputerWhitelist(m, data, faucet, startReputers[:2], justFirstTopic, iterationCount)
+
+	// remove 1 delegator from all global whitelists
+	iterationCount = startRemoveFromAdminWhitelist(m, data, faucet, startDelegators[:1], iterationCount)
+	iterationCount = startRemoveFromGlobalWhitelist(m, data, faucet, startDelegators[:1], iterationCount)
+	iterationCount = startRemoveFromTopicCreatorWhitelist(m, data, faucet, startDelegators[:1], iterationCount)
+
+	// add configured actors to the global whitelists
+	iterationCount = startAddToAdminWhitelist(m, data, faucet, data.pickNRandomActors(m, f.InitialSetup.NumAdminWhitelist), iterationCount)
+	iterationCount = startAddToGlobalWhitelist(m, data, faucet, data.pickNRandomActors(m, f.InitialSetup.NumGlobalWhitelist), iterationCount)
+	iterationCount = startAddToTopicCreatorWhitelist(m, data, faucet, data.pickNRandomActors(m, f.InitialSetup.NumTopicCreatorWhitelist), iterationCount)
 
 	// set back the failOnErr status the user requested for the fuzz run
 	data.failOnErr = failOnErrWanted
