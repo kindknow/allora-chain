@@ -13,6 +13,10 @@ import (
 	"github.com/allora-network/allora-chain/app/upgrades"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+
 	feemarkettypes "github.com/skip-mev/feemarket/x/feemarket/types"
 )
 
@@ -53,6 +57,12 @@ func CreateUpgradeHandler(
 		}
 		sdkCtx.Logger().Info("FEE MARKET MODULE CONFIGURED")
 
+		sdkCtx.Logger().Info("ADDING BURNER PERMISSION TO GOV MODULE")
+		if err := AddBurnerPermissionToGovModule(sdkCtx, keepers.AccountKeeper); err != nil {
+			return vm, err
+		}
+		sdkCtx.Logger().Info("BURNER PERMISSION ADDED TO GOV MODULE")
+
 		return vm, nil
 	}
 }
@@ -81,4 +91,20 @@ func ConfigureFeeMarketModule(ctx sdk.Context, keepers *keepers.AppKeepers) erro
 	state.BaseGasPrice = cosmosmath.LegacyMustNewDecFromStr("10")
 
 	return keepers.FeeMarketKeeper.SetState(ctx, state)
+}
+
+func AddBurnerPermissionToGovModule(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
+	govAccount := ak.GetModuleAccount(ctx, govtypes.ModuleName)
+	macc := govAccount.(*authtypes.ModuleAccount)
+
+	// Check if the permission already exists to avoid duplicates
+	for _, perm := range macc.Permissions {
+		if perm == authtypes.Burner {
+			return nil // Permission already exists, nothing to do
+		}
+	}
+
+	macc.Permissions = append(macc.Permissions, authtypes.Burner)
+	ak.SetModuleAccount(ctx, macc)
+	return nil
 }
