@@ -57,6 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+* [#699](https://github.com/allora-network/allora-chain/pull/699) Make install script manage new release assets naming
+
 ## v0.7.0
 
 ### Added
