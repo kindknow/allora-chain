@@ -57,6 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* [#694](https://github.com/allora-network/allora-chain/pull/694) Make fuzzer whitelist aware
+
 ### Fixed
 
 * [#699](https://github.com/allora-network/allora-chain/pull/699) Make install script manage new release assets naming
