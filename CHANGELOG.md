@@ -57,6 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+* [#700](https://github.com/allora-network/allora-chain/pull/700) Allow clients to unmarshall old transactions
+
 ## v0.7.0
 
 ### Added
