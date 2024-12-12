@@ -3106,7 +3106,8 @@ func (k *Keeper) InsertWorkerInferenceScore(ctx context.Context, topicId TopicId
 	if err != nil {
 		return errorsmod.Wrapf(err, "Error getting params")
 	}
-	maxNumScores := moduleParams.MaxSamplesToScaleScores
+
+	maxNumScores := moduleParams.MaxSamplesToScaleScores * moduleParams.MaxTopInferersToReward
 
 	lenScores := uint64(len(scores.Scores))
 	if lenScores > maxNumScores {
@@ -3137,10 +3138,10 @@ func (k *Keeper) GetInferenceScoresUntilBlock(ctx context.Context, topicId Topic
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "error getting params")
 	}
-	maxNumTimeSteps := moduleParams.MaxSamplesToScaleScores
 
-	scores := make([]*types.Score, 0, maxNumTimeSteps)
+	maxNumScores := moduleParams.MaxSamplesToScaleScores * moduleParams.MaxTopInferersToReward
 
+	scores := make([]*types.Score, 0, maxNumScores)
 	for iter.Valid() {
 		existingScores, err := iter.KeyValue()
 		if err != nil {
@@ -3148,13 +3149,13 @@ func (k *Keeper) GetInferenceScoresUntilBlock(ctx context.Context, topicId Topic
 		}
 
 		for _, score := range existingScores.Value.Scores {
-			if uint64(len(scores)) < maxNumTimeSteps {
+			if uint64(len(scores)) < maxNumScores {
 				scores = append(scores, score)
 			} else {
 				break
 			}
 		}
-		if uint64(len(scores)) >= maxNumTimeSteps {
+		if uint64(len(scores)) >= maxNumScores {
 			break
 		}
 		iter.Next()
@@ -3194,7 +3195,8 @@ func (k *Keeper) InsertWorkerForecastScore(ctx context.Context, topicId TopicId,
 	if err != nil {
 		return errorsmod.Wrap(err, "error getting params")
 	}
-	maxNumScores := moduleParams.MaxSamplesToScaleScores
+
+	maxNumScores := moduleParams.MaxSamplesToScaleScores * moduleParams.MaxTopForecastersToReward
 
 	lenScores := uint64(len(scores.Scores))
 	if lenScores > maxNumScores {
@@ -3225,10 +3227,10 @@ func (k *Keeper) GetForecastScoresUntilBlock(ctx context.Context, topicId TopicI
 	if err != nil {
 		return nil, errorsmod.Wrap(err, "error getting params")
 	}
-	maxNumTimeSteps := moduleParams.MaxSamplesToScaleScores
 
-	scores := make([]*types.Score, 0, maxNumTimeSteps)
+	maxNumScores := moduleParams.MaxSamplesToScaleScores * moduleParams.MaxTopForecastersToReward
 
+	scores := make([]*types.Score, 0, maxNumScores)
 	for iter.Valid() {
 		existingScores, err := iter.KeyValue()
 		if err != nil {
@@ -3236,13 +3238,13 @@ func (k *Keeper) GetForecastScoresUntilBlock(ctx context.Context, topicId TopicI
 		}
 
 		for _, score := range existingScores.Value.Scores {
-			if uint64(len(scores)) < maxNumTimeSteps {
+			if uint64(len(scores)) < maxNumScores {
 				scores = append(scores, score)
 			} else {
 				break
 			}
 		}
-		if uint64(len(scores)) >= maxNumTimeSteps {
+		if uint64(len(scores)) >= maxNumScores {
 			break
 		}
 		iter.Next()
