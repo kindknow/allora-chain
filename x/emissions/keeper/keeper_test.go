@@ -4975,7 +4975,7 @@ func (s *KeeperTestSuite) TestScoreLimiting() {
 
 	scores, err := k.GetWorkerInferenceScoresAtBlock(ctx, topicId, blockHeight)
 	s.Require().NoError(err)
-	s.Require().Equal(6, len(scores.Scores), "Should keep MaxSamplesToScaleScores * MaxTopInferersToReward scores")
+	s.Require().Len(scores.Scores, 6, "Should keep MaxSamplesToScaleScores * MaxTopInferersToReward scores")
 
 	for i, score := range scores.Scores {
 		expectedWorker := s.addrsStr[i+2]
