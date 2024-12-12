@@ -2642,6 +2642,7 @@ func (s *KeeperTestSuite) TestInsertWorkerInferenceScore() {
 	maxNumScores := 5
 	params := types.DefaultParams()
 	params.MaxSamplesToScaleScores = uint64(maxNumScores)
+	params.MaxTopInferersToReward = 1
 	err := keeper.SetParams(ctx, params)
 	s.Require().NoError(err, "Setting parameters should not fail")
 
@@ -2667,6 +2668,7 @@ func (s *KeeperTestSuite) TestInsertWorkerInferenceScore2() {
 	maxNumScores := 5
 	params := types.DefaultParams()
 	params.MaxSamplesToScaleScores = uint64(maxNumScores)
+	params.MaxTopInferersToReward = 1
 	err := keeper.SetParams(ctx, params)
 	s.Require().NoError(err, "Setting parameters should not fail")
 
@@ -2740,6 +2742,7 @@ func (s *KeeperTestSuite) TestInsertWorkerForecastScore() {
 	maxNumScores := 5
 	params := types.DefaultParams()
 	params.MaxSamplesToScaleScores = uint64(maxNumScores)
+	params.MaxTopForecastersToReward = 1
 	err := keeper.SetParams(ctx, params)
 	s.Require().NoError(err, "Setting parameters should not fail")
 

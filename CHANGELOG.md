@@ -57,6 +57,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+* [#702](https://github.com/allora-network/allora-chain/pull/702) Adjust score normalization to consider more scores samples
+
 ## v0.7.0
 
 ### Added
