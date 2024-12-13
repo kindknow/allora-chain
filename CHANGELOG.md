@@ -61,30 +61,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* [#694](https://github.com/allora-network/allora-chain/pull/694) Make fuzzer whitelist aware
+* [#708](https://github.com/allora-network/allora-chain/pull/708) Add Emission Enabled bolean flag to Mint Module
+* [#703](https://github.com/allora-network/allora-chain/pull/703) Add outlier detection to inferences
+
 ### Changed
 
 ### Deprecated
 
 ### Removed
 
-### Added
-
-* [#694](https://github.com/allora-network/allora-chain/pull/694) Make fuzzer whitelist aware
-* [#708](https://github.com/allora-network/allora-chain/pull/708) Add Emission Enabled bolean flag to Mint Module
-
 ### Fixed
 
 * [#702](https://github.com/allora-network/allora-chain/pull/702) Adjust score normalization to consider more scores samples
 * [#699](https://github.com/allora-network/allora-chain/pull/699) Make install script manage new release assets naming
 * [#704](https://github.com/allora-network/allora-chain/pull/704) Correct Discrepancies with Whitepaper modified reward fractions vs plain EMA
+* [#700](https://github.com/allora-network/allora-chain/pull/700) Allow clients to unmarshall old transactions
 
 ### Security
 
 # [Released]
-
-### Fixed
-
-* [#700](https://github.com/allora-network/allora-chain/pull/700) Allow clients to unmarshall old transactions
 
 ## v0.7.0
 
