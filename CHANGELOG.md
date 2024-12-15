@@ -57,9 +57,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v0.X.X
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
 ### Fixed
 
 * [#699](https://github.com/allora-network/allora-chain/pull/699) Make install script manage new release assets naming
+* [#704](https://github.com/allora-network/allora-chain/pull/704) Correct Discrepancies with Whitepaper modified reward fractions vs plain EMA
+
+### Security
+
+## [Released]
 
 ## v0.7.0
 
@@ -103,8 +118,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 * [#682](https://github.com/allora-network/allora-chain/pull/682) Ensure IBC `MsgTransfer` funds are received
-
-## [Released]
 
 ## v0.6.0
 
