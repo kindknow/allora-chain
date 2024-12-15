@@ -2642,6 +2642,7 @@ func (s *KeeperTestSuite) TestInsertWorkerInferenceScore() {
 	maxNumScores := 5
 	params := types.DefaultParams()
 	params.MaxSamplesToScaleScores = uint64(maxNumScores)
+	params.MaxTopInferersToReward = 1
 	err := keeper.SetParams(ctx, params)
 	s.Require().NoError(err, "Setting parameters should not fail")
 
@@ -2667,6 +2668,7 @@ func (s *KeeperTestSuite) TestInsertWorkerInferenceScore2() {
 	maxNumScores := 5
 	params := types.DefaultParams()
 	params.MaxSamplesToScaleScores = uint64(maxNumScores)
+	params.MaxTopInferersToReward = 1
 	err := keeper.SetParams(ctx, params)
 	s.Require().NoError(err, "Setting parameters should not fail")
 
@@ -2740,6 +2742,7 @@ func (s *KeeperTestSuite) TestInsertWorkerForecastScore() {
 	maxNumScores := 5
 	params := types.DefaultParams()
 	params.MaxSamplesToScaleScores = uint64(maxNumScores)
+	params.MaxTopForecastersToReward = 1
 	err := keeper.SetParams(ctx, params)
 	s.Require().NoError(err, "Setting parameters should not fail")
 
@@ -4945,4 +4948,37 @@ func (s *KeeperTestSuite) TestGetCountForecasterInclusionsInTopic() {
 	count, err = k.GetCountForecasterInclusionsInTopic(ctx, topicId, forecaster2)
 	require.NoError(err)
 	require.Equal(uint64(1), count)
+}
+
+func (s *KeeperTestSuite) TestScoreLimiting() {
+	k := s.emissionsKeeper
+	ctx := s.ctx
+	topicId := s.CreateOneTopic(10800)
+	blockHeight := int64(10)
+
+	params := types.DefaultParams()
+	params.MaxTopInferersToReward = 2
+	params.MaxSamplesToScaleScores = 3
+	err := k.SetParams(ctx, params)
+	s.Require().NoError(err)
+
+	for i := 0; i < 8; i++ {
+		score := types.Score{
+			TopicId:     topicId,
+			BlockHeight: blockHeight,
+			Address:     s.addrsStr[i],
+			Score:       alloraMath.NewDecFromInt64(int64(90 + i)),
+		}
+		err := k.InsertWorkerInferenceScore(ctx, topicId, blockHeight, score)
+		s.Require().NoError(err)
+	}
+
+	scores, err := k.GetWorkerInferenceScoresAtBlock(ctx, topicId, blockHeight)
+	s.Require().NoError(err)
+	s.Require().Len(scores.Scores, 6, "Should keep MaxSamplesToScaleScores * MaxTopInferersToReward scores")
+
+	for i, score := range scores.Scores {
+		expectedWorker := s.addrsStr[i+2]
+		s.Require().Equal(expectedWorker, score.Address)
+	}
 }
