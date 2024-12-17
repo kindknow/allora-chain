@@ -1310,6 +1310,12 @@ func (k *Keeper) AppendInference(
 		}
 	}
 
+	// Penalise the inferer if needed
+	previousEmaScore, err = k.MayPenaliseInferer(ctx, topic, nonceBlockHeight, previousEmaScore)
+	if err != nil {
+		return errorsmod.Wrap(err, "error setting bad reputer in nonce")
+	}
+
 	// Get lowest inferer score ema for the topic
 	lowestEmaScore, _, err := k.GetLowestInfererScoreEma(ctx, topic.Id)
 	if err != nil {
