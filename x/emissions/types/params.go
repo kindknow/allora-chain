@@ -42,9 +42,9 @@ func DefaultParams() Params {
 		MinEpochLengthRecordLimit:           int64(3),                                     // minimum number of epochs to keep records for a topic
 		MaxSerializedMsgLength:              int64(1000 * 1000),                           // maximum size of data to msg and query server in bytes
 		BlocksPerMonth:                      uint64(864000),                               // ~3 seconds block time, assuming 30 days in a month 60 * 60 * 24 * 30 / 3
-		PRewardInference:                    alloraMath.NewDecFromInt64(1),                // fiducial value for rewards calculation
+		PRewardInference:                    alloraMath.NewDecFromInt64(3),                // fiducial value for rewards calculation
 		PRewardForecast:                     alloraMath.NewDecFromInt64(3),                // fiducial value for rewards calculation
-		PRewardReputer:                      alloraMath.NewDecFromInt64(3),                // fiducial value for rewards calculation
+		PRewardReputer:                      alloraMath.NewDecFromInt64(1),                // fiducial value for rewards calculation
 		CRewardInference:                    alloraMath.MustNewDecFromString("0.75"),      // fiducial value for rewards calculation
 		CRewardForecast:                     alloraMath.MustNewDecFromString("0.75"),      // fiducial value for rewards calculation
 		CNorm:                               alloraMath.MustNewDecFromString("0.75"),      // fiducial value for inference synthesis
