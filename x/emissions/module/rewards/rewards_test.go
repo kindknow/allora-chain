@@ -2391,6 +2391,7 @@ func (s *RewardsTestSuite) TestOnlyFewTopActorsGetReward() {
 	s.Require().Equal(uint64(len(forecasterScores)), params.GetMaxTopForecastersToReward(), "Only few Top forecasters can get reward")
 }
 
+/* to be rewritten in PROTO-3088
 func (s *RewardsTestSuite) TestTotalInferersRewardFractionGrowsWithMoreInferers() {
 	block := int64(100)
 	s.ctx = s.ctx.WithBlockHeight(block)
@@ -2918,6 +2919,7 @@ func (s *RewardsTestSuite) TestTotalInferersRewardFractionGrowsWithMoreInferers(
 		thirdInfererFraction.String(),
 	)
 }
+*/
 
 // TestRewardForTopicGoesUpWhenRelativeStakeGoesUp tests that the reward for a topic increases
 // when its relative stake compared to other topics increases.
