@@ -58,6 +58,8 @@ func DefaultParams() Params {
 		GlobalWhitelistEnabled:              true,                                         // global whitelist enabled => all global whitelisted actors can create topics and participate in all topics as workers and reputers
 		TopicCreatorWhitelistEnabled:        true,                                         // topic creator whitelist enabled => all topic creator whitelisted actors can create topics
 		MinExperiencedWorkerRegrets:         uint64(10),                                   // minimum number of experienced workers required to use their regrets for calculating the topic initial regret
+		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),        // threshold for inference outlier detection
+		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),       // alpha for inference outlier detection
 	}
 }
 
@@ -194,6 +196,12 @@ func (p Params) Validate() error {
 	}
 	if err := validateMinExperiencedWorkerRegrets(p.MinExperiencedWorkerRegrets); err != nil {
 		return errorsmod.Wrap(err, "params validation failure: min experienced worker regrets")
+	}
+	if err := validateInferenceOutlierDetectionThreshold(p.InferenceOutlierDetectionThreshold); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: inference outlier detection threshold")
+	}
+	if err := validateInferenceOutlierDetectionAlpha(p.InferenceOutlierDetectionAlpha); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: inference outlier detection alpha")
 	}
 	return nil
 }
@@ -609,5 +617,23 @@ func validateDataSendingFee(i cosmosMath.Int) error {
 
 // No validation needed as it is a uint
 func validateMinExperiencedWorkerRegrets(i uint64) error {
+	return nil
+}
+
+func validateInferenceOutlierDetectionThreshold(i alloraMath.Dec) error {
+	if err := ValidateDec(i); err != nil {
+		return err
+	} else if i.IsNegative() {
+		return ErrValidationMustBeGreaterthanZero
+	}
+	return nil
+}
+
+func validateInferenceOutlierDetectionAlpha(i alloraMath.Dec) error {
+	if err := ValidateDec(i); err != nil {
+		return err
+	} else if !isAlloraDecBetweenZeroAndOneInclusive(i) {
+		return ErrValidationMustBeBetweenZeroAndOne
+	}
 	return nil
 }

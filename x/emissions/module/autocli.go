@@ -2,14 +2,14 @@ package module
 
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	statev6 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v6"
+	statev7 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v7"
 )
 
 // AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
 func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
 		Query: &autocliv1.ServiceCommandDescriptor{
-			Service: statev6.QueryService_ServiceDesc.ServiceName,
+			Service: statev7.QueryService_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "GetParams",
@@ -160,6 +160,14 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "GetLatestAvailableNetworkInferences",
 					Use:       "latest-available-network-inferences [topic_id]",
 					Short:     "Returns network inference only if all available information to compute the inference is present",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "GetLatestAvailableNetworkInferencesOutlierResistant",
+					Use:       "latest-available-network-inferences-outlier-resistant [topic_id]",
+					Short:     "Returns network inference only if all available information to compute the inference is present, removing outliers",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "topic_id"},
 					},
@@ -573,9 +581,26 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
+					RpcMethod: "GetNetworkInferencesAtBlockOutlierResistant",
+					Use:       "network-inferences-at-block-outlier-resistant [topic_id] [block_height_last_inference]",
+					Short:     "Get the Network Inferences for a topic at a block height where the last inference was made removing outliers",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+						{ProtoField: "block_height_last_inference"},
+					},
+				},
+				{
 					RpcMethod: "GetLatestNetworkInferences",
 					Use:       "latest-network-inferences [topic_id]",
 					Short:     "Get the latest Network inferences and weights for a topic. Will return whatever information it has available.",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "GetLatestNetworkInferencesOutlierResistant",
+					Use:       "latest-network-inferences-outlier-resistant [topic_id]",
+					Short:     "Get the latest Network inferences and weights for a topic. Will return whatever information it has available removing outliers.",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "topic_id"},
 					},
@@ -814,7 +839,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			Short:                "Emissions module query commands",
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
-			Service: statev6.MsgService_ServiceDesc.ServiceName,
+			Service: statev7.MsgService_ServiceDesc.ServiceName,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "UpdateParams",

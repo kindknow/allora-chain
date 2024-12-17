@@ -1,6 +1,7 @@
 package emissionsv4
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -25,4 +26,10 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&InsertWorkerPayloadRequest{},
 		&InsertReputerPayloadRequest{},
 	)
+}
+
+// So we need to register types like:
+func RegisterTypes(registry *codec.LegacyAmino) {
+	// Internal types used by requests
+	registry.RegisterConcrete(&OptionalParams{}, "emissions/v4/OptionalParams", nil) //nolint:exhaustruct
 }
