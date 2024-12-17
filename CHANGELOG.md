@@ -70,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * [#694](https://github.com/allora-network/allora-chain/pull/694) Make fuzzer whitelist aware
+* [#708](https://github.com/allora-network/allora-chain/pull/708) Add Emission Enabled bolean flag to Mint Module
 
 ### Fixed
 
