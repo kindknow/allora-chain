@@ -569,8 +569,10 @@ func GetQuantileOfDecs(
 }
 
 // MedianAbsoluteDeviation calculates the median absolute deviation of a slice of Dec values.
-// Returns (MAD, median, error)
-func MedianAbsoluteDeviation(data []Dec) (Dec, Dec, error) {
+// If an error occurs, returns (Dec{}, Dec{}, error).
+// For empty slices, returns (ZeroDec(), ZeroDec(), nil).
+// For single-element slices, returns (ZeroDec(), value, nil).
+func MedianAbsoluteDeviation(data []Dec) (medianAbsoluteDeviation Dec, median Dec, err error) {
 	// Check for NaN values first, consistent with other functions
 	for _, v := range data {
 		if v.isNaN {
@@ -582,8 +584,12 @@ func MedianAbsoluteDeviation(data []Dec) (Dec, Dec, error) {
 		return ZeroDec(), ZeroDec(), nil
 	}
 
+	if len(data) == 1 {
+		return ZeroDec(), data[0], nil // MAD of single value is 0
+	}
+
 	// Calculate the median of the original data
-	median, err := Median(data)
+	median, err = Median(data)
 	if err != nil {
 		return Dec{}, Dec{}, err
 	}
@@ -593,20 +599,20 @@ func MedianAbsoluteDeviation(data []Dec) (Dec, Dec, error) {
 	for i, v := range data {
 		diff, err := v.Sub(median)
 		if err != nil {
-			return Dec{}, Dec{}, err
+			return Dec{}, Dec{}, errorsmod.Wrap(err, "MAD: error calculating difference")
 		}
 		absDiff, err := diff.Abs()
 		if err != nil {
-			return Dec{}, Dec{}, err
+			return Dec{}, Dec{}, errorsmod.Wrap(err, "MAD: error calculating absolute difference")
 		}
 		absDevs[i] = absDiff
 	}
 
 	// Calculate the median of the absolute deviations
-	mad, err := Median(absDevs)
+	medianAbsoluteDeviation, err = Median(absDevs)
 	if err != nil {
 		return Dec{}, Dec{}, err
 	}
 
-	return mad, median, nil
+	return medianAbsoluteDeviation, median, nil
 }
