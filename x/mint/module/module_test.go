@@ -566,3 +566,31 @@ func (s *MintModuleTestSuite) TestInflationRateAsMorePeopleStakeGoesUp() {
 		ecosystemTokensMintedDelta1.String(),
 	)
 }
+
+func (s *MintModuleTestSuite) TestEmissionDisabled() {
+	s.ctx = s.ctx.WithBlockHeight(1)
+
+	params, err := s.mintKeeper.GetParams(s.ctx)
+	s.Require().NoError(err)
+	params.EmissionEnabled = false
+	err = s.mintKeeper.Params.Set(s.ctx, params)
+	s.Require().NoError(err)
+
+	tokenSupplyBefore := s.bankKeeper.GetSupply(s.ctx, sdk.DefaultBondDenom)
+	// call begin blocker to simulate running the mint module
+	err = mint.BeginBlocker(s.ctx, s.mintKeeper)
+	s.Require().NoError(err)
+
+	tokenSupplyAfter := s.bankKeeper.GetSupply(s.ctx, sdk.DefaultBondDenom)
+	s.Require().True(tokenSupplyAfter.Equal(tokenSupplyBefore),
+		"Token supply should stay the same when emission is disabled: %s != %s",
+		tokenSupplyAfter.String(),
+		tokenSupplyBefore.String(),
+	)
+	ecosystemTokensMintedAfter, err := s.mintKeeper.EcosystemTokensMinted.Get(s.ctx)
+	s.Require().NoError(err)
+	s.Require().True(ecosystemTokensMintedAfter.Equal(cosmosMath.ZeroInt()),
+		"Ecosystem tokens minted should be zero when emission is disabled: %s != 0",
+		ecosystemTokensMintedAfter.String(),
+	)
+}
