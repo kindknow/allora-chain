@@ -156,4 +156,5 @@ message Params {
   // and participate in all topics as workers and reputers
   bool topic_creator_whitelist_enabled = 51; // topic creator whitelist enabled => only topic creator whitelisted actors can create topics
   uint64 min_experienced_worker_regrets = 52; // minimum number of experienced workers required to use their regrets
+  // for calculating the topic initial regret
 }
