@@ -1,6 +1,7 @@
 package emissionsv3
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -25,4 +26,14 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgInsertWorkerPayload{},
 		&MsgInsertReputerPayload{},
 	)
+}
+
+// So we need to register types like:
+func RegisterTypes(registry *codec.LegacyAmino) {
+	// Internal types used by requests
+	registry.RegisterConcrete(&OptionalParams{}, "emissions/v3/OptionalParams", nil)
+	registry.RegisterConcrete(&WorkerDataBundle{}, "emissions/v3/WorkerDataBundle", nil)
+	registry.RegisterConcrete(&ReputerValueBundle{}, "emissions/v3/ReputerValueBundle", nil)
+	registry.RegisterConcrete(&WorkerDataBundles{}, "emissions/v3/WorkerDataBundles", nil)
+	registry.RegisterConcrete(&ReputerValueBundles{}, "emissions/v3/ReputerValueBundles", nil)
 }

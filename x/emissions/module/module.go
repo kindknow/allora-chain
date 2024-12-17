@@ -10,6 +10,7 @@ import (
 	v3 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v3"
 	v4 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v4"
 	v5 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v5"
+	v6 "github.com/allora-network/allora-chain/x/emissions/api/emissions/v6"
 	keeper "github.com/allora-network/allora-chain/x/emissions/keeper"
 	"github.com/allora-network/allora-chain/x/emissions/keeper/msgserver"
 	"github.com/allora-network/allora-chain/x/emissions/keeper/queryserver"
@@ -56,8 +57,11 @@ func (AppModule) Name() string { return types.ModuleName }
 
 // RegisterLegacyAminoCodec registers the state module's types on the LegacyAmino codec.
 func (AppModule) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	// TODO: Implement full Amino codec registration if needed in the future
-	// types.RegisterLegacyAminoCodec(cdc)
+	v2.RegisterTypes(cdc)
+	v3.RegisterTypes(cdc)
+	v4.RegisterTypes(cdc)
+	v5.RegisterTypes(cdc)
+	v6.RegisterTypes(cdc)
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the state module.
@@ -74,6 +78,7 @@ func (AppModule) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	v3.RegisterInterfaces(registry)
 	v4.RegisterInterfaces(registry)
 	v5.RegisterInterfaces(registry)
+	v6.RegisterInterfaces(registry)
 }
 
 // ConsensusVersion implements AppModule/ConsensusVersion.

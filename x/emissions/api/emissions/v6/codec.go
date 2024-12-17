@@ -1,6 +1,7 @@
 package emissionsv6
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -37,4 +38,10 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&AddToTopicReputerWhitelistRequest{},
 		&RemoveFromTopicReputerWhitelistRequest{},
 	)
+}
+
+// So we need to register types like:
+func RegisterTypes(registry *codec.LegacyAmino) {
+	// Internal types used by requests
+	registry.RegisterConcrete(&OptionalParams{}, "emissions/v6/OptionalParams", nil)
 }
