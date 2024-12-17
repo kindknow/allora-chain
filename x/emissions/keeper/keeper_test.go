@@ -1151,8 +1151,8 @@ func (s *KeeperTestSuite) TestGetInferencesAtBlockOutlierResistant() {
 		},
 	}
 
-	// Assume InsertActiveInferences correctly sets up inferences
-	nonce := types.Nonce{BlockHeight: block} // Assuming block type cast to int64 if needed
+	// Insert directly as active inferences
+	nonce := types.Nonce{BlockHeight: block}
 	err = keeper.InsertActiveInferences(ctx, topicId, nonce.BlockHeight, expectedInferences)
 	s.Require().NoError(err)
 
@@ -1161,7 +1161,6 @@ func (s *KeeperTestSuite) TestGetInferencesAtBlockOutlierResistant() {
 	s.Require().NoError(err)
 	s.Require().Len(actualInferences.Inferences, 3)
 
-	// Retrieve inferences
 	actualInferences, err = keeper.GetInferencesAtBlock(ctx, topicId, block, true)
 	s.Require().NoError(err)
 	s.Require().Len(actualInferences.Inferences, 2)
@@ -5081,13 +5080,10 @@ func (s *KeeperTestSuite) TestUpdateNetworkInferencesOutlierMetrics() {
 	s.Require().Equal(alloraMath.NewDecFromInt64(1), mad)
 	s.Require().Equal(alloraMath.NewDecFromInt64(11), median)
 
-	// Verify running it a second time, should change the
 	// Modify a copy of the previous inferences and run it again
-	inferencesCopy := inferences
-	inferencesCopy[0].Value = alloraMath.NewDecFromInt64(100)
-	inferencesCopy[1].Value = alloraMath.NewDecFromInt64(50)
-	inferencesWrapperCopy := types.Inferences{Inferences: inferencesCopy}
-	err = s.emissionsKeeper.InsertActiveInferences(s.ctx, topicId, blockHeight, inferencesWrapperCopy)
+	inferencesWrapper.Inferences[0].Value = alloraMath.NewDecFromInt64(100)
+	inferencesWrapper.Inferences[1].Value = alloraMath.NewDecFromInt64(50)
+	err = s.emissionsKeeper.InsertActiveInferences(s.ctx, topicId, blockHeight, inferencesWrapper)
 	s.Require().NoError(err)
 
 	err = s.emissionsKeeper.UpdateNetworkInferencesOutlierMetrics(s.ctx, topicId, blockHeight)
