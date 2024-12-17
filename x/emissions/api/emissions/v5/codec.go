@@ -31,5 +31,5 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 // So we need to register types like:
 func RegisterTypes(registry *codec.LegacyAmino) {
 	// Internal types used by requests
-	registry.RegisterConcrete(&OptionalParams{}, "emissions/v5/OptionalParams", nil)
+	registry.RegisterConcrete(&OptionalParams{}, "emissions/v5/OptionalParams", nil) //nolint:exhaustruct
 }

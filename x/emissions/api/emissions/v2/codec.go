@@ -31,9 +31,9 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 // So we need to register types like:
 func RegisterTypes(registry *codec.LegacyAmino) {
 	// Internal types used by requests
-	registry.RegisterConcrete(&OptionalParams{}, "emissions/v2/OptionalParams", nil)
-	registry.RegisterConcrete(&WorkerDataBundle{}, "emissions/v2/WorkerDataBundle", nil)
-	registry.RegisterConcrete(&ReputerValueBundle{}, "emissions/v2/ReputerValueBundle", nil)
-	registry.RegisterConcrete(&WorkerDataBundles{}, "emissions/v2/WorkerDataBundles", nil)
-	registry.RegisterConcrete(&ReputerValueBundles{}, "emissions/v2/ReputerValueBundles", nil)
+	registry.RegisterConcrete(&OptionalParams{}, "emissions/v2/OptionalParams", nil)           //nolint:exhaustruct
+	registry.RegisterConcrete(&WorkerDataBundle{}, "emissions/v2/WorkerDataBundle", nil)       //nolint:exhaustruct
+	registry.RegisterConcrete(&ReputerValueBundle{}, "emissions/v2/ReputerValueBundle", nil)   //nolint:exhaustruct
+	registry.RegisterConcrete(&WorkerDataBundles{}, "emissions/v2/WorkerDataBundles", nil)     //nolint:exhaustruct
+	registry.RegisterConcrete(&ReputerValueBundles{}, "emissions/v2/ReputerValueBundles", nil) //nolint:exhaustruct
 }
