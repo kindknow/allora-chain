@@ -106,11 +106,9 @@ func MigrateParams(store storetypes.KVStore, cdc codec.BinaryCodec) error {
 		InitialRegretQuantile:               oldParams.InitialRegretQuantile,
 		PNormSafeDiv:                        oldParams.PNormSafeDiv,
 		// NEW PARAMS
-		GlobalWhitelistEnabled:             defaultParams.GlobalWhitelistEnabled,
-		TopicCreatorWhitelistEnabled:       defaultParams.TopicCreatorWhitelistEnabled,
-		MinExperiencedWorkerRegrets:        defaultParams.MinExperiencedWorkerRegrets,
-		InferenceOutlierDetectionThreshold: defaultParams.InferenceOutlierDetectionThreshold,
-		InferenceOutlierDetectionAlpha:     defaultParams.InferenceOutlierDetectionAlpha,
+		GlobalWhitelistEnabled:       defaultParams.GlobalWhitelistEnabled,
+		TopicCreatorWhitelistEnabled: defaultParams.TopicCreatorWhitelistEnabled,
+		MinExperiencedWorkerRegrets:  defaultParams.MinExperiencedWorkerRegrets,
 	}
 
 	store.Delete(emissionstypes.ParamsKey)

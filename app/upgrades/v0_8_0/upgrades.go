@@ -7,6 +7,7 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/allora-network/allora-chain/app/keepers"
 	"github.com/allora-network/allora-chain/app/upgrades"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
@@ -26,6 +27,14 @@ func CreateUpgradeHandler(
 	keepers *keepers.AppKeepers,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx context.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
-		return moduleManager.RunMigrations(ctx, configurator, vm)
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
+		sdkCtx.Logger().Info("RUN MIGRATIONS")
+		vm, err := moduleManager.RunMigrations(ctx, configurator, vm)
+		if err != nil {
+			return vm, err
+		}
+
+		sdkCtx.Logger().Info("MIGRATIONS COMPLETED")
+		return vm, nil
 	}
 }
