@@ -1379,6 +1379,7 @@ func generateWorkerDataBundles(s *RewardsTestSuite, blockHeight int64, topicId u
 	return inferences
 }
 
+/* to be rewritten in PROTO-3088
 func generateMoreInferencesDataBundles(s *RewardsTestSuite, blockHeight int64, topicId uint64) []*types.WorkerDataBundle {
 	var newInferences []*types.WorkerDataBundle
 	worker1 := 13
@@ -1427,7 +1428,7 @@ func generateMoreInferencesDataBundles(s *RewardsTestSuite, blockHeight int64, t
 			TopicId:     topicId,
 			BlockHeight: blockHeight,
 			Inferer:     s.addrsStr[worker2],
-			Value:       alloraMath.MustNewDecFromString("0.01251"),
+			Value:       alloraMath.MustNewDecFromString("10000"),
 			ExtraData:   nil,
 			Proof:       "",
 		},
@@ -1462,7 +1463,9 @@ func generateMoreInferencesDataBundles(s *RewardsTestSuite, blockHeight int64, t
 
 	return newInferences
 }
+*/
 
+/* to be rewritten in PROTO-3088
 func generateMoreForecastersDataBundles(s *RewardsTestSuite, blockHeight int64, topicId uint64) []*types.WorkerDataBundle {
 	var newForecasts []*types.WorkerDataBundle
 	worker1 := 13
@@ -1546,6 +1549,7 @@ func generateMoreForecastersDataBundles(s *RewardsTestSuite, blockHeight int64, 
 
 	return newForecasts
 }
+*/
 
 type TestWorkerValue struct {
 	Index int
