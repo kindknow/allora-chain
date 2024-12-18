@@ -1452,12 +1452,15 @@ func (k *Keeper) AppendForecast(
 		if err != nil {
 			return errorsmod.Wrap(err, "error getting topic initial ema score")
 		}
-		return k.SetForecasterScoreEma(ctx, topic.Id, forecast.Forecaster, types.Score{
+		err = k.SetForecasterScoreEma(ctx, topic.Id, forecast.Forecaster, types.Score{
 			TopicId:     topic.Id,
 			Address:     forecast.Forecaster,
 			BlockHeight: nonceBlockHeight,
 			Score:       initialEmaScore,
 		})
+		if err != nil {
+			return errorsmod.Wrap(err, "error setting forecaster score ema")
+		}
 	}
 
 	lowestEmaScore, _, err := k.GetLowestForecasterScoreEma(ctx, topic.Id)
@@ -1662,12 +1665,15 @@ func (k *Keeper) AppendReputerLoss(
 		if err != nil {
 			return errorsmod.Wrap(err, "error getting topic initial ema score")
 		}
-		return k.SetReputerScoreEma(ctx, topic.Id, reputerLoss.ValueBundle.Reputer, types.Score{
+		err = k.SetReputerScoreEma(ctx, topic.Id, reputerLoss.ValueBundle.Reputer, types.Score{
 			TopicId:     topic.Id,
 			Address:     reputerLoss.ValueBundle.Reputer,
 			BlockHeight: nonceBlockHeight,
 			Score:       initialEmaScore,
 		})
+		if err != nil {
+			return errorsmod.Wrap(err, "error setting initial reputer score ema")
+		}
 	}
 
 	lowestEmaScore, _, err := k.GetLowestReputerScoreEma(ctx, topic.Id)
