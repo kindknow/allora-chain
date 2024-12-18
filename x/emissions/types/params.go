@@ -60,7 +60,7 @@ func DefaultParams() Params {
 		MinExperiencedWorkerRegrets:         uint64(10),                                   // minimum number of experienced workers required to use their regrets for calculating the topic initial regret
 		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),        // threshold for inference outlier detection
 		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),       // alpha for inference outlier detection
-		SortitionLambdaPenalty:              alloraMath.MustNewDecFromString("2"),         // lambda for new participant score initialization
+		LambdaInitialScore:                  alloraMath.MustNewDecFromString("2"),         // lambda for new participant score initialization
 	}
 }
 
@@ -204,8 +204,8 @@ func (p Params) Validate() error {
 	if err := validateInferenceOutlierDetectionAlpha(p.InferenceOutlierDetectionAlpha); err != nil {
 		return errorsmod.Wrap(err, "params validation failure: inference outlier detection alpha")
 	}
-	if err := validateSortitionLambdaPenalty(p.SortitionLambdaPenalty); err != nil {
-		return errorsmod.Wrap(err, "params validation failure: sortition lambda penalty")
+	if err := validateLambdaInitialScore(p.LambdaInitialScore); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: lambda initial score")
 	}
 	return nil
 }
@@ -642,7 +642,7 @@ func validateInferenceOutlierDetectionAlpha(i alloraMath.Dec) error {
 	return nil
 }
 
-func validateSortitionLambdaPenalty(i alloraMath.Dec) error {
+func validateLambdaInitialScore(i alloraMath.Dec) error {
 	if err := ValidateDec(i); err != nil {
 		return err
 	} else if i.IsNegative() {

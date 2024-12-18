@@ -55,7 +55,7 @@ func MigrateParams(ctx sdk.Context, store storetypes.KVStore, cdc codec.BinaryCo
 	// ADDED:
 	//       InferenceOutlierDetectionAlpha
 	//       InferenceOutlierDetectionThreshold
-	//       SortitionLambdaPenalty
+	//       LambdaInitialScore
 	newParams := emissionstypes.Params{ //nolint: exhaustruct
 		Version:                             oldParams.Version,
 		MaxSerializedMsgLength:              oldParams.MaxSerializedMsgLength,
@@ -106,7 +106,7 @@ func MigrateParams(ctx sdk.Context, store storetypes.KVStore, cdc codec.BinaryCo
 		// NEW PARAMS
 		InferenceOutlierDetectionThreshold: defaultParams.InferenceOutlierDetectionThreshold,
 		InferenceOutlierDetectionAlpha:     defaultParams.InferenceOutlierDetectionAlpha,
-		SortitionLambdaPenalty:             defaultParams.SortitionLambdaPenalty,
+		LambdaInitialScore:                 defaultParams.LambdaInitialScore,
 	}
 
 	ctx.Logger().Info(fmt.Sprintf("MIGRATED PARAMS: %+v", newParams))

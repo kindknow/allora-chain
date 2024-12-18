@@ -184,5 +184,5 @@ func (s *EmissionsV6MigrationTestSuite) TestMigrateParams() {
 	s.Require().Equal(paramsExpected.MinExperiencedWorkerRegrets, params.MinExperiencedWorkerRegrets)
 	s.Require().Equal(paramsExpected.InferenceOutlierDetectionThreshold, params.InferenceOutlierDetectionThreshold)
 	s.Require().Equal(paramsExpected.InferenceOutlierDetectionAlpha, params.InferenceOutlierDetectionAlpha)
-	s.Require().Equal(paramsExpected.SortitionLambdaPenalty, params.SortitionLambdaPenalty)
+	s.Require().Equal(paramsExpected.LambdaInitialScore, params.LambdaInitialScore)
 }

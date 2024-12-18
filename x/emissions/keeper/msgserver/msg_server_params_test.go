@@ -68,7 +68,7 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		MinExperiencedWorkerRegrets:         []uint64{1234},
 		InferenceOutlierDetectionThreshold:  []alloraMath.Dec{alloraMath.MustNewDecFromString("11")},
 		InferenceOutlierDetectionAlpha:      []alloraMath.Dec{alloraMath.MustNewDecFromString("0.2")},
-		SortitionLambdaPenalty:              []alloraMath.Dec{alloraMath.MustNewDecFromString("1")},
+		LambdaInitialScore:                  []alloraMath.Dec{alloraMath.MustNewDecFromString("2")},
 	}
 
 	updateMsg := &types.UpdateParamsRequest{
@@ -131,7 +131,7 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 	require.Equal(newParams.MinExperiencedWorkerRegrets[0], updatedParams.MinExperiencedWorkerRegrets)
 	require.Equal(newParams.InferenceOutlierDetectionThreshold[0], updatedParams.InferenceOutlierDetectionThreshold)
 	require.Equal(newParams.InferenceOutlierDetectionAlpha[0], updatedParams.InferenceOutlierDetectionAlpha)
-	require.Equal(newParams.SortitionLambdaPenalty[0], updatedParams.SortitionLambdaPenalty)
+	require.Equal(newParams.LambdaInitialScore[0], updatedParams.LambdaInitialScore)
 }
 
 func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
@@ -193,7 +193,7 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 		MinExperiencedWorkerRegrets:         nil,
 		InferenceOutlierDetectionThreshold:  nil,
 		InferenceOutlierDetectionAlpha:      nil,
-		SortitionLambdaPenalty:              nil,
+		LambdaInitialScore:                  nil,
 	}
 
 	// Creating the UpdateParamsRequest message with a non-whitelisted user

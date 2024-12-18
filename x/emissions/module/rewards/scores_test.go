@@ -1847,7 +1847,7 @@ func (s *RewardsTestSuite) TestCalculateTopicInitialEmaScore() {
 	// Get lambda from params
 	params, err := s.emissionsKeeper.GetParams(s.ctx)
 	s.Require().NoError(err)
-	lambda := params.SortitionLambdaPenalty
+	lambda := params.LambdaInitialScore
 
 	// Calculate expected score manually
 	// Standard deviation ≈ 0.1581139

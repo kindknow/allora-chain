@@ -536,7 +536,7 @@ func CalculateTopicInitialEmaScore(
 	if err != nil {
 		return alloraMath.Dec{}, errors.Wrapf(err, "error getting module params")
 	}
-	lambda := params.SortitionLambdaPenalty
+	lambda := params.LambdaInitialScore
 
 	// Calculate standard deviation of EMA scores in active set
 	var emaScores []alloraMath.Dec

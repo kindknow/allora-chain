@@ -165,8 +165,7 @@ message Params {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  // Constant used to determine the penalty for non-live actors
-  string sortition_lambda_penalty = 55 [
+  string lambda_initial_score = 55 [
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
