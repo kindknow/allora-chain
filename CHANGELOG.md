@@ -65,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#708](https://github.com/allora-network/allora-chain/pull/708) Add Emission Enabled bolean flag to Mint Module
 * [#703](https://github.com/allora-network/allora-chain/pull/703) Add outlier detection to inferences
 * [#714](https://github.com/allora-network/allora-chain/pull/714) Add initialization of actors' EMA scores
+* [#716](https://github.com/allora-network/allora-chain/pull/716) Add global workers, reputers, admins + bulk operations
 
 ### Changed
 
