@@ -17,7 +17,7 @@ func (k *Keeper) MayPenaliseInferer(
 	block types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return mayPenaliseWorker(
+	return mayPenaliseActor(
 		func(topicId TopicId) (alloraMath.Dec, error) {
 			return k.initialInfererEmaScore.Get(ctx, topicId)
 		},
@@ -38,7 +38,7 @@ func (k *Keeper) MayPenaliseForecaster(
 	block types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return mayPenaliseWorker(
+	return mayPenaliseActor(
 		func(topicId TopicId) (alloraMath.Dec, error) {
 			return k.initialForecasterEmaScore.Get(ctx, topicId)
 		},
@@ -51,14 +51,35 @@ func (k *Keeper) MayPenaliseForecaster(
 	)
 }
 
-func mayPenaliseWorker(
+// MayPenaliseReputer penalises a reputer for missing previous epochs. It saves and returns the new EMA score.
+// If the reputer didn't miss any epochs this is a no-op, the EMA score is returned as is.
+func (k *Keeper) MayPenaliseReputer(
+	ctx sdk.Context,
+	topic types.Topic,
+	block types.BlockHeight,
+	emaScore types.Score,
+) (types.Score, error) {
+	return mayPenaliseActor(
+		func(topicId TopicId) (alloraMath.Dec, error) {
+			return k.initialReputerEmaScore.Get(ctx, topicId)
+		},
+		func(topicId TopicId, score types.Score) error {
+			return k.SetReputerScoreEma(ctx, topicId, score.Address, score)
+		},
+		topic,
+		block,
+		emaScore,
+	)
+}
+
+func mayPenaliseActor(
 	getPenaltyFn func(topicId TopicId) (alloraMath.Dec, error),
 	setScoreFn func(topicId TopicId, score types.Score) error,
 	topic types.Topic,
 	block types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	missedEpochs := countWorkerContiguousMissedEpochs(topic, emaScore.BlockHeight)
+	missedEpochs := countContiguousMissedEpochs(topic, emaScore.BlockHeight)
 	// No missed epochs == no penalty
 	if missedEpochs == 0 {
 		return emaScore, nil
@@ -87,9 +108,9 @@ func applyPenalty(topic types.Topic, penalty, emaScore alloraMath.Dec, missedEpo
 	return alloraMath.NCalcEma(topic.MeritSortitionAlpha, penalty, emaScore, uint64(missedEpochs))
 }
 
-// CountWorkerContiguousMissedEpochs counts the number of contiguous missed epochs prior to the given nonce, given the
-// last worker submission and the current block heights.
-func countWorkerContiguousMissedEpochs(topic types.Topic, lastSubmissionHeight int64) int64 {
+// countContiguousMissedEpochsFn counts the number of contiguous missed epochs prior to the given nonce, given the
+// actor last submission.
+func countContiguousMissedEpochs(topic types.Topic, lastSubmissionHeight int64) int64 {
 	prevEpochStart := topic.EpochLastEnded - topic.EpochLength
 	if lastSubmissionHeight >= prevEpochStart {
 		return 0

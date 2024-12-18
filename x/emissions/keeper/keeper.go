@@ -1683,6 +1683,12 @@ func (k *Keeper) AppendReputerLoss(
 		return types.ErrCantUpdateEmaMoreThanOncePerWindow
 	}
 
+	// Penalise the reputer if needed
+	previousEmaScore, err = k.MayPenaliseReputer(ctx, topic, nonceBlockHeight, previousEmaScore)
+	if err != nil {
+		return errorsmod.Wrap(err, "error trying to penalise reputer")
+	}
+
 	// Check if the reputer is new and set initial EMA score
 	if previousEmaScore.BlockHeight == 0 {
 		initialEmaScore, err := k.GetTopicInitialReputerEmaScore(ctx, topic.Id)
