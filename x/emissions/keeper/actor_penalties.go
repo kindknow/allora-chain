@@ -73,7 +73,7 @@ func (k *Keeper) MayPenaliseReputer(
 }
 
 func MayPenaliseActor(
-	missedEpochsFn func(topic types.Topic, lastSubmissionHeight int64) int64,
+	missedEpochsFn func(topic types.Topic, lastSubmittedNonce int64) int64,
 	getPenaltyFn func(topicId TopicId) (alloraMath.Dec, error),
 	setScoreFn func(topicId TopicId, score types.Score) error,
 	topic types.Topic,
@@ -107,22 +107,22 @@ func applyPenalty(topic types.Topic, penalty, emaScore alloraMath.Dec, missedEpo
 
 // CountWorkerContiguousMissedEpochs counts the number of contiguous missed epochs prior to the given nonce, given the
 // actor last submission.
-func CountWorkerContiguousMissedEpochs(topic types.Topic, lastSubmissionHeight int64) int64 {
+func CountWorkerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce int64) int64 {
 	prevEpochStart := topic.EpochLastEnded - topic.EpochLength
-	return countContiguousMissedEpochs(prevEpochStart, topic.EpochLength, lastSubmissionHeight)
+	return countContiguousMissedEpochs(prevEpochStart, topic.EpochLength, lastSubmittedNonce)
 }
 
 // CountReputerContiguousMissedEpochs counts the number of contiguous missed epochs prior to the given nonce, given the
 // actor last submission.
-func CountReputerContiguousMissedEpochs(topic types.Topic, lastSubmissionHeight int64) int64 {
-	prevEpochStart := topic.EpochLastEnded - topic.EpochLength + topic.WorkerSubmissionWindow + topic.GroundTruthLag
-	return countContiguousMissedEpochs(prevEpochStart, topic.EpochLength, lastSubmissionHeight)
+func CountReputerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce int64) int64 {
+	prevEpochStart := topic.EpochLastEnded - topic.EpochLength - topic.GroundTruthLag
+	return countContiguousMissedEpochs(prevEpochStart, topic.EpochLength, lastSubmittedNonce)
 }
 
-func countContiguousMissedEpochs(prevEpochStart, epochLength, lastSubmissionHeight int64) int64 {
-	if lastSubmissionHeight >= prevEpochStart {
+func countContiguousMissedEpochs(prevEpochStart, epochLength, lastSubmittedNonce int64) int64 {
+	if lastSubmittedNonce >= prevEpochStart {
 		return 0
 	}
 
-	return (prevEpochStart-1-lastSubmissionHeight)/epochLength + 1
+	return (prevEpochStart-1-lastSubmittedNonce)/epochLength + 1
 }

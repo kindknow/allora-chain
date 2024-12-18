@@ -235,44 +235,44 @@ func TestCountWorkerContiguousMissedEpochs(t *testing.T) {
 
 	cases := []struct {
 		name                 string
-		lastSubmissionHeight int64
+		lastSubmittedNonce   int64
 		expectedMissedEpochs int64
 	}{
 		{
 			name:                 "in last epoch",
-			lastSubmissionHeight: 95,
+			lastSubmittedNonce:   95,
 			expectedMissedEpochs: 0,
 		},
 		{
 			name:                 "after last epoch",
-			lastSubmissionHeight: 105,
+			lastSubmittedNonce:   105,
 			expectedMissedEpochs: 0,
 		},
 		{
 			name:                 "one missed epoch",
-			lastSubmissionHeight: 85,
+			lastSubmittedNonce:   85,
 			expectedMissedEpochs: 1,
 		},
 		{
 			name:                 "four missed epoch",
-			lastSubmissionHeight: 55,
+			lastSubmittedNonce:   55,
 			expectedMissedEpochs: 4,
 		},
 		{
 			name:                 "on the edge of last epoch",
-			lastSubmissionHeight: 90,
+			lastSubmittedNonce:   90,
 			expectedMissedEpochs: 0,
 		},
 		{
 			name:                 "on the edge of an epoch",
-			lastSubmissionHeight: 60,
+			lastSubmittedNonce:   60,
 			expectedMissedEpochs: 3,
 		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			missedEpochs := keeper.CountWorkerContiguousMissedEpochs(topic, tc.lastSubmissionHeight)
+			missedEpochs := keeper.CountWorkerContiguousMissedEpochs(topic, tc.lastSubmittedNonce)
 			if missedEpochs != tc.expectedMissedEpochs {
 				require.Equal(t, tc.expectedMissedEpochs, missedEpochs, "expected %d, got %d", tc.expectedMissedEpochs, missedEpochs)
 			}
@@ -283,52 +283,51 @@ func TestCountWorkerContiguousMissedEpochs(t *testing.T) {
 // nolint: exhaustruct
 func TestCountReputerContiguousMissedEpochs(t *testing.T) {
 	topic := types.Topic{
-		EpochLastEnded:         95,
-		EpochLength:            10,
-		WorkerSubmissionWindow: 2,
-		GroundTruthLag:         3,
+		EpochLastEnded: 95,
+		EpochLength:    10,
+		GroundTruthLag: 5,
 	}
 
 	cases := []struct {
 		name                 string
-		lastSubmissionHeight int64
+		lastSubmittedNonce   int64
 		expectedMissedEpochs int64
 	}{
 		{
 			name:                 "in last epoch",
-			lastSubmissionHeight: 95,
+			lastSubmittedNonce:   95,
 			expectedMissedEpochs: 0,
 		},
 		{
 			name:                 "after last epoch",
-			lastSubmissionHeight: 105,
+			lastSubmittedNonce:   105,
 			expectedMissedEpochs: 0,
 		},
 		{
 			name:                 "one missed epoch",
-			lastSubmissionHeight: 85,
+			lastSubmittedNonce:   85,
 			expectedMissedEpochs: 1,
 		},
 		{
 			name:                 "four missed epoch",
-			lastSubmissionHeight: 55,
+			lastSubmittedNonce:   55,
 			expectedMissedEpochs: 4,
 		},
 		{
 			name:                 "on the edge of last epoch",
-			lastSubmissionHeight: 90,
+			lastSubmittedNonce:   90,
 			expectedMissedEpochs: 0,
 		},
 		{
 			name:                 "on the edge of an epoch",
-			lastSubmissionHeight: 60,
+			lastSubmittedNonce:   60,
 			expectedMissedEpochs: 3,
 		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			missedEpochs := keeper.CountReputerContiguousMissedEpochs(topic, tc.lastSubmissionHeight)
+			missedEpochs := keeper.CountReputerContiguousMissedEpochs(topic, tc.lastSubmittedNonce)
 			if missedEpochs != tc.expectedMissedEpochs {
 				require.Equal(t, tc.expectedMissedEpochs, missedEpochs, "expected %d, got %d", tc.expectedMissedEpochs, missedEpochs)
 			}
