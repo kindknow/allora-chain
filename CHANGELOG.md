@@ -78,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#704](https://github.com/allora-network/allora-chain/pull/704) Correct Discrepancies with Whitepaper modified reward fractions vs plain EMA
 * [#700](https://github.com/allora-network/allora-chain/pull/700) Allow clients to unmarshall old transactions
 * [#711](https://github.com/allora-network/allora-chain/pull/711) Set research-approved default module param values
+* [#713](https://github.com/allora-network/allora-chain/pull/713) Proto generation keeps codec.go files
 
 ### Security
 
