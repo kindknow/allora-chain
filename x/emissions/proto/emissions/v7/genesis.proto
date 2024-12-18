@@ -77,7 +77,7 @@ message GenesisState {
   // current reputer ema scores to apply per topic
   // map of topic -> reputer ema score
   repeated TopicIdAndDec initial_reputer_ema_score = 88;
-  
+
   /// STAKING
 
   // total sum stake of all stakers on the network
