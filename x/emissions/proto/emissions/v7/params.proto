@@ -171,6 +171,6 @@ message Params {
   ];
   bool global_worker_whitelist_enabled = 56 [(amino.dont_omitempty) = true];
   bool global_reputer_whitelist_enabled = 57 [(amino.dont_omitempty) = true];
-  bool global_admin_whitelist_enabled = 58 [(amino.dont_omitempty) = true];
+  bool global_admin_whitelist_appended = 58 [(amino.dont_omitempty) = true];
   uint64 max_whitelist_input_array_length = 59 [(amino.dont_omitempty) = true];
 }

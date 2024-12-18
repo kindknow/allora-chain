@@ -3989,7 +3989,7 @@ func mockUninitializedParams() types.Params {
 		LambdaInitialScore:                  alloraMath.MustNewDecFromString("2"),
 		GlobalWorkerWhitelistEnabled:        true,
 		GlobalReputerWhitelistEnabled:       true,
-		GlobalAdminWhitelistEnabled:         true,
+		GlobalAdminWhitelistAppended:        true,
 		MaxWhitelistInputArrayLength:        uint64(10),
 	}
 }

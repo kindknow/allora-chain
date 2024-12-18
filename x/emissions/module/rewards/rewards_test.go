@@ -2222,7 +2222,7 @@ func (s *RewardsTestSuite) SetParamsForTest() {
 		LambdaInitialScore:                  nil,
 		GlobalWorkerWhitelistEnabled:        nil,
 		GlobalReputerWhitelistEnabled:       nil,
-		GlobalAdminWhitelistEnabled:         nil,
+		GlobalAdminWhitelistAppended:        nil,
 		MaxWhitelistInputArrayLength:        nil,
 	}
 

@@ -180,8 +180,8 @@ func (ms msgServer) UpdateParams(ctx context.Context, msg *types.UpdateParamsReq
 	if len(newParams.GlobalReputerWhitelistEnabled) == 1 {
 		existingParams.GlobalReputerWhitelistEnabled = newParams.GlobalReputerWhitelistEnabled[0]
 	}
-	if len(newParams.GlobalAdminWhitelistEnabled) == 1 {
-		existingParams.GlobalAdminWhitelistEnabled = newParams.GlobalAdminWhitelistEnabled[0]
+	if len(newParams.GlobalAdminWhitelistAppended) == 1 {
+		existingParams.GlobalAdminWhitelistAppended = newParams.GlobalAdminWhitelistAppended[0]
 	}
 	if len(newParams.MaxWhitelistInputArrayLength) == 1 {
 		existingParams.MaxWhitelistInputArrayLength = newParams.MaxWhitelistInputArrayLength[0]

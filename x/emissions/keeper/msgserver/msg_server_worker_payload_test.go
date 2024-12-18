@@ -369,7 +369,7 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithFewTopElementsPerFore
 		LambdaInitialScore:                  nil,
 		GlobalWorkerWhitelistEnabled:        nil,
 		GlobalReputerWhitelistEnabled:       nil,
-		GlobalAdminWhitelistEnabled:         nil,
+		GlobalAdminWhitelistAppended:        nil,
 		MaxWhitelistInputArrayLength:        nil,
 	}
 
@@ -776,7 +776,7 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithLowScoreForecastsAreR
 		LambdaInitialScore:                  nil,
 		GlobalWorkerWhitelistEnabled:        nil,
 		GlobalReputerWhitelistEnabled:       nil,
-		GlobalAdminWhitelistEnabled:         nil,
+		GlobalAdminWhitelistAppended:        nil,
 		MaxWhitelistInputArrayLength:        nil,
 	}
 

@@ -63,7 +63,7 @@ func DefaultParams() Params {
 		LambdaInitialScore:                  alloraMath.MustNewDecFromString("2"),         // lambda for new participant score initialization
 		GlobalWorkerWhitelistEnabled:        true,                                         // global worker whitelist enabled => the global worker whitelist determines which workers can participate in all topics
 		GlobalReputerWhitelistEnabled:       true,                                         // global reputer whitelist enabled => the global reputer whitelist determines which reputers can participate in all topics
-		GlobalAdminWhitelistEnabled:         true,                                         // global admins enabled => the global admins whitelist determines which admins can create topics and participate in all topics as workers and reputers
+		GlobalAdminWhitelistAppended:        true,                                         // global admins enabled => the global admins whitelist determines which admins can create topics and participate in all topics as workers and reputers
 		MaxWhitelistInputArrayLength:        uint64(2000),                                 // maximum length of input arrays for whitelist operations
 	}
 }

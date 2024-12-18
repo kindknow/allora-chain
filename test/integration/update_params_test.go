@@ -94,7 +94,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			LambdaInitialScore:                  nil,
 			GlobalWorkerWhitelistEnabled:        nil,
 			GlobalReputerWhitelistEnabled:       nil,
-			GlobalAdminWhitelistEnabled:         nil,
+			GlobalAdminWhitelistAppended:        nil,
 			MaxWhitelistInputArrayLength:        nil,
 		},
 	}
@@ -160,7 +160,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			LambdaInitialScore:                  nil,
 			GlobalWorkerWhitelistEnabled:        nil,
 			GlobalReputerWhitelistEnabled:       nil,
-			GlobalAdminWhitelistEnabled:         nil,
+			GlobalAdminWhitelistAppended:        nil,
 			MaxWhitelistInputArrayLength:        nil,
 		},
 	}
@@ -230,7 +230,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			LambdaInitialScore:                  nil,
 			GlobalWorkerWhitelistEnabled:        nil,
 			GlobalReputerWhitelistEnabled:       nil,
-			GlobalAdminWhitelistEnabled:         nil,
+			GlobalAdminWhitelistAppended:        nil,
 			MaxWhitelistInputArrayLength:        nil,
 		},
 	}

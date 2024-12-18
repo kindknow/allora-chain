@@ -71,7 +71,7 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		LambdaInitialScore:                  []alloraMath.Dec{alloraMath.MustNewDecFromString("2")},
 		GlobalWorkerWhitelistEnabled:        []bool{true},
 		GlobalReputerWhitelistEnabled:       []bool{true},
-		GlobalAdminWhitelistEnabled:         []bool{true},
+		GlobalAdminWhitelistAppended:        []bool{true},
 		MaxWhitelistInputArrayLength:        []uint64{10},
 	}
 
@@ -138,7 +138,7 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 	require.Equal(newParams.LambdaInitialScore[0], updatedParams.LambdaInitialScore)
 	require.Equal(newParams.GlobalWorkerWhitelistEnabled[0], updatedParams.GlobalWorkerWhitelistEnabled)
 	require.Equal(newParams.GlobalReputerWhitelistEnabled[0], updatedParams.GlobalReputerWhitelistEnabled)
-	require.Equal(newParams.GlobalAdminWhitelistEnabled[0], updatedParams.GlobalAdminWhitelistEnabled)
+	require.Equal(newParams.GlobalAdminWhitelistAppended[0], updatedParams.GlobalAdminWhitelistAppended)
 	require.Equal(newParams.MaxWhitelistInputArrayLength[0], updatedParams.MaxWhitelistInputArrayLength)
 }
 
@@ -204,7 +204,7 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 		LambdaInitialScore:                  nil,
 		GlobalWorkerWhitelistEnabled:        nil,
 		GlobalReputerWhitelistEnabled:       nil,
-		GlobalAdminWhitelistEnabled:         nil,
+		GlobalAdminWhitelistAppended:        nil,
 		MaxWhitelistInputArrayLength:        nil,
 	}
 

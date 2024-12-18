@@ -58,7 +58,7 @@ func MigrateParams(ctx sdk.Context, store storetypes.KVStore, cdc codec.BinaryCo
 	//       LambdaInitialScore
 	//       GlobalWorkerWhitelistEnabled
 	//       GlobalReputerWhitelistEnabled
-	//       GlobalAdminWhitelistEnabled
+	//       GlobalAdminWhitelistAppended
 	//       MaxInputArrayLength
 	newParams := emissionstypes.Params{ //nolint: exhaustruct
 		Version:                             oldParams.Version,
@@ -113,7 +113,7 @@ func MigrateParams(ctx sdk.Context, store storetypes.KVStore, cdc codec.BinaryCo
 		LambdaInitialScore:                 defaultParams.LambdaInitialScore,
 		GlobalWorkerWhitelistEnabled:       defaultParams.GlobalWorkerWhitelistEnabled,
 		GlobalReputerWhitelistEnabled:      defaultParams.GlobalReputerWhitelistEnabled,
-		GlobalAdminWhitelistEnabled:        defaultParams.GlobalAdminWhitelistEnabled,
+		GlobalAdminWhitelistAppended:       defaultParams.GlobalAdminWhitelistAppended,
 		MaxWhitelistInputArrayLength:       defaultParams.MaxWhitelistInputArrayLength,
 	}
 
