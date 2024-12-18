@@ -1292,6 +1292,12 @@ func (k *Keeper) AppendInference(
 		return types.ErrCantUpdateEmaMoreThanOncePerWindow
 	}
 
+	// Penalise the inferer if needed
+	previousEmaScore, err = k.MayPenaliseInferer(ctx, topic, nonceBlockHeight, previousEmaScore)
+	if err != nil {
+		return errorsmod.Wrap(err, "error trying to penalise inferer")
+	}
+
 	// Check if the inferer is new and set initial EMA score
 	if previousEmaScore.BlockHeight == 0 {
 		initialEmaScore, err := k.GetTopicInitialInfererEmaScore(ctx, topic.Id)
@@ -1308,12 +1314,6 @@ func (k *Keeper) AppendInference(
 		if err != nil {
 			return errorsmod.Wrap(err, "error setting initial inferer score ema")
 		}
-	}
-
-	// Penalise the inferer if needed
-	previousEmaScore, err = k.MayPenaliseInferer(ctx, topic, nonceBlockHeight, previousEmaScore)
-	if err != nil {
-		return errorsmod.Wrap(err, "error setting bad reputer in nonce")
 	}
 
 	// Get lowest inferer score ema for the topic
@@ -1462,6 +1462,12 @@ func (k *Keeper) AppendForecast(
 	// Only calc and save if there's a new update
 	if previousEmaScore.BlockHeight >= nonceBlockHeight {
 		return types.ErrCantUpdateEmaMoreThanOncePerWindow
+	}
+
+	// Penalise the forecaster if needed
+	previousEmaScore, err = k.MayPenaliseForecaster(ctx, topic, nonceBlockHeight, previousEmaScore)
+	if err != nil {
+		return errorsmod.Wrap(err, "error trying to penalise forecaster")
 	}
 
 	// Check if the forecaster is new and set initial EMA score
