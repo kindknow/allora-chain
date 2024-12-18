@@ -53,6 +53,56 @@ func CalcEma(
 	return ret, nil
 }
 
+// NCalcEma is a generalisation of calculating the EMA update n times.
+func NCalcEma(
+	alpha,
+	update,
+	score Dec,
+	n uint64,
+) (Dec, error) {
+	if update.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma update EMA operand should not be NaN")
+	}
+	if score.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma score EMA operand should not be NaN")
+	}
+	if alpha.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma alpha EMA operand should not be NaN")
+	}
+
+	nDec, err := NewDecFromUint64(n)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	oneMinusAlpha, err := OneDec().Sub(alpha)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	oneMinusAlphaExpN, err := Pow(oneMinusAlpha, nDec)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	oneMinusAlphaExpNTimesScore, err := oneMinusAlphaExpN.Mul(score)
+	if err != nil {
+		return ZeroDec(), err
+	}
+
+	oneMinusOneMinusAlphaExpN, err := OneDec().Sub(oneMinusAlphaExpN)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	UpdateTimesOneMinusOneMinusAlphaExpN, err := update.Mul(oneMinusOneMinusAlphaExpN)
+	if err != nil {
+		return ZeroDec(), err
+	}
+
+	ret, err := oneMinusAlphaExpNTimesScore.Add(UpdateTimesOneMinusOneMinusAlphaExpN)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	return ret, nil
+}
+
 // Generic function that sorts the keys of a map
 // Used for deterministic ranging of maps
 func GetSortedKeys[K cmp.Ordered, V any](m map[K]V) []K {

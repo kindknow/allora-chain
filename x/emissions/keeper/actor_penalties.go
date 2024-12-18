@@ -73,8 +73,7 @@ func mayPenaliseWorker(
 		return types.Score{}, err
 	}
 	emaScore.BlockHeight = block
-	// TODO: Provide the limit as the initial score
-	emaScore.Score, err = applyPenalty(topic, penalty, alloraMath.ZeroDec(), emaScore.Score, missedEpochs)
+	emaScore.Score, err = applyPenalty(topic, penalty, emaScore.Score, missedEpochs)
 	if err != nil {
 		return types.Score{}, err
 	}
@@ -84,20 +83,8 @@ func mayPenaliseWorker(
 }
 
 // applyPenalty applies the penalty to the EMA score for the given number of missed epochs while staying above provided limit.
-func applyPenalty(topic types.Topic, penalty, limit, emaScore alloraMath.Dec, missedEpochs int64) (alloraMath.Dec, error) {
-	for i := int64(0); i < missedEpochs; i++ {
-		penalisedScore, err := alloraMath.CalcEma(topic.MeritSortitionAlpha, penalty, emaScore, false)
-		if err != nil {
-			return alloraMath.ZeroDec(), err
-		}
-
-		if penalisedScore.Lt(limit) {
-			break
-		}
-		emaScore = penalisedScore
-	}
-
-	return emaScore, nil
+func applyPenalty(topic types.Topic, penalty, emaScore alloraMath.Dec, missedEpochs int64) (alloraMath.Dec, error) {
+	return alloraMath.NCalcEma(topic.MeritSortitionAlpha, penalty, emaScore, uint64(missedEpochs))
 }
 
 // CountWorkerContiguousMissedEpochs counts the number of contiguous missed epochs prior to the given nonce, given the
