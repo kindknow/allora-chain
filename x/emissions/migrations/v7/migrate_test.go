@@ -131,7 +131,7 @@ func (s *EmissionsV6MigrationTestSuite) TestMigrateParams() {
 	// TO BE ADDED VIA DEFAULT PARAMS:
 	// - InferenceOutlierDetectionThreshold
 	// - InferenceOutlierDetectionAlpha
-
+	// - LambdaInitialScore
 	paramsExpected := defaultParams
 
 	params, err := s.emissionsKeeper.GetParams(s.ctx)
