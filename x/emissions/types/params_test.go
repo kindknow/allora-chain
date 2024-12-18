@@ -10,7 +10,7 @@ import (
 
 func TestDefaultParams(t *testing.T) {
 	expectedParams := Params{
-		Version:                             "v2",
+		Version:                             "v7",
 		MinTopicWeight:                      alloraMath.MustNewDecFromString("100"),
 		RequiredMinimumStake:                cosmosMath.NewInt(10000),
 		RemoveStakeDelayWindow:              int64((60 * 60 * 24 * 7 * 3) / 3),

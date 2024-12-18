@@ -5243,6 +5243,8 @@ func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendInference() {
 		BlockHeight: blockHeight,
 		Value:       alloraMath.MustNewDecFromString("0.52"),
 		Inferer:     worker,
+		ExtraData:   nil,
+		Proof:       "",
 	}
 
 	topic, err := k.GetTopic(ctx, topicId)
@@ -5284,6 +5286,7 @@ func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendForecast() {
 				Value:   alloraMath.MustNewDecFromString("0.52"),
 			},
 		},
+		ExtraData: nil,
 	}
 
 	topic, err := k.GetTopic(ctx, topicId)
@@ -5320,8 +5323,16 @@ func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendReputer() {
 		ReputerRequestNonce: &types.ReputerRequestNonce{
 			ReputerNonce: &types.Nonce{BlockHeight: blockHeight},
 		},
-		Reputer:       reputer,
-		CombinedValue: alloraMath.MustNewDecFromString("0.52"),
+		Reputer:                       reputer,
+		ExtraData:                     nil,
+		CombinedValue:                 alloraMath.MustNewDecFromString("0.52"),
+		InfererValues:                 nil,
+		ForecasterValues:              nil,
+		NaiveValue:                    alloraMath.MustNewDecFromString("0.52"),
+		OneOutInfererValues:           nil,
+		OneOutForecasterValues:        nil,
+		OneInForecasterValues:         nil,
+		OneOutInfererForecasterValues: nil,
 	}
 	signature := s.signValueBundle(valueBundle, s.privKeys[0])
 	reputerValueBundle := &types.ReputerValueBundle{
