@@ -1804,3 +1804,41 @@ func (s *RewardsTestSuite) TestGenerateReputerScoresWithZeroListeningCoefficient
 	s.Require().NoError(err)
 	s.Require().True(coefficient.Coefficient.Equal(params.EpsilonReputer))
 }
+
+func (s *RewardsTestSuite) TestCalculateTopicInitialEmaScore() {
+	// Setup test scores
+	scores := []types.Score{
+		{Score: alloraMath.MustNewDecFromString("0.5")},
+		{Score: alloraMath.MustNewDecFromString("0.3")},
+		{Score: alloraMath.MustNewDecFromString("0.1")},
+		{Score: alloraMath.MustNewDecFromString("0.4")},
+		{Score: alloraMath.MustNewDecFromString("0.2")},
+	}
+
+	// Calculate initial EMA score
+	initialScore, err := rewards.CalculateTopicInitialEmaScore(s.ctx, s.emissionsKeeper, scores)
+	s.Require().NoError(err)
+
+	// Get lambda from params
+	params, err := s.emissionsKeeper.GetParams(s.ctx)
+	s.Require().NoError(err)
+	lambda := params.SortitionLambdaPenalty
+
+	// Calculate expected score manually
+	// Standard deviation ≈ 0.1581139
+	stdDev := alloraMath.MustNewDecFromString("0.1581139")
+	lambdaStdDev, err := lambda.Mul(stdDev)
+	s.Require().NoError(err)
+
+	// Lowest score is 0.1
+	lowestScore := alloraMath.MustNewDecFromString("0.1")
+	expectedScore, err := lowestScore.Sub(lambdaStdDev)
+	s.Require().NoError(err)
+
+	// Verify result matches expected
+	diff, err := initialScore.Sub(expectedScore)
+	s.Require().NoError(err)
+	absDiff, err := diff.Abs()
+	s.Require().NoError(err)
+	s.Require().True(absDiff.Lt(alloraMath.MustNewDecFromString("0.000001")))
+}
