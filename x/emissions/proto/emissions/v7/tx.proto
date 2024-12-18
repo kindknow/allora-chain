@@ -206,8 +206,8 @@ message OptionalParams {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  repeated bool global_whitelist_enabled = 50;
-  repeated bool topic_creator_whitelist_enabled = 51;
+  repeated bool global_whitelist_enabled = 50 [(amino.dont_omitempty) = true];
+  repeated bool topic_creator_whitelist_enabled = 51 [(amino.dont_omitempty) = true];
   repeated uint64 min_experienced_worker_regrets = 52;
   repeated string inference_outlier_detection_threshold = 53 [
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
@@ -221,6 +221,10 @@ message OptionalParams {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
+  repeated bool global_worker_whitelist_enabled = 56 [(amino.dont_omitempty) = true];
+  repeated bool global_reputer_whitelist_enabled = 57 [(amino.dont_omitempty) = true];
+  repeated bool global_admins_enabled = 58 [(amino.dont_omitempty) = true];
+  repeated uint64 max_whitelist_input_array_length = 59 [(amino.dont_omitempty) = true];
 }
 
 message UpdateParamsRequest {

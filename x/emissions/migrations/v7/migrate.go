@@ -56,6 +56,10 @@ func MigrateParams(ctx sdk.Context, store storetypes.KVStore, cdc codec.BinaryCo
 	//       InferenceOutlierDetectionAlpha
 	//       InferenceOutlierDetectionThreshold
 	//       LambdaInitialScore
+	//       GlobalWorkerWhitelistEnabled
+	//       GlobalReputerWhitelistEnabled
+	//       GlobalAdminsEnabled
+	//       MaxInputArrayLength
 	newParams := emissionstypes.Params{ //nolint: exhaustruct
 		Version:                             oldParams.Version,
 		MaxSerializedMsgLength:              oldParams.MaxSerializedMsgLength,
@@ -107,6 +111,10 @@ func MigrateParams(ctx sdk.Context, store storetypes.KVStore, cdc codec.BinaryCo
 		InferenceOutlierDetectionThreshold: defaultParams.InferenceOutlierDetectionThreshold,
 		InferenceOutlierDetectionAlpha:     defaultParams.InferenceOutlierDetectionAlpha,
 		LambdaInitialScore:                 defaultParams.LambdaInitialScore,
+		GlobalWorkerWhitelistEnabled:       defaultParams.GlobalWorkerWhitelistEnabled,
+		GlobalReputerWhitelistEnabled:      defaultParams.GlobalReputerWhitelistEnabled,
+		GlobalAdminsEnabled:                defaultParams.GlobalAdminsEnabled,
+		MaxWhitelistInputArrayLength:       defaultParams.MaxWhitelistInputArrayLength,
 	}
 
 	ctx.Logger().Info(fmt.Sprintf("MIGRATED PARAMS: %+v", newParams))
