@@ -55,7 +55,7 @@ func MigrateParams(ctx sdk.Context, store storetypes.KVStore, cdc codec.BinaryCo
 	// ADDED:
 	//       InferenceOutlierDetectionAlpha
 	//       InferenceOutlierDetectionThreshold
-	//       NewParticipantScoreInitializationKappa
+	//       SortitionLambdaPenalty
 	newParams := emissionstypes.Params{ //nolint: exhaustruct
 		Version:                             oldParams.Version,
 		MaxSerializedMsgLength:              oldParams.MaxSerializedMsgLength,

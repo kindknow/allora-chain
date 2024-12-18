@@ -1808,11 +1808,36 @@ func (s *RewardsTestSuite) TestGenerateReputerScoresWithZeroListeningCoefficient
 func (s *RewardsTestSuite) TestCalculateTopicInitialEmaScore() {
 	// Setup test scores
 	scores := []types.Score{
-		{Score: alloraMath.MustNewDecFromString("0.5")},
-		{Score: alloraMath.MustNewDecFromString("0.3")},
-		{Score: alloraMath.MustNewDecFromString("0.1")},
-		{Score: alloraMath.MustNewDecFromString("0.4")},
-		{Score: alloraMath.MustNewDecFromString("0.2")},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[0].String(),
+			Score:       alloraMath.MustNewDecFromString("0.5"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[1].String(),
+			Score:       alloraMath.MustNewDecFromString("0.3"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[2].String(),
+			Score:       alloraMath.MustNewDecFromString("0.1"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[3].String(),
+			Score:       alloraMath.MustNewDecFromString("0.4"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[4].String(),
+			Score:       alloraMath.MustNewDecFromString("0.2"),
+		},
 	}
 
 	// Calculate initial EMA score
