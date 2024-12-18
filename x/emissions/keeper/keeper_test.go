@@ -3938,55 +3938,55 @@ func (s *KeeperTestSuite) TestAppendInferenceWithResetActiveWorkers() {
 
 func mockUninitializedParams() types.Params {
 	return types.Params{
-		Version:                                "v2",
-		MinTopicWeight:                         alloraMath.MustNewDecFromString("0"),
-		RequiredMinimumStake:                   cosmosMath.NewInt(0),
-		RemoveStakeDelayWindow:                 0,
-		MinEpochLength:                         1,
-		BetaEntropy:                            alloraMath.MustNewDecFromString("0"),
-		LearningRate:                           alloraMath.MustNewDecFromString("0.0001"),
-		GradientDescentMaxIters:                uint64(100),
-		MaxGradientThreshold:                   alloraMath.MustNewDecFromString("0.0001"),
-		MinStakeFraction:                       alloraMath.MustNewDecFromString("0"),
-		EpsilonReputer:                         alloraMath.MustNewDecFromString("0.0001"),
-		EpsilonSafeDiv:                         alloraMath.MustNewDecFromString("0.0001"),
-		MaxUnfulfilledWorkerRequests:           uint64(0),
-		MaxUnfulfilledReputerRequests:          uint64(0),
-		TopicRewardStakeImportance:             alloraMath.MustNewDecFromString("0"),
-		TopicRewardFeeRevenueImportance:        alloraMath.MustNewDecFromString("0"),
-		TopicRewardAlpha:                       alloraMath.MustNewDecFromString("0.1"),
-		TaskRewardAlpha:                        alloraMath.MustNewDecFromString("0.1"),
-		ValidatorsVsAlloraPercentReward:        alloraMath.MustNewDecFromString("0"),
-		MaxSamplesToScaleScores:                uint64(10),
-		MaxTopInferersToReward:                 uint64(0),
-		MaxTopForecastersToReward:              uint64(0),
-		MaxTopReputersToReward:                 uint64(0),
-		CreateTopicFee:                         cosmosMath.NewInt(0),
-		RegistrationFee:                        cosmosMath.NewInt(0),
-		DefaultPageLimit:                       uint64(0),
-		MaxPageLimit:                           uint64(0),
-		MinEpochLengthRecordLimit:              int64(0),
-		MaxSerializedMsgLength:                 int64(0),
-		BlocksPerMonth:                         uint64(864000),
-		PRewardInference:                       alloraMath.NewDecFromInt64(1),
-		PRewardForecast:                        alloraMath.NewDecFromInt64(1),
-		PRewardReputer:                         alloraMath.NewDecFromInt64(1),
-		CRewardInference:                       alloraMath.MustNewDecFromString("0.1"),
-		CRewardForecast:                        alloraMath.MustNewDecFromString("0.1"),
-		CNorm:                                  alloraMath.MustNewDecFromString("0.1"),
-		HalfMaxProcessStakeRemovalsEndBlock:    uint64(1),
-		DataSendingFee:                         cosmosMath.NewInt(0),
-		MaxElementsPerForecast:                 uint64(0),
-		MaxActiveTopicsPerBlock:                uint64(0),
-		MaxStringLength:                        uint64(0),
-		InitialRegretQuantile:                  alloraMath.ZeroDec(),
-		PNormSafeDiv:                           alloraMath.ZeroDec(),
-		GlobalWhitelistEnabled:                 true,
-		TopicCreatorWhitelistEnabled:           true,
-		MinExperiencedWorkerRegrets:            uint64(10),
-		InferenceOutlierDetectionThreshold:     alloraMath.MustNewDecFromString("11"),
-		InferenceOutlierDetectionAlpha:         alloraMath.MustNewDecFromString("0.2"),
-		NewParticipantScoreInitializationKappa: alloraMath.MustNewDecFromString("0.1"),
+		Version:                             "v2",
+		MinTopicWeight:                      alloraMath.MustNewDecFromString("0"),
+		RequiredMinimumStake:                cosmosMath.NewInt(0),
+		RemoveStakeDelayWindow:              0,
+		MinEpochLength:                      1,
+		BetaEntropy:                         alloraMath.MustNewDecFromString("0"),
+		LearningRate:                        alloraMath.MustNewDecFromString("0.0001"),
+		GradientDescentMaxIters:             uint64(100),
+		MaxGradientThreshold:                alloraMath.MustNewDecFromString("0.0001"),
+		MinStakeFraction:                    alloraMath.MustNewDecFromString("0"),
+		EpsilonReputer:                      alloraMath.MustNewDecFromString("0.0001"),
+		EpsilonSafeDiv:                      alloraMath.MustNewDecFromString("0.0001"),
+		MaxUnfulfilledWorkerRequests:        uint64(0),
+		MaxUnfulfilledReputerRequests:       uint64(0),
+		TopicRewardStakeImportance:          alloraMath.MustNewDecFromString("0"),
+		TopicRewardFeeRevenueImportance:     alloraMath.MustNewDecFromString("0"),
+		TopicRewardAlpha:                    alloraMath.MustNewDecFromString("0.1"),
+		TaskRewardAlpha:                     alloraMath.MustNewDecFromString("0.1"),
+		ValidatorsVsAlloraPercentReward:     alloraMath.MustNewDecFromString("0"),
+		MaxSamplesToScaleScores:             uint64(10),
+		MaxTopInferersToReward:              uint64(0),
+		MaxTopForecastersToReward:           uint64(0),
+		MaxTopReputersToReward:              uint64(0),
+		CreateTopicFee:                      cosmosMath.NewInt(0),
+		RegistrationFee:                     cosmosMath.NewInt(0),
+		DefaultPageLimit:                    uint64(0),
+		MaxPageLimit:                        uint64(0),
+		MinEpochLengthRecordLimit:           int64(0),
+		MaxSerializedMsgLength:              int64(0),
+		BlocksPerMonth:                      uint64(864000),
+		PRewardInference:                    alloraMath.NewDecFromInt64(1),
+		PRewardForecast:                     alloraMath.NewDecFromInt64(1),
+		PRewardReputer:                      alloraMath.NewDecFromInt64(1),
+		CRewardInference:                    alloraMath.MustNewDecFromString("0.1"),
+		CRewardForecast:                     alloraMath.MustNewDecFromString("0.1"),
+		CNorm:                               alloraMath.MustNewDecFromString("0.1"),
+		HalfMaxProcessStakeRemovalsEndBlock: uint64(1),
+		DataSendingFee:                      cosmosMath.NewInt(0),
+		MaxElementsPerForecast:              uint64(0),
+		MaxActiveTopicsPerBlock:             uint64(0),
+		MaxStringLength:                     uint64(0),
+		InitialRegretQuantile:               alloraMath.ZeroDec(),
+		PNormSafeDiv:                        alloraMath.ZeroDec(),
+		GlobalWhitelistEnabled:              true,
+		TopicCreatorWhitelistEnabled:        true,
+		MinExperiencedWorkerRegrets:         uint64(10),
+		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),
+		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),
+		SortitionLambdaPenalty:              alloraMath.MustNewDecFromString("0.1"),
 	}
 }
 
@@ -5225,41 +5225,124 @@ func (s *KeeperTestSuite) TestFilterOutlierResistantInferences() {
 	}
 }
 
-func (s *KeeperTestSuite) TestInitialEmaScores() {
+func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendInference() {
 	ctx := s.ctx
 	k := s.emissionsKeeper
 	topicId := s.CreateOneTopic(10800)
+	worker := s.addrsStr[0]
+	blockHeight := int64(10)
 
-	// Test Inferer Initial EMA Score
-	infererScore := alloraMath.MustNewDecFromString("100.0")
-	err := k.SetTopicInitialInfererEmaScore(ctx, topicId, infererScore)
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("95.5")
+	err := k.SetTopicInitialInfererEmaScore(ctx, topicId, initialScore)
 	s.Require().NoError(err)
 
-	retrievedInfererScore, err := k.GetTopicInitialInfererEmaScore(ctx, topicId)
-	s.Require().NoError(err)
-	s.Require().True(infererScore.Equal(retrievedInfererScore))
+	// Create and append a new inference
+	inference := &types.Inference{
+		TopicId:     topicId,
+		BlockHeight: blockHeight,
+		Value:       alloraMath.MustNewDecFromString("0.52"),
+		Inferer:     worker,
+	}
 
-	// Test Forecaster Initial EMA Score
-	forecasterScore := alloraMath.MustNewDecFromString("90.0")
-	err = k.SetTopicInitialForecasterEmaScore(ctx, topicId, forecasterScore)
-	s.Require().NoError(err)
-
-	retrievedForecasterScore, err := k.GetTopicInitialForecasterEmaScore(ctx, topicId)
-	s.Require().NoError(err)
-	s.Require().True(forecasterScore.Equal(retrievedForecasterScore))
-
-	// Test Reputer Initial EMA Score
-	reputerScore := alloraMath.MustNewDecFromString("95.0")
-	err = k.SetTopicInitialReputerEmaScore(ctx, topicId, reputerScore)
+	topic, err := k.GetTopic(ctx, topicId)
 	s.Require().NoError(err)
 
-	retrievedReputerScore, err := k.GetTopicInitialReputerEmaScore(ctx, topicId)
+	// Append the inference
+	err = k.AppendInference(ctx, topic, blockHeight, inference, 4)
 	s.Require().NoError(err)
-	s.Require().True(reputerScore.Equal(retrievedReputerScore))
 
-	// Test Non-existent Topic
-	nonExistentTopicId := topicId + 1
-	zeroScore, err := k.GetTopicInitialInfererEmaScore(ctx, nonExistentTopicId)
+	// Verify the worker received the initial EMA score
+	score, err := k.GetInfererScoreEma(ctx, topicId, worker)
 	s.Require().NoError(err)
-	s.Require().True(zeroScore.IsZero())
+	s.Require().Equal(initialScore, score.Score)
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(worker, score.Address)
+	s.Require().Equal(topicId, score.TopicId)
+}
+
+func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendForecast() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topicId := s.CreateOneTopic(10800)
+	worker := s.addrsStr[0]
+	blockHeight := int64(10)
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("92.5")
+	err := k.SetTopicInitialForecasterEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err)
+
+	// Create and append a new forecast
+	forecast := &types.Forecast{
+		TopicId:     topicId,
+		BlockHeight: blockHeight,
+		Forecaster:  worker,
+		ForecastElements: []*types.ForecastElement{
+			{
+				Inferer: s.addrsStr[1],
+				Value:   alloraMath.MustNewDecFromString("0.52"),
+			},
+		},
+	}
+
+	topic, err := k.GetTopic(ctx, topicId)
+	s.Require().NoError(err)
+
+	// Append the forecast
+	err = k.AppendForecast(ctx, topic, blockHeight, forecast, 4)
+	s.Require().NoError(err)
+
+	// Verify the worker received the initial EMA score
+	score, err := k.GetForecasterScoreEma(ctx, topicId, worker)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, score.Score)
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(worker, score.Address)
+	s.Require().Equal(topicId, score.TopicId)
+}
+
+func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendReputer() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topicId := s.CreateOneTopic(10800)
+	reputer := s.addrsStr[0]
+	blockHeight := int64(10)
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("97.5")
+	err := k.SetTopicInitialReputerEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err)
+
+	// Create and append a new reputer value bundle
+	valueBundle := &types.ValueBundle{
+		TopicId: topicId,
+		ReputerRequestNonce: &types.ReputerRequestNonce{
+			ReputerNonce: &types.Nonce{BlockHeight: blockHeight},
+		},
+		Reputer:       reputer,
+		CombinedValue: alloraMath.MustNewDecFromString("0.52"),
+	}
+	signature := s.signValueBundle(valueBundle, s.privKeys[0])
+	reputerValueBundle := &types.ReputerValueBundle{
+		ValueBundle: valueBundle,
+		Signature:   signature,
+		Pubkey:      s.pubKeyHexStr[0],
+	}
+
+	topic, err := k.GetTopic(ctx, topicId)
+	s.Require().NoError(err)
+
+	params := types.DefaultParams()
+	// Append the reputer value bundle
+	err = k.AppendReputerLoss(ctx, topic, params, blockHeight, reputerValueBundle)
+	s.Require().NoError(err)
+
+	// Verify the reputer received the initial EMA score
+	score, err := k.GetReputerScoreEma(ctx, topicId, reputer)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, score.Score)
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(reputer, score.Address)
+	s.Require().Equal(topicId, score.TopicId)
 }

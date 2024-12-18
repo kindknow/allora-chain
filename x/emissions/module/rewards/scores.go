@@ -124,8 +124,6 @@ func GenerateReputerScores(
 	var instantScores []types.Score
 	var emaScores []types.Score
 	activeArr := make(map[string]bool)
-	var lowestEmaScore types.Score
-	first := true
 	for i, reputer := range reputers {
 		err := keeper.SetListeningCoefficient(
 			ctx,
@@ -153,12 +151,6 @@ func GenerateReputerScores(
 			return []types.Score{}, errors.Wrapf(err, "Error calculating and saving reputer score ema")
 		}
 
-		// Track lowest EMA score
-		if first || emaScore.Score.Lt(lowestEmaScore.Score) {
-			lowestEmaScore = emaScore
-			first = false
-		}
-
 		activeArr[reputer] = true
 		instantScores = append(instantScores, instantScore)
 		emaScores = append(emaScores, emaScore)
@@ -175,7 +167,7 @@ func GenerateReputerScores(
 	}
 
 	// Calculate initial EMA score
-	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, lowestEmaScore, topicInstantScoreQuantile)
+	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error calculating initial EMA score")
 	}
@@ -225,8 +217,6 @@ func GenerateInferenceScores(
 		return []types.Score{}, errors.Wrapf(err, "Error getting topic")
 	}
 
-	var lowestEmaScore types.Score
-	first := true
 	for _, oneOutLoss := range networkLosses.OneOutInfererValues {
 		workerNewScore, err := oneOutLoss.Value.Sub(networkLosses.CombinedValue)
 		if err != nil {
@@ -249,12 +239,6 @@ func GenerateInferenceScores(
 			return []types.Score{}, errors.Wrapf(err, "Error calculating and saving inferer score ema")
 		}
 
-		// Track lowest EMA score
-		if first || emaScore.Score.Lt(lowestEmaScore.Score) {
-			lowestEmaScore = emaScore
-			first = false
-		}
-
 		activeArr[oneOutLoss.Worker] = true
 		instantScores = append(instantScores, instantScore)
 		emaScores = append(emaScores, emaScore)
@@ -271,7 +255,7 @@ func GenerateInferenceScores(
 	}
 
 	// Calculate initial EMA score
-	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, lowestEmaScore, topicInstantScoreQuantile)
+	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error calculating initial EMA score")
 	}
@@ -338,8 +322,6 @@ func GenerateForecastScores(
 		return []types.Score{}, errors.Wrapf(err, "Error getting fUniqueAgg")
 	}
 
-	var lowestEmaScore types.Score
-	first := true
 	for i, oneInNaiveLoss := range networkLosses.OneInForecasterValues {
 		// Get worker score for one in loss
 		workerScoreOneIn, err := networkLosses.NaiveValue.Sub(oneInNaiveLoss.Value)
@@ -369,12 +351,6 @@ func GenerateForecastScores(
 			return []types.Score{}, errors.Wrapf(err, "Error calculating and saving forecaster score ema")
 		}
 
-		// Track lowest EMA score
-		if first || emaScore.Score.Lt(lowestEmaScore.Score) {
-			lowestEmaScore = emaScore
-			first = false
-		}
-
 		activeArr[oneInNaiveLoss.Worker] = true
 		instantScores = append(instantScores, instantScore)
 		emaScores = append(emaScores, emaScore)
@@ -391,7 +367,7 @@ func GenerateForecastScores(
 	}
 
 	// Calculate initial EMA score
-	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, lowestEmaScore, topicInstantScoreQuantile)
+	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error calculating initial EMA score")
 	}
@@ -547,34 +523,41 @@ func EnsureAllWorkersPresentWithheld(
 	return values
 }
 
-// CalculateTopicInitialEmaScore calculates the initial EMA score for a topic
+// CalculateTopicInitialEmaScore calculates the initial EMA score for new participants in the next epoch
+// using the current active set statistics. The initial score is set below the active set threshold
+// by using the formula: lowestEmaScore - lambda * standardDeviationOfEmaScores
 func CalculateTopicInitialEmaScore(
 	ctx context.Context,
 	keeper keeper.Keeper,
-	lowestScore types.Score,
-	last25thPercentile alloraMath.Dec,
+	activeScores []types.Score,
 ) (alloraMath.Dec, error) {
-	// Get kappa parameter from module params
+	// Get lambda parameter from module params
 	params, err := keeper.GetParams(ctx)
 	if err != nil {
 		return alloraMath.Dec{}, errors.Wrapf(err, "error getting module params")
 	}
-	kappa := params.NewParticipantScoreInitializationKappa
+	lambda := params.SortitionLambdaPenalty
 
-	// Calculate initial score using formula: (1+kappa)*lowestScore-kappa*last25thPercentile
-	onePlusKappa, err := alloraMath.NewDecFromInt64(1).Add(kappa)
-	if err != nil {
-		return alloraMath.Dec{}, errors.Wrapf(err, "error creating 1+kappa")
+	// Calculate standard deviation of EMA scores in active set
+	var emaScores []alloraMath.Dec
+	lowestScore := activeScores[0]
+	for _, score := range activeScores {
+		emaScores = append(emaScores, score.Score)
+		if score.Score.Lt(lowestScore.Score) {
+			lowestScore = score
+		}
 	}
-	lowestScoreMul, err := lowestScore.Score.Mul(onePlusKappa)
+	stdDev, err := alloraMath.StdDev(emaScores)
 	if err != nil {
-		return alloraMath.Dec{}, errors.Wrapf(err, "error multiplying lowest score by 1+kappa")
+		return alloraMath.Dec{}, errors.Wrapf(err, "error calculating standard deviation of EMA scores")
 	}
-	last25thPercentileMul, err := last25thPercentile.Mul(kappa)
+
+	// Calculate initial score using formula: lowestEmaScore - lambda * standardDeviationOfEmaScores
+	lambdaStdDev, err := lambda.Mul(stdDev)
 	if err != nil {
-		return alloraMath.Dec{}, errors.Wrapf(err, "error multiplying last 25th percentile by kappa")
+		return alloraMath.Dec{}, errors.Wrapf(err, "error multiplying lambda by standard deviation")
 	}
-	initialScore, err := lowestScoreMul.Sub(last25thPercentileMul)
+	initialScore, err := lowestScore.Score.Sub(lambdaStdDev)
 	if err != nil {
 		return alloraMath.Dec{}, errors.Wrapf(err, "error calculating initial score")
 	}
