@@ -243,6 +243,11 @@ message GenesisState {
   // Outlier resistant inferences
   repeated TopicIdAndDec last_median_inferences = 84;
   repeated TopicIdAndDec mad_inferences = 85;
+
+  // more whitelists
+  repeated string global_worker_whitelist = 89;
+  repeated string global_reputer_whitelist = 90;
+  repeated string global_admin_whitelist = 91;
 }
 
 message TopicIdAndTopic {

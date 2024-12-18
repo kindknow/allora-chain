@@ -187,6 +187,6 @@ func (s *EmissionsV6MigrationTestSuite) TestMigrateParams() {
 	s.Require().Equal(paramsExpected.LambdaInitialScore, params.LambdaInitialScore)
 	s.Require().True(paramsExpected.GlobalWorkerWhitelistEnabled)
 	s.Require().True(paramsExpected.GlobalReputerWhitelistEnabled)
-	s.Require().True(paramsExpected.GlobalAdminsEnabled)
+	s.Require().True(paramsExpected.GlobalAdminWhitelistEnabled)
 	s.Require().Equal(paramsExpected.MaxWhitelistInputArrayLength, params.MaxWhitelistInputArrayLength)
 }

@@ -108,4 +108,7 @@ var (
 	InitialInfererEmaScoreKey                         = collections.NewPrefix(93)
 	InitialForecasterEmaScoreKey                      = collections.NewPrefix(94)
 	InitialReputerEmaScoreKey                         = collections.NewPrefix(95)
+	GlobalWorkerWhitelistKey                          = collections.NewPrefix(96)
+	GlobalReputerWhitelistKey                         = collections.NewPrefix(97)
+	GlobalAdminWhitelistKey                           = collections.NewPrefix(98)
 )

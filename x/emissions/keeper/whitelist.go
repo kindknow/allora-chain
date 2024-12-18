@@ -55,6 +55,48 @@ func (k *Keeper) RemoveFromGlobalWhitelist(ctx context.Context, actor ActorId) e
 	return k.globalWhitelist.Remove(ctx, actor)
 }
 
+func (k *Keeper) AddToGlobalWorkerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalWorkerWhitelist.Set(ctx, actor)
+}
+
+func (k *Keeper) RemoveFromGlobalWorkerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalWorkerWhitelist.Remove(ctx, actor)
+}
+
+func (k *Keeper) AddToGlobalReputerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalReputerWhitelist.Set(ctx, actor)
+}
+
+func (k *Keeper) RemoveFromGlobalReputerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalReputerWhitelist.Remove(ctx, actor)
+}
+
+func (k *Keeper) AddToGlobalAdminWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalAdminWhitelist.Set(ctx, actor)
+}
+
+func (k *Keeper) RemoveFromGlobalAdminWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalAdminWhitelist.Remove(ctx, actor)
+}
+
 func (k *Keeper) AddToTopicCreatorWhitelist(ctx context.Context, actor ActorId) error {
 	if err := types.ValidateBech32(actor); err != nil {
 		return errorsmod.Wrap(err, "error validating admin id")

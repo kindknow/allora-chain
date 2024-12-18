@@ -69,6 +69,10 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 		InferenceOutlierDetectionThreshold:  []alloraMath.Dec{alloraMath.MustNewDecFromString("11")},
 		InferenceOutlierDetectionAlpha:      []alloraMath.Dec{alloraMath.MustNewDecFromString("0.2")},
 		LambdaInitialScore:                  []alloraMath.Dec{alloraMath.MustNewDecFromString("2")},
+		GlobalWorkerWhitelistEnabled:        []bool{true},
+		GlobalReputerWhitelistEnabled:       []bool{true},
+		GlobalAdminWhitelistEnabled:         []bool{true},
+		MaxWhitelistInputArrayLength:        []uint64{10},
 	}
 
 	updateMsg := &types.UpdateParamsRequest{
@@ -132,6 +136,10 @@ func (s *MsgServerTestSuite) TestUpdateAllParams() {
 	require.Equal(newParams.InferenceOutlierDetectionThreshold[0], updatedParams.InferenceOutlierDetectionThreshold)
 	require.Equal(newParams.InferenceOutlierDetectionAlpha[0], updatedParams.InferenceOutlierDetectionAlpha)
 	require.Equal(newParams.LambdaInitialScore[0], updatedParams.LambdaInitialScore)
+	require.Equal(newParams.GlobalWorkerWhitelistEnabled[0], updatedParams.GlobalWorkerWhitelistEnabled)
+	require.Equal(newParams.GlobalReputerWhitelistEnabled[0], updatedParams.GlobalReputerWhitelistEnabled)
+	require.Equal(newParams.GlobalAdminWhitelistEnabled[0], updatedParams.GlobalAdminWhitelistEnabled)
+	require.Equal(newParams.MaxWhitelistInputArrayLength[0], updatedParams.MaxWhitelistInputArrayLength)
 }
 
 func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
@@ -194,6 +202,10 @@ func (s *MsgServerTestSuite) TestUpdateParamsNonWhitelistedUser() {
 		InferenceOutlierDetectionThreshold:  nil,
 		InferenceOutlierDetectionAlpha:      nil,
 		LambdaInitialScore:                  nil,
+		GlobalWorkerWhitelistEnabled:        nil,
+		GlobalReputerWhitelistEnabled:       nil,
+		GlobalAdminWhitelistEnabled:         nil,
+		MaxWhitelistInputArrayLength:        nil,
 	}
 
 	// Creating the UpdateParamsRequest message with a non-whitelisted user
