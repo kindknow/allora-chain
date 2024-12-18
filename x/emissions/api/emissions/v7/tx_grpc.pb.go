@@ -47,6 +47,10 @@ const (
 	MsgService_BulkRemoveFromGlobalWorkerWhitelist_FullMethodName  = "/emissions.v7.MsgService/BulkRemoveFromGlobalWorkerWhitelist"
 	MsgService_BulkAddToGlobalReputerWhitelist_FullMethodName      = "/emissions.v7.MsgService/BulkAddToGlobalReputerWhitelist"
 	MsgService_BulkRemoveFromGlobalReputerWhitelist_FullMethodName = "/emissions.v7.MsgService/BulkRemoveFromGlobalReputerWhitelist"
+	MsgService_BulkAddToTopicWorkerWhitelist_FullMethodName        = "/emissions.v7.MsgService/BulkAddToTopicWorkerWhitelist"
+	MsgService_BulkRemoveFromTopicWorkerWhitelist_FullMethodName   = "/emissions.v7.MsgService/BulkRemoveFromTopicWorkerWhitelist"
+	MsgService_BulkAddToTopicReputerWhitelist_FullMethodName       = "/emissions.v7.MsgService/BulkAddToTopicReputerWhitelist"
+	MsgService_BulkRemoveFromTopicReputerWhitelist_FullMethodName  = "/emissions.v7.MsgService/BulkRemoveFromTopicReputerWhitelist"
 	MsgService_EnableTopicWorkerWhitelist_FullMethodName           = "/emissions.v7.MsgService/EnableTopicWorkerWhitelist"
 	MsgService_DisableTopicWorkerWhitelist_FullMethodName          = "/emissions.v7.MsgService/DisableTopicWorkerWhitelist"
 	MsgService_EnableTopicReputerWhitelist_FullMethodName          = "/emissions.v7.MsgService/EnableTopicReputerWhitelist"
@@ -93,6 +97,10 @@ type MsgServiceClient interface {
 	BulkRemoveFromGlobalWorkerWhitelist(ctx context.Context, in *BulkRemoveFromGlobalWorkerWhitelistRequest, opts ...grpc.CallOption) (*BulkRemoveFromGlobalWorkerWhitelistResponse, error)
 	BulkAddToGlobalReputerWhitelist(ctx context.Context, in *BulkAddToGlobalReputerWhitelistRequest, opts ...grpc.CallOption) (*BulkAddToGlobalReputerWhitelistResponse, error)
 	BulkRemoveFromGlobalReputerWhitelist(ctx context.Context, in *BulkRemoveFromGlobalReputerWhitelistRequest, opts ...grpc.CallOption) (*BulkRemoveFromGlobalReputerWhitelistResponse, error)
+	BulkAddToTopicWorkerWhitelist(ctx context.Context, in *BulkAddToTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*BulkAddToTopicWorkerWhitelistResponse, error)
+	BulkRemoveFromTopicWorkerWhitelist(ctx context.Context, in *BulkRemoveFromTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*BulkRemoveFromTopicWorkerWhitelistResponse, error)
+	BulkAddToTopicReputerWhitelist(ctx context.Context, in *BulkAddToTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*BulkAddToTopicReputerWhitelistResponse, error)
+	BulkRemoveFromTopicReputerWhitelist(ctx context.Context, in *BulkRemoveFromTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*BulkRemoveFromTopicReputerWhitelistResponse, error)
 	EnableTopicWorkerWhitelist(ctx context.Context, in *EnableTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicWorkerWhitelistResponse, error)
 	DisableTopicWorkerWhitelist(ctx context.Context, in *DisableTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*DisableTopicWorkerWhitelistResponse, error)
 	EnableTopicReputerWhitelist(ctx context.Context, in *EnableTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicReputerWhitelistResponse, error)
@@ -393,6 +401,46 @@ func (c *msgServiceClient) BulkRemoveFromGlobalReputerWhitelist(ctx context.Cont
 	return out, nil
 }
 
+func (c *msgServiceClient) BulkAddToTopicWorkerWhitelist(ctx context.Context, in *BulkAddToTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*BulkAddToTopicWorkerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BulkAddToTopicWorkerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_BulkAddToTopicWorkerWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) BulkRemoveFromTopicWorkerWhitelist(ctx context.Context, in *BulkRemoveFromTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*BulkRemoveFromTopicWorkerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BulkRemoveFromTopicWorkerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_BulkRemoveFromTopicWorkerWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) BulkAddToTopicReputerWhitelist(ctx context.Context, in *BulkAddToTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*BulkAddToTopicReputerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BulkAddToTopicReputerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_BulkAddToTopicReputerWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) BulkRemoveFromTopicReputerWhitelist(ctx context.Context, in *BulkRemoveFromTopicReputerWhitelistRequest, opts ...grpc.CallOption) (*BulkRemoveFromTopicReputerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BulkRemoveFromTopicReputerWhitelistResponse)
+	err := c.cc.Invoke(ctx, MsgService_BulkRemoveFromTopicReputerWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgServiceClient) EnableTopicWorkerWhitelist(ctx context.Context, in *EnableTopicWorkerWhitelistRequest, opts ...grpc.CallOption) (*EnableTopicWorkerWhitelistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EnableTopicWorkerWhitelistResponse)
@@ -527,6 +575,10 @@ type MsgServiceServer interface {
 	BulkRemoveFromGlobalWorkerWhitelist(context.Context, *BulkRemoveFromGlobalWorkerWhitelistRequest) (*BulkRemoveFromGlobalWorkerWhitelistResponse, error)
 	BulkAddToGlobalReputerWhitelist(context.Context, *BulkAddToGlobalReputerWhitelistRequest) (*BulkAddToGlobalReputerWhitelistResponse, error)
 	BulkRemoveFromGlobalReputerWhitelist(context.Context, *BulkRemoveFromGlobalReputerWhitelistRequest) (*BulkRemoveFromGlobalReputerWhitelistResponse, error)
+	BulkAddToTopicWorkerWhitelist(context.Context, *BulkAddToTopicWorkerWhitelistRequest) (*BulkAddToTopicWorkerWhitelistResponse, error)
+	BulkRemoveFromTopicWorkerWhitelist(context.Context, *BulkRemoveFromTopicWorkerWhitelistRequest) (*BulkRemoveFromTopicWorkerWhitelistResponse, error)
+	BulkAddToTopicReputerWhitelist(context.Context, *BulkAddToTopicReputerWhitelistRequest) (*BulkAddToTopicReputerWhitelistResponse, error)
+	BulkRemoveFromTopicReputerWhitelist(context.Context, *BulkRemoveFromTopicReputerWhitelistRequest) (*BulkRemoveFromTopicReputerWhitelistResponse, error)
 	EnableTopicWorkerWhitelist(context.Context, *EnableTopicWorkerWhitelistRequest) (*EnableTopicWorkerWhitelistResponse, error)
 	DisableTopicWorkerWhitelist(context.Context, *DisableTopicWorkerWhitelistRequest) (*DisableTopicWorkerWhitelistResponse, error)
 	EnableTopicReputerWhitelist(context.Context, *EnableTopicReputerWhitelistRequest) (*EnableTopicReputerWhitelistResponse, error)
@@ -630,6 +682,18 @@ func (UnimplementedMsgServiceServer) BulkAddToGlobalReputerWhitelist(context.Con
 }
 func (UnimplementedMsgServiceServer) BulkRemoveFromGlobalReputerWhitelist(context.Context, *BulkRemoveFromGlobalReputerWhitelistRequest) (*BulkRemoveFromGlobalReputerWhitelistResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BulkRemoveFromGlobalReputerWhitelist not implemented")
+}
+func (UnimplementedMsgServiceServer) BulkAddToTopicWorkerWhitelist(context.Context, *BulkAddToTopicWorkerWhitelistRequest) (*BulkAddToTopicWorkerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BulkAddToTopicWorkerWhitelist not implemented")
+}
+func (UnimplementedMsgServiceServer) BulkRemoveFromTopicWorkerWhitelist(context.Context, *BulkRemoveFromTopicWorkerWhitelistRequest) (*BulkRemoveFromTopicWorkerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BulkRemoveFromTopicWorkerWhitelist not implemented")
+}
+func (UnimplementedMsgServiceServer) BulkAddToTopicReputerWhitelist(context.Context, *BulkAddToTopicReputerWhitelistRequest) (*BulkAddToTopicReputerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BulkAddToTopicReputerWhitelist not implemented")
+}
+func (UnimplementedMsgServiceServer) BulkRemoveFromTopicReputerWhitelist(context.Context, *BulkRemoveFromTopicReputerWhitelistRequest) (*BulkRemoveFromTopicReputerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BulkRemoveFromTopicReputerWhitelist not implemented")
 }
 func (UnimplementedMsgServiceServer) EnableTopicWorkerWhitelist(context.Context, *EnableTopicWorkerWhitelistRequest) (*EnableTopicWorkerWhitelistResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnableTopicWorkerWhitelist not implemented")
@@ -1186,6 +1250,78 @@ func _MsgService_BulkRemoveFromGlobalReputerWhitelist_Handler(srv interface{}, c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_BulkAddToTopicWorkerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BulkAddToTopicWorkerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BulkAddToTopicWorkerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MsgService_BulkAddToTopicWorkerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BulkAddToTopicWorkerWhitelist(ctx, req.(*BulkAddToTopicWorkerWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_BulkRemoveFromTopicWorkerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BulkRemoveFromTopicWorkerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BulkRemoveFromTopicWorkerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MsgService_BulkRemoveFromTopicWorkerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BulkRemoveFromTopicWorkerWhitelist(ctx, req.(*BulkRemoveFromTopicWorkerWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_BulkAddToTopicReputerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BulkAddToTopicReputerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BulkAddToTopicReputerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MsgService_BulkAddToTopicReputerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BulkAddToTopicReputerWhitelist(ctx, req.(*BulkAddToTopicReputerWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_BulkRemoveFromTopicReputerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BulkRemoveFromTopicReputerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BulkRemoveFromTopicReputerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MsgService_BulkRemoveFromTopicReputerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BulkRemoveFromTopicReputerWhitelist(ctx, req.(*BulkRemoveFromTopicReputerWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MsgService_EnableTopicWorkerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EnableTopicWorkerWhitelistRequest)
 	if err := dec(in); err != nil {
@@ -1484,6 +1620,22 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BulkRemoveFromGlobalReputerWhitelist",
 			Handler:    _MsgService_BulkRemoveFromGlobalReputerWhitelist_Handler,
+		},
+		{
+			MethodName: "BulkAddToTopicWorkerWhitelist",
+			Handler:    _MsgService_BulkAddToTopicWorkerWhitelist_Handler,
+		},
+		{
+			MethodName: "BulkRemoveFromTopicWorkerWhitelist",
+			Handler:    _MsgService_BulkRemoveFromTopicWorkerWhitelist_Handler,
+		},
+		{
+			MethodName: "BulkAddToTopicReputerWhitelist",
+			Handler:    _MsgService_BulkAddToTopicReputerWhitelist_Handler,
+		},
+		{
+			MethodName: "BulkRemoveFromTopicReputerWhitelist",
+			Handler:    _MsgService_BulkRemoveFromTopicReputerWhitelist_Handler,
 		},
 		{
 			MethodName: "EnableTopicWorkerWhitelist",

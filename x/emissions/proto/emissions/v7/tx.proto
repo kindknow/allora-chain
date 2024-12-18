@@ -70,6 +70,14 @@ service MsgService {
 
   rpc BulkRemoveFromGlobalReputerWhitelist(BulkRemoveFromGlobalReputerWhitelistRequest) returns (BulkRemoveFromGlobalReputerWhitelistResponse);
 
+  rpc BulkAddToTopicWorkerWhitelist(BulkAddToTopicWorkerWhitelistRequest) returns (BulkAddToTopicWorkerWhitelistResponse);
+
+  rpc BulkRemoveFromTopicWorkerWhitelist(BulkRemoveFromTopicWorkerWhitelistRequest) returns (BulkRemoveFromTopicWorkerWhitelistResponse);
+
+  rpc BulkAddToTopicReputerWhitelist(BulkAddToTopicReputerWhitelistRequest) returns (BulkAddToTopicReputerWhitelistResponse);
+
+  rpc BulkRemoveFromTopicReputerWhitelist(BulkRemoveFromTopicReputerWhitelistRequest) returns (BulkRemoveFromTopicReputerWhitelistResponse);
+
   rpc EnableTopicWorkerWhitelist(EnableTopicWorkerWhitelistRequest) returns (EnableTopicWorkerWhitelistResponse);
 
   rpc DisableTopicWorkerWhitelist(DisableTopicWorkerWhitelistRequest) returns (DisableTopicWorkerWhitelistResponse);
@@ -537,6 +545,8 @@ message AddToTopicCreatorWhitelistRequest {
   string address = 2;
 }
 
+message AddToTopicCreatorWhitelistResponse {}
+
 message AddToGlobalWorkerWhitelistRequest {
   option (cosmos.msg.v1.signer) = "sender";
   string sender = 1;
@@ -617,7 +627,41 @@ message BulkRemoveFromGlobalReputerWhitelistRequest {
 
 message BulkRemoveFromGlobalReputerWhitelistResponse {}
 
-message AddToTopicCreatorWhitelistResponse {}
+message BulkAddToTopicWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkAddToTopicWorkerWhitelistResponse {}
+
+message BulkRemoveFromTopicWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkRemoveFromTopicWorkerWhitelistResponse {}
+
+message BulkAddToTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkAddToTopicReputerWhitelistResponse {}
+
+message BulkRemoveFromTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkRemoveFromTopicReputerWhitelistResponse {}
 
 message RemoveFromTopicCreatorWhitelistRequest {
   option (cosmos.msg.v1.signer) = "sender";

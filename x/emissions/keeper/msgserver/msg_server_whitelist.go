@@ -422,6 +422,194 @@ func (ms msgServer) BulkRemoveFromGlobalReputerWhitelist(ctx context.Context, ms
 	return &types.BulkRemoveFromGlobalReputerWhitelistResponse{}, nil
 }
 
+func (ms msgServer) BulkAddToTopicWorkerWhitelist(ctx context.Context, msg *types.BulkAddToTopicWorkerWhitelistRequest) (_ *types.BulkAddToTopicWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkAddToTopicWorkerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that topic exists
+	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	if err != nil {
+		return nil, err
+	} else if !exists {
+		return nil, types.ErrTopicDoesNotExist
+	}
+
+	// Check that sender is permitted to update topic whitelists
+	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	for _, address := range msg.Addresses {
+		// The main benefits of bulk operations are defeated if we do too much in-loop compute, and we validate addresses in layer below anyway
+		// => no need to validate address here.
+
+		err := ms.k.AddToTopicWorkerWhitelist(ctx, msg.TopicId, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkAddToTopicWorkerWhitelistResponse{}, nil
+}
+
+func (ms msgServer) BulkRemoveFromTopicWorkerWhitelist(ctx context.Context, msg *types.BulkRemoveFromTopicWorkerWhitelistRequest) (_ *types.BulkRemoveFromTopicWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkRemoveFromTopicWorkerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that topic exists
+	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	if err != nil {
+		return nil, err
+	} else if !exists {
+		return nil, types.ErrTopicDoesNotExist
+	}
+
+	// Check that sender is permitted to update topic whitelists
+	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	for _, address := range msg.Addresses {
+		// The main benefits of bulk operations are defeated if we do too much in-loop compute, and we validate addresses in layer below anyway
+		// => no need to validate address here.
+
+		err := ms.k.RemoveFromTopicWorkerWhitelist(ctx, msg.TopicId, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkRemoveFromTopicWorkerWhitelistResponse{}, nil
+}
+
+func (ms msgServer) BulkAddToTopicReputerWhitelist(ctx context.Context, msg *types.BulkAddToTopicReputerWhitelistRequest) (_ *types.BulkAddToTopicReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkAddToTopicReputerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that topic exists
+	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	if err != nil {
+		return nil, err
+	} else if !exists {
+		return nil, types.ErrTopicDoesNotExist
+	}
+
+	// Check that sender is permitted to update topic whitelists
+	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	for _, address := range msg.Addresses {
+		// The main benefits of bulk operations are defeated if we do too much in-loop compute, and we validate addresses in layer below anyway
+		// => no need to validate address here.
+
+		err := ms.k.AddToTopicReputerWhitelist(ctx, msg.TopicId, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkAddToTopicReputerWhitelistResponse{}, nil
+}
+
+func (ms msgServer) BulkRemoveFromTopicReputerWhitelist(ctx context.Context, msg *types.BulkRemoveFromTopicReputerWhitelistRequest) (_ *types.BulkRemoveFromTopicReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkRemoveFromTopicReputerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that topic exists
+	exists, err := ms.k.TopicExists(ctx, msg.TopicId)
+	if err != nil {
+		return nil, err
+	} else if !exists {
+		return nil, types.ErrTopicDoesNotExist
+	}
+
+	// Check that sender is permitted to update topic whitelists
+	canUpdate, err := ms.k.CanUpdateTopicWhitelist(ctx, msg.TopicId, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateTopicWhitelist
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	for _, address := range msg.Addresses {
+		// The main benefits of bulk operations are defeated if we do too much in-loop compute, and we validate addresses in layer below anyway
+		// => no need to validate address here.
+
+		err := ms.k.RemoveFromTopicReputerWhitelist(ctx, msg.TopicId, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkRemoveFromTopicReputerWhitelistResponse{}, nil
+}
+
 func (ms msgServer) EnableTopicWorkerWhitelist(ctx context.Context, msg *types.EnableTopicWorkerWhitelistRequest) (_ *types.EnableTopicWorkerWhitelistResponse, err error) {
 	defer metrics.RecordMetrics("EnableTopicWorkerWhitelist", time.Now(), &err)
 
