@@ -62,7 +62,7 @@ func TestDefaultParams(t *testing.T) {
 		GlobalWorkerWhitelistEnabled:        true,
 		GlobalReputerWhitelistEnabled:       true,
 		GlobalAdminWhitelistAppended:        true,
-		MaxWhitelistInputArrayLength:        uint64(10),
+		MaxWhitelistInputArrayLength:        uint64(2000),
 	}
 
 	params := DefaultParams()
