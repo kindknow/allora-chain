@@ -64,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#694](https://github.com/allora-network/allora-chain/pull/694) Make fuzzer whitelist aware
 * [#708](https://github.com/allora-network/allora-chain/pull/708) Add Emission Enabled bolean flag to Mint Module
 * [#703](https://github.com/allora-network/allora-chain/pull/703) Add outlier detection to inferences
+* [#714](https://github.com/allora-network/allora-chain/pull/714) Add initialization of actors' EMA scores
 
 ### Changed
 
