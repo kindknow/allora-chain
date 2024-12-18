@@ -66,6 +66,18 @@ message GenesisState {
   // map of (topic, forecaster) -> ratio of forecaster score
   repeated TopicIdAndDec previous_forecaster_score_ratio = 20;
 
+  /// INITIAL SCORES
+
+  // current inferer ema scores to apply per topic
+  // map of topic -> inferer ema score
+  repeated TopicIdAndDec initial_inferer_ema_score = 86;
+  // current forecaster ema scores to apply per topic
+  // map of topic -> forecaster ema score
+  repeated TopicIdAndDec initial_forecaster_ema_score = 87;
+  // current reputer ema scores to apply per topic
+  // map of topic -> reputer ema score
+  repeated TopicIdAndDec initial_reputer_ema_score = 88;
+  
   /// STAKING
 
   // total sum stake of all stakers on the network
