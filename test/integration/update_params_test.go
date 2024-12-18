@@ -91,7 +91,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			MinExperiencedWorkerRegrets:            nil,
 			InferenceOutlierDetectionThreshold:     nil,
 			InferenceOutlierDetectionAlpha:         nil,
-			NewParticipantScoreInitializationKappa: nil,
+			SortitionLambdaPenalty:                 nil,
 		},
 	}
 	txResp, err := m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)
@@ -153,7 +153,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			MinExperiencedWorkerRegrets:            nil,
 			InferenceOutlierDetectionThreshold:     nil,
 			InferenceOutlierDetectionAlpha:         nil,
-			NewParticipantScoreInitializationKappa: nil,
+			SortitionLambdaPenalty:                 nil,
 		},
 	}
 	_, err = m.Client.BroadcastTx(ctx, m.BobAcc, updateParamRequest)
@@ -219,7 +219,7 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			MinExperiencedWorkerRegrets:            nil,
 			InferenceOutlierDetectionThreshold:     nil,
 			InferenceOutlierDetectionAlpha:         nil,
-			NewParticipantScoreInitializationKappa: nil,
+			SortitionLambdaPenalty:                 nil,
 		},
 	}
 	txResp, err = m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)

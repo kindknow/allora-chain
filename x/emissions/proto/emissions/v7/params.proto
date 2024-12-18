@@ -165,7 +165,8 @@ message Params {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  string new_participant_score_initialization_kappa = 55 [
+  // Constant used to determine the penalty for non-live actors
+  string sortition_lambda_penalty = 55 [
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
