@@ -783,7 +783,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
-					RpcMethod: "CanUpdateGlobalWhitelists",
+					RpcMethod: "CanUpdateAllGlobalWhitelists",
 					Use:       "can-update-global-whitelists [address]",
 					Short:     "Check if address can update global whitelists",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{

@@ -35,6 +35,96 @@ func (s *QueryServerTestSuite) TestIsWhitelistAdmin() {
 	s.Require().False(response.IsAdmin, "The IsAdmin field should be false for the anti test address")
 }
 
+func (s *QueryServerTestSuite) TestIsWhitelistedGlobalWorker() {
+	ctx := s.ctx
+	queryServer := s.queryServer
+	keeper := s.emissionsKeeper
+
+	testAddress := "allo10es2a97cr7u2m3aa08tcu7yd0d300thdct45ve"
+	antitestAddress := "allo1snm6pxg7p9jetmkhz0jz9ku3vdzmszegy9q5lh"
+
+	err := keeper.AddToGlobalWorkerWhitelist(ctx, testAddress)
+	s.Require().NoError(err, "AddToGlobalWorkerWhitelist should not produce an error")
+
+	req := &types.IsWhitelistedGlobalWorkerRequest{
+		Address: testAddress,
+	}
+
+	response, err := queryServer.IsWhitelistedGlobalWorker(ctx, req)
+	s.Require().NoError(err, "IsWhitelistedGlobalWorker should not produce an error")
+	s.Require().NotNil(response, "The response should not be nil")
+	s.Require().True(response.IsWhitelistedGlobalWorker, "The IsWhitelistedGlobalWorker field should be true for the test address")
+
+	req = &types.IsWhitelistedGlobalWorkerRequest{
+		Address: antitestAddress,
+	}
+
+	response, err = queryServer.IsWhitelistedGlobalWorker(ctx, req)
+	s.Require().NoError(err, "IsWhitelistedGlobalWorker should not produce an error")
+	s.Require().NotNil(response, "The response should not be nil")
+	s.Require().False(response.IsWhitelistedGlobalWorker, "The IsWhitelistedGlobalWorker field should be false for the anti test address")
+}
+
+func (s *QueryServerTestSuite) TestIsWhitelistedGlobalReputer() {
+	ctx := s.ctx
+	queryServer := s.queryServer
+	keeper := s.emissionsKeeper
+
+	testAddress := "allo10es2a97cr7u2m3aa08tcu7yd0d300thdct45ve"
+	antitestAddress := "allo1snm6pxg7p9jetmkhz0jz9ku3vdzmszegy9q5lh"
+
+	err := keeper.AddToGlobalReputerWhitelist(ctx, testAddress)
+	s.Require().NoError(err, "AddToGlobalReputerWhitelist should not produce an error")
+
+	req := &types.IsWhitelistedGlobalReputerRequest{
+		Address: testAddress,
+	}
+
+	response, err := queryServer.IsWhitelistedGlobalReputer(ctx, req)
+	s.Require().NoError(err, "IsWhitelistedGlobalReputer should not produce an error")
+	s.Require().NotNil(response, "The response should not be nil")
+	s.Require().True(response.IsWhitelistedGlobalReputer, "The IsWhitelistedGlobalReputer field should be true for the test address")
+
+	req = &types.IsWhitelistedGlobalReputerRequest{
+		Address: antitestAddress,
+	}
+
+	response, err = queryServer.IsWhitelistedGlobalReputer(ctx, req)
+	s.Require().NoError(err, "IsWhitelistedGlobalReputer should not produce an error")
+	s.Require().NotNil(response, "The response should not be nil")
+	s.Require().False(response.IsWhitelistedGlobalReputer, "The IsWhitelistedGlobalReputer field should be false for the anti test address")
+}
+
+func (s *QueryServerTestSuite) TestIsWhitelistedGlobalAdmin() {
+	ctx := s.ctx
+	queryServer := s.queryServer
+	keeper := s.emissionsKeeper
+
+	testAddress := "allo10es2a97cr7u2m3aa08tcu7yd0d300thdct45ve"
+	antitestAddress := "allo1snm6pxg7p9jetmkhz0jz9ku3vdzmszegy9q5lh"
+
+	err := keeper.AddToGlobalAdminWhitelist(ctx, testAddress)
+	s.Require().NoError(err, "AddToGlobalAdminWhitelist should not produce an error")
+
+	req := &types.IsWhitelistedGlobalAdminRequest{
+		Address: testAddress,
+	}
+
+	response, err := queryServer.IsWhitelistedGlobalAdmin(ctx, req)
+	s.Require().NoError(err, "IsWhitelistedGlobalAdmin should not produce an error")
+	s.Require().NotNil(response, "The response should not be nil")
+	s.Require().True(response.IsWhitelistedGlobalAdmin, "The IsWhitelistedGlobalAdmin field should be true for the test address")
+
+	req = &types.IsWhitelistedGlobalAdminRequest{
+		Address: antitestAddress,
+	}
+
+	response, err = queryServer.IsWhitelistedGlobalAdmin(ctx, req)
+	s.Require().NoError(err, "IsWhitelistedGlobalAdmin should not produce an error")
+	s.Require().NotNil(response, "The response should not be nil")
+	s.Require().False(response.IsWhitelistedGlobalAdmin, "The IsWhitelistedGlobalAdmin field should be false for the anti test address")
+}
+
 func (s *QueryServerTestSuite) TestIsTopicWhitelistEnabled() {
 	ctx := s.ctx
 	queryServer := s.queryServer
@@ -208,24 +298,24 @@ func (s *QueryServerTestSuite) TestCanUpdateGlobalWhitelists() {
 
 	testAddr := "allo10es2a97cr7u2m3aa08tcu7yd0d300thdct45ve"
 
-	req := &types.CanUpdateGlobalWhitelistsRequest{
+	req := &types.CanUpdateAllGlobalWhitelistsRequest{
 		Address: testAddr,
 	}
 
 	// Initially should not be able to update
-	response, err := queryServer.CanUpdateGlobalWhitelists(ctx, req)
+	response, err := queryServer.CanUpdateAllGlobalWhitelists(ctx, req)
 	s.Require().NoError(err)
 	s.Require().NotNil(response)
-	s.Require().False(response.CanUpdateGlobalWhitelists)
+	s.Require().False(response.CanUpdateAllGlobalWhitelists)
 
 	// Add as admin
 	err = keeper.AddWhitelistAdmin(ctx, testAddr)
 	s.Require().NoError(err)
 
-	response, err = queryServer.CanUpdateGlobalWhitelists(ctx, req)
+	response, err = queryServer.CanUpdateAllGlobalWhitelists(ctx, req)
 	s.Require().NoError(err)
 	s.Require().NotNil(response)
-	s.Require().True(response.CanUpdateGlobalWhitelists)
+	s.Require().True(response.CanUpdateAllGlobalWhitelists)
 }
 
 func (s *QueryServerTestSuite) TestCanUpdateParams() {

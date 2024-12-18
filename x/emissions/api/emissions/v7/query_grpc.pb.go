@@ -104,13 +104,18 @@ const (
 	QueryService_GetActiveReputersForTopic_FullMethodName                           = "/emissions.v7.QueryService/GetActiveReputersForTopic"
 	QueryService_GetActiveForecastersForTopic_FullMethodName                        = "/emissions.v7.QueryService/GetActiveForecastersForTopic"
 	QueryService_GetActiveInferersForTopic_FullMethodName                           = "/emissions.v7.QueryService/GetActiveInferersForTopic"
+	QueryService_IsWhitelistedGlobalWorker_FullMethodName                           = "/emissions.v7.QueryService/IsWhitelistedGlobalWorker"
+	QueryService_IsWhitelistedGlobalReputer_FullMethodName                          = "/emissions.v7.QueryService/IsWhitelistedGlobalReputer"
+	QueryService_IsWhitelistedGlobalAdmin_FullMethodName                            = "/emissions.v7.QueryService/IsWhitelistedGlobalAdmin"
 	QueryService_IsTopicWorkerWhitelistEnabled_FullMethodName                       = "/emissions.v7.QueryService/IsTopicWorkerWhitelistEnabled"
 	QueryService_IsTopicReputerWhitelistEnabled_FullMethodName                      = "/emissions.v7.QueryService/IsTopicReputerWhitelistEnabled"
 	QueryService_IsWhitelistedTopicCreator_FullMethodName                           = "/emissions.v7.QueryService/IsWhitelistedTopicCreator"
 	QueryService_IsWhitelistedGlobalActor_FullMethodName                            = "/emissions.v7.QueryService/IsWhitelistedGlobalActor"
 	QueryService_IsWhitelistedTopicWorker_FullMethodName                            = "/emissions.v7.QueryService/IsWhitelistedTopicWorker"
 	QueryService_IsWhitelistedTopicReputer_FullMethodName                           = "/emissions.v7.QueryService/IsWhitelistedTopicReputer"
-	QueryService_CanUpdateGlobalWhitelists_FullMethodName                           = "/emissions.v7.QueryService/CanUpdateGlobalWhitelists"
+	QueryService_CanUpdateAllGlobalWhitelists_FullMethodName                        = "/emissions.v7.QueryService/CanUpdateAllGlobalWhitelists"
+	QueryService_CanUpdateGlobalWorkerWhitelist_FullMethodName                      = "/emissions.v7.QueryService/CanUpdateGlobalWorkerWhitelist"
+	QueryService_CanUpdateGlobalReputerWhitelist_FullMethodName                     = "/emissions.v7.QueryService/CanUpdateGlobalReputerWhitelist"
 	QueryService_CanUpdateParams_FullMethodName                                     = "/emissions.v7.QueryService/CanUpdateParams"
 	QueryService_CanUpdateTopicWhitelist_FullMethodName                             = "/emissions.v7.QueryService/CanUpdateTopicWhitelist"
 	QueryService_CanCreateTopic_FullMethodName                                      = "/emissions.v7.QueryService/CanCreateTopic"
@@ -210,13 +215,18 @@ type QueryServiceClient interface {
 	GetActiveReputersForTopic(ctx context.Context, in *GetActiveReputersForTopicRequest, opts ...grpc.CallOption) (*GetActiveReputersForTopicResponse, error)
 	GetActiveForecastersForTopic(ctx context.Context, in *GetActiveForecastersForTopicRequest, opts ...grpc.CallOption) (*GetActiveForecastersForTopicResponse, error)
 	GetActiveInferersForTopic(ctx context.Context, in *GetActiveInferersForTopicRequest, opts ...grpc.CallOption) (*GetActiveInferersForTopicResponse, error)
+	IsWhitelistedGlobalWorker(ctx context.Context, in *IsWhitelistedGlobalWorkerRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalWorkerResponse, error)
+	IsWhitelistedGlobalReputer(ctx context.Context, in *IsWhitelistedGlobalReputerRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalReputerResponse, error)
+	IsWhitelistedGlobalAdmin(ctx context.Context, in *IsWhitelistedGlobalAdminRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalAdminResponse, error)
 	IsTopicWorkerWhitelistEnabled(ctx context.Context, in *IsTopicWorkerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWorkerWhitelistEnabledResponse, error)
 	IsTopicReputerWhitelistEnabled(ctx context.Context, in *IsTopicReputerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicReputerWhitelistEnabledResponse, error)
 	IsWhitelistedTopicCreator(ctx context.Context, in *IsWhitelistedTopicCreatorRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicCreatorResponse, error)
 	IsWhitelistedGlobalActor(ctx context.Context, in *IsWhitelistedGlobalActorRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalActorResponse, error)
 	IsWhitelistedTopicWorker(ctx context.Context, in *IsWhitelistedTopicWorkerRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicWorkerResponse, error)
 	IsWhitelistedTopicReputer(ctx context.Context, in *IsWhitelistedTopicReputerRequest, opts ...grpc.CallOption) (*IsWhitelistedTopicReputerResponse, error)
-	CanUpdateGlobalWhitelists(ctx context.Context, in *CanUpdateGlobalWhitelistsRequest, opts ...grpc.CallOption) (*CanUpdateGlobalWhitelistsResponse, error)
+	CanUpdateAllGlobalWhitelists(ctx context.Context, in *CanUpdateAllGlobalWhitelistsRequest, opts ...grpc.CallOption) (*CanUpdateAllGlobalWhitelistsResponse, error)
+	CanUpdateGlobalWorkerWhitelist(ctx context.Context, in *CanUpdateGlobalWorkerWhitelistRequest, opts ...grpc.CallOption) (*CanUpdateGlobalWorkerWhitelistResponse, error)
+	CanUpdateGlobalReputerWhitelist(ctx context.Context, in *CanUpdateGlobalReputerWhitelistRequest, opts ...grpc.CallOption) (*CanUpdateGlobalReputerWhitelistResponse, error)
 	CanUpdateParams(ctx context.Context, in *CanUpdateParamsRequest, opts ...grpc.CallOption) (*CanUpdateParamsResponse, error)
 	CanUpdateTopicWhitelist(ctx context.Context, in *CanUpdateTopicWhitelistRequest, opts ...grpc.CallOption) (*CanUpdateTopicWhitelistResponse, error)
 	CanCreateTopic(ctx context.Context, in *CanCreateTopicRequest, opts ...grpc.CallOption) (*CanCreateTopicResponse, error)
@@ -1082,6 +1092,36 @@ func (c *queryServiceClient) GetActiveInferersForTopic(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *queryServiceClient) IsWhitelistedGlobalWorker(ctx context.Context, in *IsWhitelistedGlobalWorkerRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalWorkerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWhitelistedGlobalWorkerResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsWhitelistedGlobalWorker_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsWhitelistedGlobalReputer(ctx context.Context, in *IsWhitelistedGlobalReputerRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalReputerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWhitelistedGlobalReputerResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsWhitelistedGlobalReputer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) IsWhitelistedGlobalAdmin(ctx context.Context, in *IsWhitelistedGlobalAdminRequest, opts ...grpc.CallOption) (*IsWhitelistedGlobalAdminResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWhitelistedGlobalAdminResponse)
+	err := c.cc.Invoke(ctx, QueryService_IsWhitelistedGlobalAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *queryServiceClient) IsTopicWorkerWhitelistEnabled(ctx context.Context, in *IsTopicWorkerWhitelistEnabledRequest, opts ...grpc.CallOption) (*IsTopicWorkerWhitelistEnabledResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(IsTopicWorkerWhitelistEnabledResponse)
@@ -1142,10 +1182,30 @@ func (c *queryServiceClient) IsWhitelistedTopicReputer(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *queryServiceClient) CanUpdateGlobalWhitelists(ctx context.Context, in *CanUpdateGlobalWhitelistsRequest, opts ...grpc.CallOption) (*CanUpdateGlobalWhitelistsResponse, error) {
+func (c *queryServiceClient) CanUpdateAllGlobalWhitelists(ctx context.Context, in *CanUpdateAllGlobalWhitelistsRequest, opts ...grpc.CallOption) (*CanUpdateAllGlobalWhitelistsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CanUpdateGlobalWhitelistsResponse)
-	err := c.cc.Invoke(ctx, QueryService_CanUpdateGlobalWhitelists_FullMethodName, in, out, cOpts...)
+	out := new(CanUpdateAllGlobalWhitelistsResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanUpdateAllGlobalWhitelists_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanUpdateGlobalWorkerWhitelist(ctx context.Context, in *CanUpdateGlobalWorkerWhitelistRequest, opts ...grpc.CallOption) (*CanUpdateGlobalWorkerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanUpdateGlobalWorkerWhitelistResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanUpdateGlobalWorkerWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) CanUpdateGlobalReputerWhitelist(ctx context.Context, in *CanUpdateGlobalReputerWhitelistRequest, opts ...grpc.CallOption) (*CanUpdateGlobalReputerWhitelistResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CanUpdateGlobalReputerWhitelistResponse)
+	err := c.cc.Invoke(ctx, QueryService_CanUpdateGlobalReputerWhitelist_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1294,13 +1354,18 @@ type QueryServiceServer interface {
 	GetActiveReputersForTopic(context.Context, *GetActiveReputersForTopicRequest) (*GetActiveReputersForTopicResponse, error)
 	GetActiveForecastersForTopic(context.Context, *GetActiveForecastersForTopicRequest) (*GetActiveForecastersForTopicResponse, error)
 	GetActiveInferersForTopic(context.Context, *GetActiveInferersForTopicRequest) (*GetActiveInferersForTopicResponse, error)
+	IsWhitelistedGlobalWorker(context.Context, *IsWhitelistedGlobalWorkerRequest) (*IsWhitelistedGlobalWorkerResponse, error)
+	IsWhitelistedGlobalReputer(context.Context, *IsWhitelistedGlobalReputerRequest) (*IsWhitelistedGlobalReputerResponse, error)
+	IsWhitelistedGlobalAdmin(context.Context, *IsWhitelistedGlobalAdminRequest) (*IsWhitelistedGlobalAdminResponse, error)
 	IsTopicWorkerWhitelistEnabled(context.Context, *IsTopicWorkerWhitelistEnabledRequest) (*IsTopicWorkerWhitelistEnabledResponse, error)
 	IsTopicReputerWhitelistEnabled(context.Context, *IsTopicReputerWhitelistEnabledRequest) (*IsTopicReputerWhitelistEnabledResponse, error)
 	IsWhitelistedTopicCreator(context.Context, *IsWhitelistedTopicCreatorRequest) (*IsWhitelistedTopicCreatorResponse, error)
 	IsWhitelistedGlobalActor(context.Context, *IsWhitelistedGlobalActorRequest) (*IsWhitelistedGlobalActorResponse, error)
 	IsWhitelistedTopicWorker(context.Context, *IsWhitelistedTopicWorkerRequest) (*IsWhitelistedTopicWorkerResponse, error)
 	IsWhitelistedTopicReputer(context.Context, *IsWhitelistedTopicReputerRequest) (*IsWhitelistedTopicReputerResponse, error)
-	CanUpdateGlobalWhitelists(context.Context, *CanUpdateGlobalWhitelistsRequest) (*CanUpdateGlobalWhitelistsResponse, error)
+	CanUpdateAllGlobalWhitelists(context.Context, *CanUpdateAllGlobalWhitelistsRequest) (*CanUpdateAllGlobalWhitelistsResponse, error)
+	CanUpdateGlobalWorkerWhitelist(context.Context, *CanUpdateGlobalWorkerWhitelistRequest) (*CanUpdateGlobalWorkerWhitelistResponse, error)
+	CanUpdateGlobalReputerWhitelist(context.Context, *CanUpdateGlobalReputerWhitelistRequest) (*CanUpdateGlobalReputerWhitelistResponse, error)
 	CanUpdateParams(context.Context, *CanUpdateParamsRequest) (*CanUpdateParamsResponse, error)
 	CanUpdateTopicWhitelist(context.Context, *CanUpdateTopicWhitelistRequest) (*CanUpdateTopicWhitelistResponse, error)
 	CanCreateTopic(context.Context, *CanCreateTopicRequest) (*CanCreateTopicResponse, error)
@@ -1571,6 +1636,15 @@ func (UnimplementedQueryServiceServer) GetActiveForecastersForTopic(context.Cont
 func (UnimplementedQueryServiceServer) GetActiveInferersForTopic(context.Context, *GetActiveInferersForTopicRequest) (*GetActiveInferersForTopicResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetActiveInferersForTopic not implemented")
 }
+func (UnimplementedQueryServiceServer) IsWhitelistedGlobalWorker(context.Context, *IsWhitelistedGlobalWorkerRequest) (*IsWhitelistedGlobalWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedGlobalWorker not implemented")
+}
+func (UnimplementedQueryServiceServer) IsWhitelistedGlobalReputer(context.Context, *IsWhitelistedGlobalReputerRequest) (*IsWhitelistedGlobalReputerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedGlobalReputer not implemented")
+}
+func (UnimplementedQueryServiceServer) IsWhitelistedGlobalAdmin(context.Context, *IsWhitelistedGlobalAdminRequest) (*IsWhitelistedGlobalAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedGlobalAdmin not implemented")
+}
 func (UnimplementedQueryServiceServer) IsTopicWorkerWhitelistEnabled(context.Context, *IsTopicWorkerWhitelistEnabledRequest) (*IsTopicWorkerWhitelistEnabledResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsTopicWorkerWhitelistEnabled not implemented")
 }
@@ -1589,8 +1663,14 @@ func (UnimplementedQueryServiceServer) IsWhitelistedTopicWorker(context.Context,
 func (UnimplementedQueryServiceServer) IsWhitelistedTopicReputer(context.Context, *IsWhitelistedTopicReputerRequest) (*IsWhitelistedTopicReputerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsWhitelistedTopicReputer not implemented")
 }
-func (UnimplementedQueryServiceServer) CanUpdateGlobalWhitelists(context.Context, *CanUpdateGlobalWhitelistsRequest) (*CanUpdateGlobalWhitelistsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateGlobalWhitelists not implemented")
+func (UnimplementedQueryServiceServer) CanUpdateAllGlobalWhitelists(context.Context, *CanUpdateAllGlobalWhitelistsRequest) (*CanUpdateAllGlobalWhitelistsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateAllGlobalWhitelists not implemented")
+}
+func (UnimplementedQueryServiceServer) CanUpdateGlobalWorkerWhitelist(context.Context, *CanUpdateGlobalWorkerWhitelistRequest) (*CanUpdateGlobalWorkerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateGlobalWorkerWhitelist not implemented")
+}
+func (UnimplementedQueryServiceServer) CanUpdateGlobalReputerWhitelist(context.Context, *CanUpdateGlobalReputerWhitelistRequest) (*CanUpdateGlobalReputerWhitelistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateGlobalReputerWhitelist not implemented")
 }
 func (UnimplementedQueryServiceServer) CanUpdateParams(context.Context, *CanUpdateParamsRequest) (*CanUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CanUpdateParams not implemented")
@@ -3158,6 +3238,60 @@ func _QueryService_GetActiveInferersForTopic_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QueryService_IsWhitelistedGlobalWorker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWhitelistedGlobalWorkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalWorker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsWhitelistedGlobalWorker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalWorker(ctx, req.(*IsWhitelistedGlobalWorkerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsWhitelistedGlobalReputer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWhitelistedGlobalReputerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalReputer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsWhitelistedGlobalReputer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalReputer(ctx, req.(*IsWhitelistedGlobalReputerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_IsWhitelistedGlobalAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWhitelistedGlobalAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_IsWhitelistedGlobalAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).IsWhitelistedGlobalAdmin(ctx, req.(*IsWhitelistedGlobalAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _QueryService_IsTopicWorkerWhitelistEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IsTopicWorkerWhitelistEnabledRequest)
 	if err := dec(in); err != nil {
@@ -3266,20 +3400,56 @@ func _QueryService_IsWhitelistedTopicReputer_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QueryService_CanUpdateGlobalWhitelists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CanUpdateGlobalWhitelistsRequest)
+func _QueryService_CanUpdateAllGlobalWhitelists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanUpdateAllGlobalWhitelistsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServiceServer).CanUpdateGlobalWhitelists(ctx, in)
+		return srv.(QueryServiceServer).CanUpdateAllGlobalWhitelists(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: QueryService_CanUpdateGlobalWhitelists_FullMethodName,
+		FullMethod: QueryService_CanUpdateAllGlobalWhitelists_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServiceServer).CanUpdateGlobalWhitelists(ctx, req.(*CanUpdateGlobalWhitelistsRequest))
+		return srv.(QueryServiceServer).CanUpdateAllGlobalWhitelists(ctx, req.(*CanUpdateAllGlobalWhitelistsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanUpdateGlobalWorkerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanUpdateGlobalWorkerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanUpdateGlobalWorkerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanUpdateGlobalWorkerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanUpdateGlobalWorkerWhitelist(ctx, req.(*CanUpdateGlobalWorkerWhitelistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_CanUpdateGlobalReputerWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CanUpdateGlobalReputerWhitelistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).CanUpdateGlobalReputerWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_CanUpdateGlobalReputerWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).CanUpdateGlobalReputerWhitelist(ctx, req.(*CanUpdateGlobalReputerWhitelistRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3722,6 +3892,18 @@ var QueryService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _QueryService_GetActiveInferersForTopic_Handler,
 		},
 		{
+			MethodName: "IsWhitelistedGlobalWorker",
+			Handler:    _QueryService_IsWhitelistedGlobalWorker_Handler,
+		},
+		{
+			MethodName: "IsWhitelistedGlobalReputer",
+			Handler:    _QueryService_IsWhitelistedGlobalReputer_Handler,
+		},
+		{
+			MethodName: "IsWhitelistedGlobalAdmin",
+			Handler:    _QueryService_IsWhitelistedGlobalAdmin_Handler,
+		},
+		{
 			MethodName: "IsTopicWorkerWhitelistEnabled",
 			Handler:    _QueryService_IsTopicWorkerWhitelistEnabled_Handler,
 		},
@@ -3746,8 +3928,16 @@ var QueryService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _QueryService_IsWhitelistedTopicReputer_Handler,
 		},
 		{
-			MethodName: "CanUpdateGlobalWhitelists",
-			Handler:    _QueryService_CanUpdateGlobalWhitelists_Handler,
+			MethodName: "CanUpdateAllGlobalWhitelists",
+			Handler:    _QueryService_CanUpdateAllGlobalWhitelists_Handler,
+		},
+		{
+			MethodName: "CanUpdateGlobalWorkerWhitelist",
+			Handler:    _QueryService_CanUpdateGlobalWorkerWhitelist_Handler,
+		},
+		{
+			MethodName: "CanUpdateGlobalReputerWhitelist",
+			Handler:    _QueryService_CanUpdateGlobalReputerWhitelist_Handler,
 		},
 		{
 			MethodName: "CanUpdateParams",

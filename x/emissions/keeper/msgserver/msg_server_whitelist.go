@@ -24,7 +24,7 @@ func (ms msgServer) AddToWhitelistAdmin(ctx context.Context, msg *types.AddToWhi
 	}
 
 	// Check that sender is permitted to update global whitelists
-	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
+	canUpdate, err := ms.k.CanUpdateAllGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
@@ -51,7 +51,7 @@ func (ms msgServer) RemoveFromWhitelistAdmin(ctx context.Context, msg *types.Rem
 	}
 
 	// Check that sender is permitted to update global whitelists
-	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
+	canUpdate, err := ms.k.CanUpdateAllGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
@@ -78,7 +78,7 @@ func (ms msgServer) AddToGlobalWhitelist(ctx context.Context, msg *types.AddToGl
 	}
 
 	// Check that sender is permitted to update global whitelists
-	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
+	canUpdate, err := ms.k.CanUpdateAllGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
@@ -105,7 +105,7 @@ func (ms msgServer) RemoveFromGlobalWhitelist(ctx context.Context, msg *types.Re
 	}
 
 	// Check that sender is permitted to update global whitelists
-	canUpdate, err := ms.k.CanUpdateGlobalWhitelists(ctx, msg.Sender)
+	canUpdate, err := ms.k.CanUpdateAllGlobalWhitelists(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
 	} else if !canUpdate {
@@ -114,6 +114,312 @@ func (ms msgServer) RemoveFromGlobalWhitelist(ctx context.Context, msg *types.Re
 
 	// Remove the address from the whitelist
 	return &types.RemoveFromGlobalWhitelistResponse{}, ms.k.RemoveFromGlobalWhitelist(ctx, msg.Address)
+}
+
+func (ms msgServer) AddToGlobalWorkerWhitelist(ctx context.Context, msg *types.AddToGlobalWorkerWhitelistRequest) (_ *types.AddToGlobalWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("AddToGlobalWorkerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalWorkerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Add the address to the whitelist
+	return &types.AddToGlobalWorkerWhitelistResponse{}, ms.k.AddToGlobalWorkerWhitelist(ctx, msg.Address)
+}
+
+func (ms msgServer) RemoveFromGlobalWorkerWhitelist(ctx context.Context, msg *types.RemoveFromGlobalWorkerWhitelistRequest) (_ *types.RemoveFromGlobalWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("RemoveFromGlobalWorkerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalWorkerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Remove the address from the whitelist
+	return &types.RemoveFromGlobalWorkerWhitelistResponse{}, ms.k.RemoveFromGlobalWorkerWhitelist(ctx, msg.Address)
+}
+
+func (ms msgServer) AddToGlobalReputerWhitelist(ctx context.Context, msg *types.AddToGlobalReputerWhitelistRequest) (_ *types.AddToGlobalReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("AddToGlobalReputerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalReputerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Add the address to the whitelist
+	return &types.AddToGlobalReputerWhitelistResponse{}, ms.k.AddToGlobalReputerWhitelist(ctx, msg.Address)
+}
+
+func (ms msgServer) RemoveFromGlobalReputerWhitelist(ctx context.Context, msg *types.RemoveFromGlobalReputerWhitelistRequest) (_ *types.RemoveFromGlobalReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("RemoveFromGlobalReputerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalReputerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Remove the address from the whitelist
+	return &types.RemoveFromGlobalReputerWhitelistResponse{}, ms.k.RemoveFromGlobalReputerWhitelist(ctx, msg.Address)
+}
+
+func (ms msgServer) AddToGlobalAdminWhitelist(ctx context.Context, msg *types.AddToGlobalAdminWhitelistRequest) (_ *types.AddToGlobalAdminWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("AddToGlobalAdminWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateAllGlobalWhitelists(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Add the address to the whitelist
+	return &types.AddToGlobalAdminWhitelistResponse{}, ms.k.AddToGlobalAdminWhitelist(ctx, msg.Address)
+}
+
+func (ms msgServer) RemoveFromGlobalAdminWhitelist(ctx context.Context, msg *types.RemoveFromGlobalAdminWhitelistRequest) (_ *types.RemoveFromGlobalAdminWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("RemoveFromGlobalAdminWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate the address
+	err = ms.k.ValidateStringIsBech32(msg.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateAllGlobalWhitelists(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Remove the address from the whitelist
+	return &types.RemoveFromGlobalAdminWhitelistResponse{}, ms.k.RemoveFromGlobalAdminWhitelist(ctx, msg.Address)
+}
+
+func (ms msgServer) BulkAddToGlobalWorkerWhitelist(ctx context.Context, msg *types.BulkAddToGlobalWorkerWhitelistRequest) (_ *types.BulkAddToGlobalWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkAddToGlobalWorkerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalWorkerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	for _, address := range msg.Addresses {
+		err := ms.k.AddToGlobalWorkerWhitelist(ctx, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkAddToGlobalWorkerWhitelistResponse{}, nil
+}
+
+func (ms msgServer) BulkRemoveFromGlobalWorkerWhitelist(ctx context.Context, msg *types.BulkRemoveFromGlobalWorkerWhitelistRequest) (_ *types.BulkRemoveFromGlobalWorkerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkRemoveFromGlobalWorkerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalWorkerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	for _, address := range msg.Addresses {
+		err := ms.k.RemoveFromGlobalWorkerWhitelist(ctx, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkRemoveFromGlobalWorkerWhitelistResponse{}, nil
+}
+
+func (ms msgServer) BulkAddToGlobalReputerWhitelist(ctx context.Context, msg *types.BulkAddToGlobalReputerWhitelistRequest) (_ *types.BulkAddToGlobalReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkAddToGlobalReputerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalReputerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	for _, address := range msg.Addresses {
+		err := ms.k.AddToGlobalReputerWhitelist(ctx, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkAddToGlobalReputerWhitelistResponse{}, nil
+}
+
+func (ms msgServer) BulkRemoveFromGlobalReputerWhitelist(ctx context.Context, msg *types.BulkRemoveFromGlobalReputerWhitelistRequest) (_ *types.BulkRemoveFromGlobalReputerWhitelistResponse, err error) {
+	defer metrics.RecordMetrics("BulkRemoveFromGlobalReputerWhitelist", time.Now(), &err)
+
+	// Validate the sender address
+	err = ms.k.ValidateStringIsBech32(msg.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check that sender is permitted to update global whitelists
+	canUpdate, err := ms.k.CanUpdateGlobalReputerWhitelist(ctx, msg.Sender)
+	if err != nil {
+		return nil, err
+	} else if !canUpdate {
+		return nil, types.ErrNotPermittedToUpdateGlobalWhitelist
+	}
+
+	// Check length of addresses to add using global max_whitelist_input_array_length
+	params, err := ms.k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(msg.Addresses)) > params.MaxWhitelistInputArrayLength {
+		return nil, types.ErrMaxWhitelistInputArrayLengthExceeded
+	}
+
+	for _, address := range msg.Addresses {
+		err := ms.k.RemoveFromGlobalReputerWhitelist(ctx, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.BulkRemoveFromGlobalReputerWhitelistResponse{}, nil
 }
 
 func (ms msgServer) EnableTopicWorkerWhitelist(ctx context.Context, msg *types.EnableTopicWorkerWhitelistRequest) (_ *types.EnableTopicWorkerWhitelistResponse, err error) {

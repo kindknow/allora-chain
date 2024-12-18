@@ -287,7 +287,7 @@ func (k *Keeper) IsEnabledTopicReputer(ctx context.Context, topicId TopicId, act
 /// PERMISSIONS - Functions that determine if an actor has the ability to perform an action
 
 // Whitelist admins can update global whitelists including adding/removing from the global actor and whitelist admin lists
-func (k *Keeper) CanUpdateGlobalWhitelists(ctx context.Context, actor ActorId) (bool, error) {
+func (k *Keeper) CanUpdateAllGlobalWhitelists(ctx context.Context, actor ActorId) (bool, error) {
 	return k.IsWhitelistAdmin(ctx, actor)
 }
 
