@@ -58,7 +58,7 @@ func TestDefaultParams(t *testing.T) {
 		MinExperiencedWorkerRegrets:         uint64(10),
 		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),
 		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),
-		SortitionLambdaPenalty:              alloraMath.MustNewDecFromString("0.01"),
+		SortitionLambdaPenalty:              alloraMath.MustNewDecFromString("2"),
 	}
 
 	params := DefaultParams()
