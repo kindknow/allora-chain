@@ -63,6 +63,78 @@ func TestCalcEmaWithNaN(t *testing.T) {
 	require.ErrorIs(t, err, alloraMath.ErrNaN)
 }
 
+func TestNCalcEma(t *testing.T) {
+	cases := []struct {
+		name           string
+		alpha          alloraMath.Dec
+		update         alloraMath.Dec
+		score          alloraMath.Dec
+		n              uint64
+		expectedResult alloraMath.Dec
+		expectedErr    error
+	}{
+		{
+			name:           "n=1",
+			alpha:          alloraMath.MustNewDecFromString("0.1"),
+			update:         alloraMath.MustNewDecFromString("300"),
+			score:          alloraMath.MustNewDecFromString("200"),
+			n:              1,
+			expectedResult: alloraMath.MustNewDecFromString("210"),
+			expectedErr:    nil,
+		},
+		{
+			name:           "n=4",
+			alpha:          alloraMath.MustNewDecFromString("0.1"),
+			update:         alloraMath.MustNewDecFromString("300"),
+			score:          alloraMath.MustNewDecFromString("200"),
+			n:              4,
+			expectedResult: alloraMath.MustNewDecFromString("234.39"),
+			expectedErr:    nil,
+		},
+		{
+			name:           "error alpha NaN",
+			alpha:          alloraMath.NewNaN(),
+			update:         alloraMath.MustNewDecFromString("300"),
+			score:          alloraMath.MustNewDecFromString("200"),
+			n:              3,
+			expectedResult: alloraMath.ZeroDec(),
+			expectedErr:    alloraMath.ErrNaN,
+		},
+		{
+			name:           "error update NaN",
+			alpha:          alloraMath.MustNewDecFromString("0.1"),
+			update:         alloraMath.NewNaN(),
+			score:          alloraMath.MustNewDecFromString("200"),
+			n:              3,
+			expectedResult: alloraMath.ZeroDec(),
+			expectedErr:    alloraMath.ErrNaN,
+		},
+		{
+			name:           "error score NaN",
+			alpha:          alloraMath.MustNewDecFromString("0.1"),
+			update:         alloraMath.MustNewDecFromString("300"),
+			score:          alloraMath.NewNaN(),
+			n:              3,
+			expectedResult: alloraMath.ZeroDec(),
+			expectedErr:    alloraMath.ErrNaN,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := alloraMath.NCalcEma(tc.alpha, tc.update, tc.score, tc.n)
+			if tc.expectedErr != nil {
+				require.ErrorIs(t, err, tc.expectedErr)
+			} else {
+				require.NoError(t, err)
+				inDelta, err := alloraMath.InDelta(tc.expectedResult, result, alloraMath.MustNewDecFromString("0.0001"))
+				require.NoError(t, err)
+				require.True(t, inDelta, "expected %s, got %s", tc.expectedResult.String(), result.String())
+			}
+		})
+	}
+}
+
 func TestStdDev(t *testing.T) {
 	tests := []struct {
 		name string

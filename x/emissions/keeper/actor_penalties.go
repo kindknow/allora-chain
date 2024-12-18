@@ -1,9 +1,6 @@
 package keeper
 
 import (
-	"errors"
-
-	"cosmossdk.io/collections"
 	alloraMath "github.com/allora-network/allora-chain/math"
 	"github.com/allora-network/allora-chain/x/emissions/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,7 +17,7 @@ func (k *Keeper) MayPenaliseInferer(
 	return MayPenaliseActor(
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
-			return k.initialInfererEmaScore.Get(ctx, topicId)
+			return k.GetTopicInitialInfererEmaScore(ctx, topicId)
 		},
 		func(topicId TopicId, score types.Score) error {
 			return k.SetInfererScoreEma(ctx, topicId, score.Address, score)
@@ -42,7 +39,7 @@ func (k *Keeper) MayPenaliseForecaster(
 	return MayPenaliseActor(
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
-			return k.initialForecasterEmaScore.Get(ctx, topicId)
+			return k.GetTopicInitialForecasterEmaScore(ctx, topicId)
 		},
 		func(topicId TopicId, score types.Score) error {
 			return k.SetForecasterScoreEma(ctx, topicId, score.Address, score)
@@ -64,7 +61,7 @@ func (k *Keeper) MayPenaliseReputer(
 	return MayPenaliseActor(
 		CountReputerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
-			return k.initialReputerEmaScore.Get(ctx, topicId)
+			return k.GetTopicInitialReputerEmaScore(ctx, topicId)
 		},
 		func(topicId TopicId, score types.Score) error {
 			return k.SetReputerScoreEma(ctx, topicId, score.Address, score)
@@ -90,10 +87,6 @@ func MayPenaliseActor(
 	}
 
 	penalty, err := getPenaltyFn(topic.Id)
-	// No penalty set, no penalty
-	if errors.Is(err, collections.ErrNotFound) {
-		return emaScore, nil
-	}
 	if err != nil {
 		return types.Score{}, err
 	}
