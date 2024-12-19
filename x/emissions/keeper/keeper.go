@@ -1302,7 +1302,9 @@ func (k *Keeper) AppendInference(
 	}
 
 	// Check if the inferer is new and set initial EMA score
+	firstSubmission := false
 	if previousEmaScore.BlockHeight == 0 {
+		firstSubmission = true
 		initialEmaScore, err := k.GetTopicInitialInfererEmaScore(ctx, topic.Id)
 		if err != nil {
 			return errorsmod.Wrap(err, "error getting topic initial ema score")
@@ -1394,7 +1396,7 @@ func (k *Keeper) AppendInference(
 		return k.InsertInference(ctx, topic.Id, *inference)
 	} else {
 		// Update EMA score for the current inferer, who is the lowest score inferer
-		if previousEmaScore.BlockHeight != 0 { // Only update if not a new inferer
+		if !firstSubmission { // Only update if not a new inferer
 			err = k.CalcAndSaveInfererScoreEmaWithLastSavedTopicQuantile(ctx, topic, nonceBlockHeight, previousEmaScore)
 			if err != nil {
 				return errorsmod.Wrap(err, "error calculating and saving inferer score ema with last saved topic quantile")
@@ -1474,7 +1476,9 @@ func (k *Keeper) AppendForecast(
 	}
 
 	// Check if the forecaster is new and set initial EMA score
+	firstSubmission := false
 	if previousEmaScore.BlockHeight == 0 {
+		firstSubmission = true
 		initialEmaScore, err := k.GetTopicInitialForecasterEmaScore(ctx, topic.Id)
 		if err != nil {
 			return errorsmod.Wrap(err, "error getting topic initial ema score")
@@ -1560,7 +1564,7 @@ func (k *Keeper) AppendForecast(
 		return k.InsertForecast(ctx, topic.Id, *forecast)
 	} else {
 		// Update EMA score for the current forecaster, who is the lowest score forecaster
-		if previousEmaScore.BlockHeight != 0 {
+		if !firstSubmission {
 			err = k.CalcAndSaveForecasterScoreEmaWithLastSavedTopicQuantile(ctx, topic, nonceBlockHeight, previousEmaScore)
 			if err != nil {
 				return errorsmod.Wrap(err, "error calculating and saving forecaster score ema with last saved topic quantile")
@@ -1693,7 +1697,9 @@ func (k *Keeper) AppendReputerLoss(
 	}
 
 	// Check if the reputer is new and set initial EMA score
+	firstSubmission := false
 	if previousEmaScore.BlockHeight == 0 {
+		firstSubmission = true
 		initialEmaScore, err := k.GetTopicInitialReputerEmaScore(ctx, topic.Id)
 		if err != nil {
 			return errorsmod.Wrap(err, "error getting topic initial ema score")
@@ -1778,7 +1784,7 @@ func (k *Keeper) AppendReputerLoss(
 		return k.InsertReputerLoss(ctx, topic.Id, *reputerLoss)
 	} else {
 		// Update EMA score for the current reputer, who is the lowest score reputer
-		if previousEmaScore.BlockHeight != 0 {
+		if !firstSubmission {
 			err = k.CalcAndSaveReputerScoreEmaWithLastSavedTopicQuantile(ctx, topic, nonceBlockHeight, previousEmaScore)
 			if err != nil {
 				return errorsmod.Wrap(err, "error calculating and saving reputer score ema with last saved topic quantile")

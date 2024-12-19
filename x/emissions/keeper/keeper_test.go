@@ -5361,3 +5361,61 @@ func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendReputer() {
 	s.Require().Equal(reputer, score.Address)
 	s.Require().Equal(topicId, score.TopicId)
 }
+
+func (s *KeeperTestSuite) TestFirstSubmissionDoesNotUpdateEMAUsingQuantile() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topicId := s.CreateOneTopic(10800)
+
+	params := types.DefaultParams()
+	params.MaxTopInferersToReward = 4
+	err := k.SetParams(ctx, params)
+	s.Require().NoError(err)
+
+	for i := 0; i < int(params.MaxTopInferersToReward); i++ {
+		score := types.Score{
+			TopicId:     topicId,
+			Address:     s.addrsStr[i],
+			BlockHeight: 1,
+			Score:       alloraMath.NewDecFromInt64(90 + int64(i)),
+		}
+		err := k.SetInfererScoreEma(ctx, topicId, s.addrsStr[i], score)
+		s.Require().NoError(err)
+
+		err = k.AddActiveInferer(ctx, topicId, s.addrsStr[i])
+		s.Require().NoError(err)
+
+		if i == 0 {
+			err = k.SetLowestInfererScoreEma(ctx, topicId, score)
+			s.Require().NoError(err)
+		}
+	}
+
+	// Set a low initial score for new actors
+	initialScore := alloraMath.NewDecFromInt64(50)
+	err = k.SetTopicInitialInfererEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err)
+
+	// Create a new inference from a new actor
+	inference := &types.Inference{
+		TopicId:     topicId,
+		BlockHeight: 2,
+		Inferer:     s.addrsStr[9], // Using a different address
+		Value:       alloraMath.NewDecFromInt64(100),
+		ExtraData:   nil,
+		Proof:       "",
+	}
+
+	topic, err := k.GetTopic(ctx, topicId)
+	s.Require().NoError(err)
+
+	// Submit inference - should not trigger EMA update using quantile since it's first submission
+	// and score is lower than active set
+	err = k.AppendInference(ctx, topic, 2, inference, params.MaxTopInferersToReward)
+	s.Require().NoError(err)
+
+	// Verify score remains at initial value
+	score, err := k.GetInfererScoreEma(ctx, topicId, s.addrsStr[9])
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, score.Score)
+}
