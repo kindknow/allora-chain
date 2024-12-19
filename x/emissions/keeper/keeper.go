@@ -1295,12 +1295,6 @@ func (k *Keeper) AppendInference(
 		return types.ErrCantUpdateEmaMoreThanOncePerWindow
 	}
 
-	// Penalise the inferer if needed
-	previousEmaScore, err = k.ApplyLivenessPenaltyToInferer(ctx, topic, nonceBlockHeight, previousEmaScore)
-	if err != nil {
-		return errorsmod.Wrap(err, "error trying to penalise inferer")
-	}
-
 	// Check if the inferer is new and set initial EMA score
 	firstSubmission := false
 	if previousEmaScore.BlockHeight == 0 {
@@ -1318,6 +1312,19 @@ func (k *Keeper) AppendInference(
 		err = k.SetInfererScoreEma(ctx, topic.Id, inference.Inferer, previousEmaScore)
 		if err != nil {
 			return errorsmod.Wrap(err, "error setting initial inferer score ema")
+		}
+	} else {
+		// If not new: Penalise the inferer if needed
+		previousEmaScore, err = k.ApplyLivenessPenaltyToInferer(ctx, topic, nonceBlockHeight, previousEmaScore)
+		if err != nil {
+			return errorsmod.Wrap(err, "error trying to penalise inferer")
+		}
+
+		// Update score nonce for liveness tracking
+		previousEmaScore.BlockHeight = nonceBlockHeight
+		err = k.SetInfererScoreEma(ctx, topic.Id, inference.Inferer, previousEmaScore)
+		if err != nil {
+			return errorsmod.Wrap(err, "error setting penalised inferer score ema")
 		}
 	}
 
@@ -1469,12 +1476,6 @@ func (k *Keeper) AppendForecast(
 		return types.ErrCantUpdateEmaMoreThanOncePerWindow
 	}
 
-	// Penalise the forecaster if needed
-	previousEmaScore, err = k.ApplyLivenessPenaltyToForecaster(ctx, topic, nonceBlockHeight, previousEmaScore)
-	if err != nil {
-		return errorsmod.Wrap(err, "error trying to penalise forecaster")
-	}
-
 	// Check if the forecaster is new and set initial EMA score
 	firstSubmission := false
 	if previousEmaScore.BlockHeight == 0 {
@@ -1491,6 +1492,19 @@ func (k *Keeper) AppendForecast(
 		})
 		if err != nil {
 			return errorsmod.Wrap(err, "error setting forecaster score ema")
+		}
+	} else {
+		// If not new: Penalise the forecaster if needed
+		previousEmaScore, err = k.ApplyLivenessPenaltyToForecaster(ctx, topic, nonceBlockHeight, previousEmaScore)
+		if err != nil {
+			return errorsmod.Wrap(err, "error trying to penalise forecaster")
+		}
+
+		// Update score nonce for liveness tracking
+		previousEmaScore.BlockHeight = nonceBlockHeight
+		err = k.SetForecasterScoreEma(ctx, topic.Id, previousEmaScore.Address, previousEmaScore)
+		if err != nil {
+			return errorsmod.Wrap(err, "error setting penalised forecaster score ema")
 		}
 	}
 
@@ -1690,12 +1704,6 @@ func (k *Keeper) AppendReputerLoss(
 		return types.ErrCantUpdateEmaMoreThanOncePerWindow
 	}
 
-	// Penalise the reputer if needed
-	previousEmaScore, err = k.ApplyLivenessPenaltyToReputer(ctx, topic, nonceBlockHeight, previousEmaScore)
-	if err != nil {
-		return errorsmod.Wrap(err, "error trying to penalise reputer")
-	}
-
 	// Check if the reputer is new and set initial EMA score
 	firstSubmission := false
 	if previousEmaScore.BlockHeight == 0 {
@@ -1712,6 +1720,19 @@ func (k *Keeper) AppendReputerLoss(
 		})
 		if err != nil {
 			return errorsmod.Wrap(err, "error setting initial reputer score ema")
+		}
+	} else {
+		// If not new: Penalise the reputer if needed
+		previousEmaScore, err = k.ApplyLivenessPenaltyToReputer(ctx, topic, nonceBlockHeight, previousEmaScore)
+		if err != nil {
+			return errorsmod.Wrap(err, "error trying to penalise reputer")
+		}
+
+		// Update score nonce for liveness tracking
+		previousEmaScore.BlockHeight = nonceBlockHeight
+		err = k.SetReputerScoreEma(ctx, topic.Id, previousEmaScore.Address, previousEmaScore)
+		if err != nil {
+			return errorsmod.Wrap(err, "error setting penalised reputer score ema")
 		}
 	}
 
