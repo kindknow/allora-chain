@@ -103,8 +103,6 @@ func ApplyLivenessPenaltyToActor(
 		"before", beforePenalty,
 		"after", emaScore,
 	)
-
-	// Save the penalised EMA score
 	return emaScore, nil
 }
 
