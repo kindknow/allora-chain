@@ -1197,7 +1197,7 @@ func (k *Keeper) UpdateNetworkInferencesOutlierMetrics(
 	}
 	if len(inferences.Inferences) == 0 {
 		// If there are no inferences, do not update the metrics
-		ctx.Logger().Info("no inferences found, skipping update of outlier metrics, topicId: ", topicId)
+		ctx.Logger().Info(fmt.Sprintf("no inferences found, skipping update of outlier metrics, topicId: %d blockHeight: %d", topicId, inferenceBlockHeight))
 		return nil
 	}
 
