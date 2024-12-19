@@ -68,6 +68,8 @@ func (s *KeeperTestSuite) SetupTest() {
 		storeServiceBank      = runtime.NewKVStoreService(keyBank)
 	)
 
+	// It's simply test suite setup so just ignore the exhaustruct linter
+	//nolint:exhaustruct
 	ctx := testutil.DefaultContextWithKeys(map[string]*storetypes.KVStoreKey{
 		"emissions": keyEmissions,
 		"account":   keyAccount,
