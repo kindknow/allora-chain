@@ -1189,6 +1189,7 @@ func (k *Keeper) UpdateNetworkInferencesOutlierMetrics(
 	topicId TopicId,
 	inferenceBlockHeight BlockHeight,
 ) error {
+	ctx.Logger().Debug(fmt.Sprintf("Updating network inferences outlier metrics for topic %d, block height %d", topicId, inferenceBlockHeight))
 	// Get all inferences at the block height
 	inferences, err := k.GetInferencesAtBlock(ctx, topicId, inferenceBlockHeight, false)
 	if err != nil {
@@ -1239,6 +1240,8 @@ func (k *Keeper) UpdateNetworkInferencesOutlierMetrics(
 			return errorsmod.Wrap(err, "error calculating ema of mad")
 		}
 	}
+
+	ctx.Logger().Info(fmt.Sprintf("Setting new outlier-resistant mad %s, median %s for topic %d", newMad, median, topicId))
 
 	// Set last mad inferences
 	err = k.SetMadInferences(ctx, topicId, newMad)
