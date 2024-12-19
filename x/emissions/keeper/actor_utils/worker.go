@@ -98,7 +98,7 @@ func CloseWorkerNonce(k *keeper.Keeper, ctx sdk.Context, topic types.Topic, nonc
 	}
 
 	// Once inferences are closed, update the network inferences outlier metrics
-	err = k.UpdateNetworkInferencesOutlierMetrics(ctx, topic.Id, blockHeight)
+	err = k.UpdateNetworkInferencesOutlierMetrics(ctx, topic.Id, nonce.BlockHeight)
 	if err != nil {
 		return err
 	}
