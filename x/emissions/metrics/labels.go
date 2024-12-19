@@ -18,4 +18,5 @@ const (
 	FORECASTER_NETWORK_REGRET_EVENT    = "forecaster_network_regret_event"
 	NAIVE_INFERER_NETWORK_REGRET_EVENT = "naive_inferer_network_regret_event"
 	TOPIC_INITIAL_REGRET_EVENT         = "topic_initial_regret_event"
+	TOPIC_INITIAL_EMA_SCORE_EVENT      = "topic_initial_ema_score_event"
 )

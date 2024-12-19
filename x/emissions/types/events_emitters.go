@@ -184,3 +184,11 @@ func EmitNewTopicInitialRegretSetEvent(ctx sdk.Context, topicId uint64, blockHei
 		ctx.Logger().Warn("Error emitting NewTopicInitialRegretSetEvent: ", err.Error())
 	}
 }
+
+func EmitNewTopicInitialEmaScoreSetEvent(ctx sdk.Context, actorType ActorType, topicId uint64, blockHeight int64, score alloraMath.Dec) {
+	metrics.IncrProducerEventCount(metrics.TOPIC_INITIAL_EMA_SCORE_EVENT)
+	err := ctx.EventManager().EmitTypedEvent(NewTopicInitialEmaScoreSetEventBase(actorType, topicId, blockHeight, score))
+	if err != nil {
+		ctx.Logger().Warn("Error emitting NewTopicInitialEmaScoreSetEvent: ", err.Error())
+	}
+}

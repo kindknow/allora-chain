@@ -161,3 +161,12 @@ func NewTopicInitialRegretSetEventBase(topicID uint64, blockHeight int64, regret
 		Regret:      regret,
 	}
 }
+
+func NewTopicInitialEmaScoreSetEventBase(actorType ActorType, topicId uint64, blockHeight int64, score alloraMath.Dec) proto.Message {
+	return &EventTopicInitialEmaScoreSet{
+		ActorType:   actorType,
+		TopicId:     topicId,
+		BlockHeight: blockHeight,
+		Score:       score,
+	}
+}
