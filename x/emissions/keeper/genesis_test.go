@@ -17,10 +17,6 @@ func (s *KeeperTestSuite) TestImportExportGenesisNoError() {
 	genesisState, err := s.emissionsKeeper.ExportGenesis(s.ctx)
 	s.Require().NoError(err)
 
-	// To avoid a weird bug specific to this list.
-	// Comment this line to see for yourself.
-	genesisState.GlobalReputerWhitelist = []string{}
-
 	err = s.emissionsKeeper.InitGenesis(s.ctx, genesisState)
 	s.Require().NoError(err)
 
