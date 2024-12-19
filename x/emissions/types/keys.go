@@ -109,7 +109,6 @@ var (
 	InitialForecasterEmaScoreKey                      = collections.NewPrefix(94)
 	InitialReputerEmaScoreKey                         = collections.NewPrefix(95)
 	GlobalWorkerWhitelistKey                          = collections.NewPrefix(96)
-	// 97 is a reserved prefix in the SDK!
-	GlobalReputerWhitelistKey = collections.NewPrefix(98)
-	GlobalAdminWhitelistKey   = collections.NewPrefix(99)
+	GlobalReputerWhitelistKey                         = collections.NewPrefix(97)
+	GlobalAdminWhitelistKey                           = collections.NewPrefix(98)
 )

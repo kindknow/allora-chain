@@ -8,7 +8,6 @@ import (
 	"cosmossdk.io/collections"
 	cosmosAddress "cosmossdk.io/core/address"
 	"cosmossdk.io/core/header"
-	"cosmossdk.io/core/store"
 	"cosmossdk.io/log"
 	cosmosMath "cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
@@ -48,13 +47,11 @@ type KeeperTestSuite struct {
 	ctx             sdk.Context
 	codec           codec.Codec
 	addressCodec    cosmosAddress.Codec
-	storeService    store.KVStoreService
 	accountKeeper   authkeeper.AccountKeeper
 	bankKeeper      bankkeeper.BaseKeeper
 	emissionsKeeper keeper.Keeper
 	appModule       module.AppModule
 	msgServer       types.MsgServiceServer
-	key             *storetypes.KVStoreKey
 	privKeys        []secp256k1.PrivKey
 	addrs           []sdk.AccAddress
 	addrsStr        []string
@@ -62,11 +59,25 @@ type KeeperTestSuite struct {
 }
 
 func (s *KeeperTestSuite) SetupTest() {
-	key := storetypes.NewKVStoreKey("emissions")
-	storeService := runtime.NewKVStoreService(key)
-	s.storeService = storeService
-	testCtx := testutil.DefaultContextWithDB(s.T(), key, storetypes.NewTransientStoreKey("transient_test"))
-	ctx := testCtx.Ctx.WithHeaderInfo(header.Info{Time: time.Now()}) // nolint: exhaustruct
+	var (
+		keyEmissions          = storetypes.NewKVStoreKey("emissions")
+		keyAccount            = storetypes.NewKVStoreKey("account")
+		keyBank               = storetypes.NewKVStoreKey("bank")
+		storeServiceEmissions = runtime.NewKVStoreService(keyEmissions)
+		storeServiceAccount   = runtime.NewKVStoreService(keyAccount)
+		storeServiceBank      = runtime.NewKVStoreService(keyBank)
+	)
+
+	// It's simply test suite setup so just ignore the exhaustruct linter
+	//nolint:exhaustruct
+	ctx := testutil.DefaultContextWithKeys(map[string]*storetypes.KVStoreKey{
+		"emissions": keyEmissions,
+		"account":   keyAccount,
+		"bank":      keyBank,
+	}, map[string]*storetypes.TransientStoreKey{
+		"transient_test": storetypes.NewTransientStoreKey("transient_test"),
+	}, nil).WithHeaderInfo(header.Info{Time: time.Now()})
+
 	encCfg := moduletestutil.MakeTestEncodingConfig(auth.AppModuleBasic{}, bank.AppModuleBasic{}, module.AppModule{})
 	s.codec = encCfg.Codec
 	addressCodec := address.NewBech32Codec(params.Bech32PrefixAccAddr)
@@ -87,7 +98,7 @@ func (s *KeeperTestSuite) SetupTest() {
 
 	accountKeeper := authkeeper.NewAccountKeeper(
 		encCfg.Codec,
-		storeService,
+		storeServiceAccount,
 		authtypes.ProtoBaseAccount,
 		maccPerms,
 		authcodec.NewBech32Codec(params.Bech32PrefixAccAddr),
@@ -99,7 +110,7 @@ func (s *KeeperTestSuite) SetupTest() {
 
 	bankKeeper := bankkeeper.NewBaseKeeper(
 		encCfg.Codec,
-		storeService,
+		storeServiceBank,
 		accountKeeper,
 		map[string]bool{},
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
@@ -112,11 +123,11 @@ func (s *KeeperTestSuite) SetupTest() {
 	s.emissionsKeeper = keeper.NewKeeper(
 		encCfg.Codec,
 		addressCodec,
-		storeService,
+		storeServiceEmissions,
 		accountKeeper,
 		bankKeeper,
 		authtypes.FeeCollectorName)
-	s.key = key
+	// s.key = key
 	appModule := module.NewAppModule(encCfg.Codec, s.emissionsKeeper)
 	defaultGenesis := appModule.DefaultGenesis(encCfg.Codec)
 	appModule.InitGenesis(ctx, encCfg.Codec, defaultGenesis)
