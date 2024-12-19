@@ -1867,3 +1867,49 @@ func (s *RewardsTestSuite) TestCalculateTopicInitialEmaScore() {
 	s.Require().NoError(err)
 	s.Require().True(absDiff.Lt(alloraMath.MustNewDecFromString("0.000001")))
 }
+
+func (s *RewardsTestSuite) TestCalculateTopicInitialEmaScoreEdgeCases() {
+	testCases := []struct {
+		name          string
+		scores        []types.Score
+		expectedError bool
+		expectedScore string
+	}{
+		{
+			name:          "empty scores",
+			scores:        []types.Score{},
+			expectedError: false,
+			expectedScore: "0", // Returns zero when no scores
+		},
+		{
+			name: "single score",
+			scores: []types.Score{
+				{Score: alloraMath.MustNewDecFromString("0.5")},
+			},
+			expectedError: false,
+			expectedScore: "0.5", // With single score, no std dev calculation possible, returns the score
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			initialScore, err := rewards.CalculateTopicInitialEmaScore(s.ctx, s.emissionsKeeper, tc.scores)
+
+			if tc.expectedError {
+				s.Require().Error(err)
+				return
+			}
+
+			s.Require().NoError(err)
+			expectedScore := alloraMath.MustNewDecFromString(tc.expectedScore)
+			diff, err := initialScore.Sub(expectedScore)
+			s.Require().NoError(err)
+			absDiff, err := diff.Abs()
+			s.Require().NoError(err)
+			s.Require().True(
+				absDiff.Lt(alloraMath.MustNewDecFromString("0.000001")),
+				"Expected %s but got %s", expectedScore, initialScore,
+			)
+		})
+	}
+}

@@ -166,16 +166,19 @@ func GenerateReputerScores(
 		return nil, err
 	}
 
-	// Calculate initial EMA score
-	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error calculating initial EMA score")
-	}
+	// Just update the initial EMA score if there are more than 0 scores
+	if len(emaScores) > 0 {
+		// Calculate initial EMA score
+		initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error calculating initial EMA score")
+		}
 
-	// Store the initial EMA score
-	err = keeper.SetTopicInitialReputerEmaScore(ctx, topicId, initialEmaScore)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error setting initial reputer EMA score")
+		// Store the initial EMA score
+		err = keeper.SetTopicInitialReputerEmaScore(ctx, topicId, initialEmaScore)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error setting initial reputer EMA score")
+		}
 	}
 
 	types.EmitNewReputerScoresSetEvent(ctx, instantScores)
@@ -254,16 +257,19 @@ func GenerateInferenceScores(
 		return nil, errors.Wrapf(err, "Error setting previous topic quantile inferer score ema")
 	}
 
-	// Calculate initial EMA score
-	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error calculating initial EMA score")
-	}
+	// Just update the initial EMA score if there are more than 0 scores
+	if len(emaScores) > 0 {
+		// Calculate initial EMA score
+		initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error calculating initial EMA score")
+		}
 
-	// Store the initial EMA score
-	err = keeper.SetTopicInitialInfererEmaScore(ctx, topicId, initialEmaScore)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error setting initial inferer EMA score")
+		// Store the initial EMA score
+		err = keeper.SetTopicInitialInfererEmaScore(ctx, topicId, initialEmaScore)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error setting initial inferer EMA score")
+		}
 	}
 
 	types.EmitNewInfererScoresSetEvent(ctx, instantScores)
@@ -366,16 +372,19 @@ func GenerateForecastScores(
 		return nil, err
 	}
 
-	// Calculate initial EMA score
-	initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error calculating initial EMA score")
-	}
+	// Just update the initial EMA score if there are more than 0 scores
+	if len(emaScores) > 0 {
+		// Calculate initial EMA score
+		initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error calculating initial EMA score")
+		}
 
-	// Store the initial EMA score
-	err = keeper.SetTopicInitialForecasterEmaScore(ctx, topicId, initialEmaScore)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error setting initial forecaster EMA score")
+		// Store the initial EMA score
+		err = keeper.SetTopicInitialForecasterEmaScore(ctx, topicId, initialEmaScore)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error setting initial forecaster EMA score")
+		}
 	}
 
 	// Emit forecaster performance scores
@@ -531,6 +540,11 @@ func CalculateTopicInitialEmaScore(
 	keeper keeper.Keeper,
 	activeScores []types.Score,
 ) (alloraMath.Dec, error) {
+	// If there are no scores, return zero
+	if len(activeScores) == 0 {
+		return alloraMath.ZeroDec(), nil
+	}
+
 	// Get lambda parameter from module params
 	params, err := keeper.GetParams(ctx)
 	if err != nil {
