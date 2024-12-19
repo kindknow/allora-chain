@@ -15,9 +15,19 @@ func (k *Keeper) ApplyLivenessPenaltyToInferer(
 	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
+	active, err := k.IsActiveInferer(ctx, topic.Id, emaScore.Address)
+	if err != nil {
+		return types.Score{}, err
+	}
+
+	missedEpochsFn := CountInactiveWorkerContiguousMissedEpochs
+	if active {
+		missedEpochsFn = CountActiveWorkerContiguousMissedEpochs
+	}
+
 	return ApplyLivenessPenaltyToActor(
 		ctx,
-		CountWorkerContiguousMissedEpochs,
+		missedEpochsFn,
 		func(topicId TopicId) (alloraMath.Dec, error) {
 			return k.GetTopicInitialInfererEmaScore(ctx, topicId)
 		},
@@ -38,9 +48,19 @@ func (k *Keeper) ApplyLivenessPenaltyToForecaster(
 	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
+	active, err := k.IsActiveForecaster(ctx, topic.Id, emaScore.Address)
+	if err != nil {
+		return types.Score{}, err
+	}
+
+	missedEpochsFn := CountInactiveWorkerContiguousMissedEpochs
+	if active {
+		missedEpochsFn = CountActiveWorkerContiguousMissedEpochs
+	}
+
 	return ApplyLivenessPenaltyToActor(
 		ctx,
-		CountWorkerContiguousMissedEpochs,
+		missedEpochsFn,
 		func(topicId TopicId) (alloraMath.Dec, error) {
 			return k.GetTopicInitialForecasterEmaScore(ctx, topicId)
 		},
@@ -85,9 +105,21 @@ func ApplyLivenessPenaltyToActor(
 	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
+	if emaScore.BlockHeight == 0 {
+		ctx.Logger().Debug("no liveness penalty on new actor",
+			"nonce", nonceBlockHeight,
+			"score", emaScore,
+		)
+		return emaScore, nil
+	}
+
 	missedEpochs := missedEpochsFn(topic, emaScore.BlockHeight)
 	// No missed epochs == no penalty
 	if missedEpochs == 0 {
+		ctx.Logger().Debug("no liveness penalty on actor",
+			"nonce", nonceBlockHeight,
+			"score", emaScore,
+		)
 		return emaScore, nil
 	}
 
@@ -95,9 +127,9 @@ func ApplyLivenessPenaltyToActor(
 	if err != nil {
 		return types.Score{}, err
 	}
-	emaScore.BlockHeight = nonceBlockHeight
 
 	beforePenalty := emaScore
+	emaScore.BlockHeight = nonceBlockHeight
 	emaScore.Score, err = applyPenalty(topic, penalty, emaScore.Score, missedEpochs)
 	if err != nil {
 		return types.Score{}, err
@@ -105,6 +137,7 @@ func ApplyLivenessPenaltyToActor(
 
 	ctx.Logger().Debug("apply liveness penalty on actor",
 		"nonce", nonceBlockHeight,
+		"missed", missedEpochs,
 		"penalty", penalty,
 		"before", beforePenalty,
 		"after", emaScore,
@@ -119,15 +152,22 @@ func applyPenalty(topic types.Topic, penalty, emaScore alloraMath.Dec, missedEpo
 	return alloraMath.NCalcEma(topic.MeritSortitionAlpha, penalty, emaScore, uint64(missedEpochs))
 }
 
-// CountWorkerContiguousMissedEpochs counts the number of contiguous missed epochs prior to the given nonce, given the
-// actor last submission.
-func CountWorkerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce int64) int64 {
+// CountActiveWorkerContiguousMissedEpochs counts the number of contiguous missed epochs of an active worker prior to
+// the given nonce, given the actor last submission.
+func CountActiveWorkerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce int64) int64 {
+	prevEpochStart := topic.EpochLastEnded - topic.EpochLength - topic.GroundTruthLag
+	return countContiguousMissedEpochs(prevEpochStart, topic.EpochLength, lastSubmittedNonce)
+}
+
+// CountInactiveWorkerContiguousMissedEpochs counts the number of contiguous missed epochs of an inactive worker prior to
+// the given nonce, given the actor last submission.
+func CountInactiveWorkerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce int64) int64 {
 	prevEpochStart := topic.EpochLastEnded - topic.EpochLength
 	return countContiguousMissedEpochs(prevEpochStart, topic.EpochLength, lastSubmittedNonce)
 }
 
-// CountReputerContiguousMissedEpochs counts the number of contiguous missed epochs prior to the given nonce, given the
-// actor last submission.
+// CountReputerContiguousMissedEpochs counts the number of contiguous missed epochs of a reputer prior to the given
+// nonce, given the actor last submission.
 func CountReputerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce int64) int64 {
 	prevEpochStart := topic.EpochLastEnded - topic.EpochLength - topic.GroundTruthLag
 	return countContiguousMissedEpochs(prevEpochStart, topic.EpochLength, lastSubmittedNonce)
