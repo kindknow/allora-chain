@@ -5372,12 +5372,13 @@ func (s *KeeperTestSuite) TestFirstSubmissionDoesNotUpdateEMAUsingQuantile() {
 	err := k.SetParams(ctx, params)
 	s.Require().NoError(err)
 
-	for i := 0; i < int(params.MaxTopInferersToReward); i++ {
+	//nolint: gosec
+	for i := int64(0); i < int64(params.MaxTopInferersToReward); i++ {
 		score := types.Score{
 			TopicId:     topicId,
 			Address:     s.addrsStr[i],
 			BlockHeight: 1,
-			Score:       alloraMath.NewDecFromInt64(90 + int64(i)),
+			Score:       alloraMath.NewDecFromInt64(90 + i),
 		}
 		err := k.SetInfererScoreEma(ctx, topicId, s.addrsStr[i], score)
 		s.Require().NoError(err)
