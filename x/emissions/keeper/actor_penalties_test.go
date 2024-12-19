@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"cosmossdk.io/collections"
+	storetypes "cosmossdk.io/store/types"
 	alloraMath "github.com/allora-network/allora-chain/math"
 	"github.com/allora-network/allora-chain/x/emissions/keeper"
 	"github.com/allora-network/allora-chain/x/emissions/types"
+	"github.com/cosmos/cosmos-sdk/testutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -114,6 +115,7 @@ func (s *KeeperTestSuite) TestMayPenaliseReputer() {
 
 // nolint: exhaustruct
 func TestMayPenaliseActor(t *testing.T) {
+	ctx := testutil.DefaultContextWithDB(t, storetypes.NewKVStoreKey("emissions"), storetypes.NewTransientStoreKey("transient_test")).Ctx
 	givenTopic := types.Topic{
 		Id:                  uint64(1),
 		MeritSortitionAlpha: alloraMath.MustNewDecFromString("0.1"),
@@ -128,7 +130,6 @@ func TestMayPenaliseActor(t *testing.T) {
 	cases := []struct {
 		name              string
 		missedEpochs      int64
-		withPenalty       bool
 		withGetPenaltyErr error
 		withSetScoreErr   error
 		expectedScore     *types.Score
@@ -136,19 +137,16 @@ func TestMayPenaliseActor(t *testing.T) {
 		{
 			name:          "no missed epochs",
 			missedEpochs:  0,
-			withPenalty:   true,
 			expectedScore: &givenPreviousScore,
 		},
 		{
 			name:          "no penalty to apply",
 			missedEpochs:  4,
-			withPenalty:   false,
 			expectedScore: &givenPreviousScore,
 		},
 		{
 			name:         "apply penalty",
 			missedEpochs: 4,
-			withPenalty:  true,
 			expectedScore: &types.Score{
 				TopicId:     givenPreviousScore.TopicId,
 				BlockHeight: int64(200),
@@ -159,13 +157,11 @@ func TestMayPenaliseActor(t *testing.T) {
 		{
 			name:              "get penalty error",
 			missedEpochs:      2,
-			withPenalty:       true,
 			withGetPenaltyErr: fmt.Errorf("oups"),
 		},
 		{
 			name:            "set score error",
 			missedEpochs:    2,
-			withPenalty:     true,
 			withSetScoreErr: fmt.Errorf("oups"),
 		},
 	}
@@ -173,6 +169,7 @@ func TestMayPenaliseActor(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			newScore, err := keeper.MayPenaliseActor(
+				ctx,
 				// Mock missed epochs calculation
 				func(topic types.Topic, _ int64) int64 {
 					require.Equal(t, givenTopic, topic)
@@ -184,10 +181,7 @@ func TestMayPenaliseActor(t *testing.T) {
 					if tc.withGetPenaltyErr != nil {
 						return alloraMath.ZeroDec(), tc.withGetPenaltyErr
 					}
-					if tc.withPenalty {
-						return alloraMath.MustNewDecFromString("200"), nil
-					}
-					return alloraMath.ZeroDec(), collections.ErrNotFound
+					return alloraMath.MustNewDecFromString("200"), nil
 				},
 				// Mock new EMA score setter
 				func(topicId keeper.TopicId, score types.Score) error {

@@ -15,6 +15,7 @@ func (k *Keeper) MayPenaliseInferer(
 	emaScore types.Score,
 ) (types.Score, error) {
 	return MayPenaliseActor(
+		ctx,
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
 			return k.GetTopicInitialInfererEmaScore(ctx, topicId)
@@ -37,6 +38,7 @@ func (k *Keeper) MayPenaliseForecaster(
 	emaScore types.Score,
 ) (types.Score, error) {
 	return MayPenaliseActor(
+		ctx,
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
 			return k.GetTopicInitialForecasterEmaScore(ctx, topicId)
@@ -59,6 +61,7 @@ func (k *Keeper) MayPenaliseReputer(
 	emaScore types.Score,
 ) (types.Score, error) {
 	return MayPenaliseActor(
+		ctx,
 		CountReputerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
 			return k.GetTopicInitialReputerEmaScore(ctx, topicId)
@@ -73,6 +76,7 @@ func (k *Keeper) MayPenaliseReputer(
 }
 
 func MayPenaliseActor(
+	ctx sdk.Context,
 	missedEpochsFn func(topic types.Topic, lastSubmittedNonce int64) int64,
 	getPenaltyFn func(topicId TopicId) (alloraMath.Dec, error),
 	setScoreFn func(topicId TopicId, score types.Score) error,
@@ -91,10 +95,19 @@ func MayPenaliseActor(
 		return types.Score{}, err
 	}
 	emaScore.BlockHeight = block
+
+	beforePenalty := emaScore
 	emaScore.Score, err = applyPenalty(topic, penalty, emaScore.Score, missedEpochs)
 	if err != nil {
 		return types.Score{}, err
 	}
+
+	ctx.Logger().Debug("apply liveness penalty on actor",
+		"nonce", block,
+		"penalty", penalty,
+		"before", beforePenalty,
+		"after", emaScore,
+	)
 
 	// Save the penalised EMA score
 	return emaScore, setScoreFn(topic.Id, emaScore)
