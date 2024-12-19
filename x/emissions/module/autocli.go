@@ -733,6 +733,54 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
+					RpcMethod: "IsWhitelistedGlobalWorker",
+					Use:       "is-whitelisted-global-worker [address]",
+					Short:     "Check if address is whitelisted as global worker",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "IsWhitelistedGlobalReputer",
+					Use:       "is-whitelisted-global-reputer [address]",
+					Short:     "Check if address is whitelisted as global reputer",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "IsWhitelistedGlobalAdmin",
+					Use:       "is-whitelisted-global-admin [address]",
+					Short:     "Check if address is whitelisted as global admin",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanUpdateAllGlobalWhitelists",
+					Use:       "can-update-all-global-whitelists [address]",
+					Short:     "Check if address can update all global whitelists",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanUpdateGlobalWorkerWhitelist",
+					Use:       "can-update-global-worker-whitelist [address]",
+					Short:     "Check if address can update global worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "CanUpdateGlobalReputerWhitelist",
+					Use:       "can-update-global-reputer-whitelist [address]",
+					Short:     "Check if address can update global reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "address"},
+					},
+				},
+				{
 					RpcMethod: "IsTopicWorkerWhitelistEnabled",
 					Use:       "is-topic-worker-whitelist-enabled [topic_id]",
 					Short:     "Check if topic-level worker whitelist is enabled for a topic",
@@ -783,7 +831,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
-					RpcMethod: "CanUpdateGlobalWhitelists",
+					RpcMethod: "CanUpdateAllGlobalWhitelists",
 					Use:       "can-update-global-whitelists [address]",
 					Short:     "Check if address can update global whitelists",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
@@ -1018,6 +1066,136 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "sender"},
 						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "AddToGlobalWorkerWhitelist",
+					Use:       "add-to-global-worker-whitelist [sender] [address]",
+					Short:     "Add an address to the global worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "RemoveFromGlobalWorkerWhitelist",
+					Use:       "remove-from-global-worker-whitelist [sender] [address]",
+					Short:     "Remove an address from the global worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "AddToGlobalReputerWhitelist",
+					Use:       "add-to-global-reputer-whitelist [sender] [address]",
+					Short:     "Add an address to the global reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "RemoveFromGlobalReputerWhitelist",
+					Use:       "remove-from-global-reputer-whitelist [sender] [address]",
+					Short:     "Remove an address from the global reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "AddToGlobalAdminWhitelist",
+					Use:       "add-to-global-admin-whitelist [sender] [address]",
+					Short:     "Add an address to the global admin whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "RemoveFromGlobalAdminWhitelist",
+					Use:       "remove-from-global-admin-whitelist [sender] [address]",
+					Short:     "Remove an address from the global admin whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "address"},
+					},
+				},
+				{
+					RpcMethod: "BulkAddToGlobalWorkerWhitelist",
+					Use:       "bulk-add-to-global-worker-whitelist [sender] [addresses]",
+					Short:     "Bulk add addresses to the global worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "addresses"},
+					},
+				},
+				{
+					RpcMethod: "BulkRemoveFromGlobalWorkerWhitelist",
+					Use:       "bulk-remove-from-global-worker-whitelist [sender] [addresses]",
+					Short:     "Bulk remove addresses from the global worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "addresses"},
+					},
+				},
+				{
+					RpcMethod: "BulkAddToGlobalReputerWhitelist",
+					Use:       "bulk-add-to-global-reputer-whitelist [sender] [addresses]",
+					Short:     "Bulk add addresses to the global reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "addresses"},
+					},
+				},
+				{
+					RpcMethod: "BulkRemoveFromGlobalReputerWhitelist",
+					Use:       "bulk-remove-from-global-reputer-whitelist [sender] [addresses]",
+					Short:     "Bulk remove addresses from the global reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "addresses"},
+					},
+				},
+				{
+					RpcMethod: "BulkAddToTopicWorkerWhitelist",
+					Use:       "bulk-add-to-topic-worker-whitelist [sender] [topic_id] [addresses]",
+					Short:     "Bulk add addresses to a topic's worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+						{ProtoField: "addresses"},
+					},
+				},
+				{
+					RpcMethod: "BulkRemoveFromTopicWorkerWhitelist",
+					Use:       "bulk-remove-from-topic-worker-whitelist [sender] [topic_id] [addresses]",
+					Short:     "Bulk remove addresses from a topic's worker whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+						{ProtoField: "addresses"},
+					},
+				},
+				{
+					RpcMethod: "BulkAddToTopicReputerWhitelist",
+					Use:       "bulk-add-to-topic-reputer-whitelist [sender] [topic_id] [addresses]",
+					Short:     "Bulk add addresses to a topic's reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+						{ProtoField: "addresses"},
+					},
+				},
+				{
+					RpcMethod: "BulkRemoveFromTopicReputerWhitelist",
+					Use:       "bulk-remove-from-topic-reputer-whitelist [sender] [topic_id] [addresses]",
+					Short:     "Bulk remove addresses from a topic's reputer whitelist",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "sender"},
+						{ProtoField: "topic_id"},
+						{ProtoField: "addresses"},
 					},
 				},
 				{

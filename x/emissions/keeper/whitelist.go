@@ -55,6 +55,48 @@ func (k *Keeper) RemoveFromGlobalWhitelist(ctx context.Context, actor ActorId) e
 	return k.globalWhitelist.Remove(ctx, actor)
 }
 
+func (k *Keeper) AddToGlobalWorkerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalWorkerWhitelist.Set(ctx, actor)
+}
+
+func (k *Keeper) RemoveFromGlobalWorkerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalWorkerWhitelist.Remove(ctx, actor)
+}
+
+func (k *Keeper) AddToGlobalReputerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalReputerWhitelist.Set(ctx, actor)
+}
+
+func (k *Keeper) RemoveFromGlobalReputerWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalReputerWhitelist.Remove(ctx, actor)
+}
+
+func (k *Keeper) AddToGlobalAdminWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalAdminWhitelist.Set(ctx, actor)
+}
+
+func (k *Keeper) RemoveFromGlobalAdminWhitelist(ctx context.Context, actor ActorId) error {
+	if err := types.ValidateBech32(actor); err != nil {
+		return errorsmod.Wrap(err, "error validating admin id")
+	}
+	return k.globalAdminWhitelist.Remove(ctx, actor)
+}
+
 func (k *Keeper) AddToTopicCreatorWhitelist(ctx context.Context, actor ActorId) error {
 	if err := types.ValidateBech32(actor); err != nil {
 		return errorsmod.Wrap(err, "error validating admin id")
@@ -126,6 +168,18 @@ func (k *Keeper) IsWhitelistedGlobalActor(ctx context.Context, actor ActorId) (b
 	return k.globalWhitelist.Has(ctx, actor)
 }
 
+func (k *Keeper) IsWhitelistedGlobalWorker(ctx context.Context, actor ActorId) (bool, error) {
+	return k.globalWorkerWhitelist.Has(ctx, actor)
+}
+
+func (k *Keeper) IsWhitelistedGlobalReputer(ctx context.Context, actor ActorId) (bool, error) {
+	return k.globalReputerWhitelist.Has(ctx, actor)
+}
+
+func (k *Keeper) IsWhitelistedGlobalAdmin(ctx context.Context, actor ActorId) (bool, error) {
+	return k.globalAdminWhitelist.Has(ctx, actor)
+}
+
 func (k *Keeper) IsWhitelistedTopicWorker(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
 	key := collections.Join(topicId, actor)
 	return k.topicWorkerWhitelist.Has(ctx, key)
@@ -148,6 +202,42 @@ func (k *Keeper) IsEnabledGlobalActor(ctx context.Context, actor ActorId) (bool,
 	if params.GlobalWhitelistEnabled {
 		// If whitelist enabled check to see if actor is whitelisted
 		return k.IsWhitelistedGlobalActor(ctx, actor)
+	}
+	return true, nil
+}
+
+func (k *Keeper) IsEnabledGlobalWorker(ctx context.Context, actor ActorId) (bool, error) {
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		return false, err
+	}
+	if params.GlobalWorkerWhitelistEnabled {
+		// If whitelist enabled check to see if actor is whitelisted
+		return k.IsWhitelistedGlobalWorker(ctx, actor)
+	}
+	return true, nil
+}
+
+func (k *Keeper) IsEnabledGlobalReputer(ctx context.Context, actor ActorId) (bool, error) {
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		return false, err
+	}
+	if params.GlobalReputerWhitelistEnabled {
+		// If whitelist enabled check to see if actor is whitelisted
+		return k.IsWhitelistedGlobalReputer(ctx, actor)
+	}
+	return true, nil
+}
+
+func (k *Keeper) IsEnabledGlobalAdmin(ctx context.Context, actor ActorId) (bool, error) {
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		return false, err
+	}
+	if params.GlobalAdminWhitelistAppended {
+		// If whitelist enabled check to see if actor is whitelisted
+		return k.IsWhitelistedGlobalAdmin(ctx, actor)
 	}
 	return true, nil
 }
@@ -197,7 +287,31 @@ func (k *Keeper) IsEnabledTopicReputer(ctx context.Context, topicId TopicId, act
 /// PERMISSIONS - Functions that determine if an actor has the ability to perform an action
 
 // Whitelist admins can update global whitelists including adding/removing from the global actor and whitelist admin lists
-func (k *Keeper) CanUpdateGlobalWhitelists(ctx context.Context, actor ActorId) (bool, error) {
+func (k *Keeper) CanUpdateAllGlobalWhitelists(ctx context.Context, actor ActorId) (bool, error) {
+	return k.IsWhitelistAdmin(ctx, actor)
+}
+
+// Whitelist admins and global admins can update global worker whitelist
+func (k *Keeper) CanUpdateGlobalWorkerWhitelist(ctx context.Context, actor ActorId) (bool, error) {
+	isWhitelistAdmin, err := k.IsEnabledGlobalAdmin(ctx, actor)
+	if err != nil {
+		return false, err
+	}
+	if isWhitelistAdmin {
+		return true, nil
+	}
+	return k.IsWhitelistAdmin(ctx, actor)
+}
+
+// Whitelist admins and global admins can update global reputer whitelist
+func (k *Keeper) CanUpdateGlobalReputerWhitelist(ctx context.Context, actor ActorId) (bool, error) {
+	isWhitelistAdmin, err := k.IsEnabledGlobalAdmin(ctx, actor)
+	if err != nil {
+		return false, err
+	}
+	if isWhitelistAdmin {
+		return true, nil
+	}
 	return k.IsWhitelistAdmin(ctx, actor)
 }
 
@@ -206,7 +320,7 @@ func (k *Keeper) CanUpdateParams(ctx context.Context, actor ActorId) (bool, erro
 	return k.IsWhitelistAdmin(ctx, actor)
 }
 
-// Whitelist admins and topic creators can update topic whitelists
+// Whitelist admins and topic creators and global admins can update topic whitelists
 // Updating the whitelist includes adding/removing from the whitelist and enabling/disabling the whitelist
 func (k *Keeper) CanUpdateTopicWhitelist(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
 	topic, err := k.GetTopic(ctx, topicId)
@@ -214,6 +328,13 @@ func (k *Keeper) CanUpdateTopicWhitelist(ctx context.Context, topicId TopicId, a
 		return false, err
 	}
 	if topic.Creator == actor {
+		return true, nil
+	}
+	isWhitelistAdmin, err := k.IsEnabledGlobalAdmin(ctx, actor)
+	if err != nil {
+		return false, err
+	}
+	if isWhitelistAdmin {
 		return true, nil
 	}
 	return k.IsWhitelistAdmin(ctx, actor)
@@ -234,8 +355,7 @@ func (k *Keeper) CanCreateTopic(ctx context.Context, actor ActorId) (bool, error
 	return k.IsEnabledGlobalActor(ctx, actor)
 }
 
-// An actor can submit a worker payload if they are topic worker whitelisted
-// or if they are globally whitelisted
+// An actor can submit a worker payload if they are topic worker whitelisted, global actor, or global worker
 func (k *Keeper) CanSubmitWorkerPayload(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
 	isEnabledTopicWorker, err := k.IsEnabledTopicWorker(ctx, topicId, actor)
 	if err != nil {
@@ -244,11 +364,17 @@ func (k *Keeper) CanSubmitWorkerPayload(ctx context.Context, topicId TopicId, ac
 	if isEnabledTopicWorker {
 		return true, nil
 	}
+	isEnabledGlobalWorker, err := k.IsEnabledGlobalWorker(ctx, actor)
+	if err != nil {
+		return false, err
+	}
+	if isEnabledGlobalWorker {
+		return true, nil
+	}
 	return k.IsEnabledGlobalActor(ctx, actor)
 }
 
-// An actor can submit a reputer payload if they are topic reputer whitelisted
-// or if they are globally whitelisted
+// An actor can submit a reputer payload if they are topic reputer whitelisted, global actor, or global reputer
 func (k *Keeper) CanSubmitReputerPayload(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
 	isEnabledTopicReputer, err := k.IsEnabledTopicReputer(ctx, topicId, actor)
 	if err != nil {
@@ -257,17 +383,30 @@ func (k *Keeper) CanSubmitReputerPayload(ctx context.Context, topicId TopicId, a
 	if isEnabledTopicReputer {
 		return true, nil
 	}
+	isEnabledGlobalReputer, err := k.IsEnabledGlobalReputer(ctx, actor)
+	if err != nil {
+		return false, err
+	}
+	if isEnabledGlobalReputer {
+		return true, nil
+	}
 	return k.IsEnabledGlobalActor(ctx, actor)
 }
 
-// An actor can submit a reputer payload if they are topic reputer whitelisted
-// or if they are globally whitelisted
+// An actor can add reputer stake if they are topic reputer whitelisted, global actor, or global reputer
 func (k *Keeper) CanAddReputerStake(ctx context.Context, topicId TopicId, actor ActorId) (bool, error) {
 	isEnabledTopicReputer, err := k.IsEnabledTopicReputer(ctx, topicId, actor)
 	if err != nil {
 		return false, err
 	}
 	if isEnabledTopicReputer {
+		return true, nil
+	}
+	isEnabledGlobalReputer, err := k.IsEnabledGlobalReputer(ctx, actor)
+	if err != nil {
+		return false, err
+	}
+	if isEnabledGlobalReputer {
 		return true, nil
 	}
 	return k.IsEnabledGlobalActor(ctx, actor)

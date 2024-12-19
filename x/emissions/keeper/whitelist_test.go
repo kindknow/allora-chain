@@ -468,14 +468,14 @@ func (s *KeeperTestSuite) TestCanUpdateGlobalWhitelists() {
 	keeper := s.emissionsKeeper
 	testAddr := "allo1wmvlvr82nlnu2y6hewgjwex30spyqgzvjhc80h"
 
-	can, err := keeper.CanUpdateGlobalWhitelists(ctx, testAddr)
+	can, err := keeper.CanUpdateAllGlobalWhitelists(ctx, testAddr)
 	s.Require().NoError(err)
 	s.Require().False(can)
 
 	err = keeper.AddWhitelistAdmin(ctx, testAddr)
 	s.Require().NoError(err)
 
-	can, err = keeper.CanUpdateGlobalWhitelists(ctx, testAddr)
+	can, err = keeper.CanUpdateAllGlobalWhitelists(ctx, testAddr)
 	s.Require().NoError(err)
 	s.Require().True(can)
 }

@@ -882,6 +882,27 @@ func (k *Keeper) InitGenesis(ctx context.Context, data *types.GenesisState) erro
 		}
 	}
 
+	// globalWorkerWhitelist
+	for _, address := range data.GlobalWorkerWhitelist {
+		if err := k.AddToGlobalWorkerWhitelist(ctx, address); err != nil {
+			return errors.Wrap(err, "error setting globalWorkerWhitelist")
+		}
+	}
+
+	// globalReputerWhitelist
+	for _, address := range data.GlobalReputerWhitelist {
+		if err := k.AddToGlobalReputerWhitelist(ctx, address); err != nil {
+			return errors.Wrap(err, "error setting globalReputerWhitelist")
+		}
+	}
+
+	// globalAdminWhitelist
+	for _, address := range data.GlobalAdminWhitelist {
+		if err := k.AddToGlobalAdminWhitelist(ctx, address); err != nil {
+			return errors.Wrap(err, "error setting globalAdminWhitelist")
+		}
+	}
+
 	// topicCreatorWhitelist
 	for _, address := range data.TopicCreatorWhitelist {
 		if err := k.AddToTopicCreatorWhitelist(ctx, address); err != nil {
@@ -2281,6 +2302,45 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 		globalWhitelist = append(globalWhitelist, key)
 	}
 
+	globalWorkerWhitelist := make([]string, 0)
+	globalWorkerWhitelistIter, err := k.globalWorkerWhitelist.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate global worker whitelist")
+	}
+	for ; globalWorkerWhitelistIter.Valid(); globalWorkerWhitelistIter.Next() {
+		key, err := globalWorkerWhitelistIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: globalWorkerWhitelistIter")
+		}
+		globalWorkerWhitelist = append(globalWorkerWhitelist, key)
+	}
+
+	globalReputerWhitelist := make([]string, 0)
+	globalReputerWhitelistIter, err := k.globalReputerWhitelist.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate global reputer whitelist")
+	}
+	for ; globalReputerWhitelistIter.Valid(); globalReputerWhitelistIter.Next() {
+		key, err := globalReputerWhitelistIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: globalReputerWhitelistIter")
+		}
+		globalReputerWhitelist = append(globalReputerWhitelist, key)
+	}
+
+	globalAdminWhitelist := make([]string, 0)
+	globalAdminWhitelistIter, err := k.globalAdminWhitelist.Iterate(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to iterate global admin whitelist")
+	}
+	for ; globalAdminWhitelistIter.Valid(); globalAdminWhitelistIter.Next() {
+		key, err := globalAdminWhitelistIter.Key()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get key: globalAdminWhitelistIter")
+		}
+		globalAdminWhitelist = append(globalAdminWhitelist, key)
+	}
+
 	topicCreatorWhitelist := make([]string, 0)
 	topicCreatorWhitelistIter, err := k.topicCreatorWhitelist.Iterate(ctx, nil)
 	if err != nil {
@@ -2464,6 +2524,9 @@ func (k *Keeper) ExportGenesis(ctx context.Context) (*types.GenesisState, error)
 		RewardCurrentBlockEmission:                     rewardCurrentBlockEmission,
 		WhitelistAdmins:                                whitelistAdmins,
 		GlobalWhitelist:                                globalWhitelist,
+		GlobalWorkerWhitelist:                          globalWorkerWhitelist,
+		GlobalReputerWhitelist:                         globalReputerWhitelist,
+		GlobalAdminWhitelist:                           globalAdminWhitelist,
 		TopicCreatorWhitelist:                          topicCreatorWhitelist,
 		TopicWorkerWhitelist:                           topicWorkerWhitelist,
 		TopicReputerWhitelist:                          topicReputerWhitelist,

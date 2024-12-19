@@ -50,6 +50,34 @@ service MsgService {
 
   rpc RemoveFromGlobalWhitelist(RemoveFromGlobalWhitelistRequest) returns (RemoveFromGlobalWhitelistResponse);
 
+  rpc AddToGlobalWorkerWhitelist(AddToGlobalWorkerWhitelistRequest) returns (AddToGlobalWorkerWhitelistResponse);
+
+  rpc RemoveFromGlobalWorkerWhitelist(RemoveFromGlobalWorkerWhitelistRequest) returns (RemoveFromGlobalWorkerWhitelistResponse);
+
+  rpc AddToGlobalReputerWhitelist(AddToGlobalReputerWhitelistRequest) returns (AddToGlobalReputerWhitelistResponse);
+
+  rpc RemoveFromGlobalReputerWhitelist(RemoveFromGlobalReputerWhitelistRequest) returns (RemoveFromGlobalReputerWhitelistResponse);
+
+  rpc AddToGlobalAdminWhitelist(AddToGlobalAdminWhitelistRequest) returns (AddToGlobalAdminWhitelistResponse);
+
+  rpc RemoveFromGlobalAdminWhitelist(RemoveFromGlobalAdminWhitelistRequest) returns (RemoveFromGlobalAdminWhitelistResponse);
+
+  rpc BulkAddToGlobalWorkerWhitelist(BulkAddToGlobalWorkerWhitelistRequest) returns (BulkAddToGlobalWorkerWhitelistResponse);
+
+  rpc BulkRemoveFromGlobalWorkerWhitelist(BulkRemoveFromGlobalWorkerWhitelistRequest) returns (BulkRemoveFromGlobalWorkerWhitelistResponse);
+
+  rpc BulkAddToGlobalReputerWhitelist(BulkAddToGlobalReputerWhitelistRequest) returns (BulkAddToGlobalReputerWhitelistResponse);
+
+  rpc BulkRemoveFromGlobalReputerWhitelist(BulkRemoveFromGlobalReputerWhitelistRequest) returns (BulkRemoveFromGlobalReputerWhitelistResponse);
+
+  rpc BulkAddToTopicWorkerWhitelist(BulkAddToTopicWorkerWhitelistRequest) returns (BulkAddToTopicWorkerWhitelistResponse);
+
+  rpc BulkRemoveFromTopicWorkerWhitelist(BulkRemoveFromTopicWorkerWhitelistRequest) returns (BulkRemoveFromTopicWorkerWhitelistResponse);
+
+  rpc BulkAddToTopicReputerWhitelist(BulkAddToTopicReputerWhitelistRequest) returns (BulkAddToTopicReputerWhitelistResponse);
+
+  rpc BulkRemoveFromTopicReputerWhitelist(BulkRemoveFromTopicReputerWhitelistRequest) returns (BulkRemoveFromTopicReputerWhitelistResponse);
+
   rpc EnableTopicWorkerWhitelist(EnableTopicWorkerWhitelistRequest) returns (EnableTopicWorkerWhitelistResponse);
 
   rpc DisableTopicWorkerWhitelist(DisableTopicWorkerWhitelistRequest) returns (DisableTopicWorkerWhitelistResponse);
@@ -206,8 +234,8 @@ message OptionalParams {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  repeated bool global_whitelist_enabled = 50;
-  repeated bool topic_creator_whitelist_enabled = 51;
+  repeated bool global_whitelist_enabled = 50 [(amino.dont_omitempty) = true];
+  repeated bool topic_creator_whitelist_enabled = 51 [(amino.dont_omitempty) = true];
   repeated uint64 min_experienced_worker_regrets = 52;
   repeated string inference_outlier_detection_threshold = 53 [
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
@@ -221,6 +249,10 @@ message OptionalParams {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
+  repeated bool global_worker_whitelist_enabled = 56 [(amino.dont_omitempty) = true];
+  repeated bool global_reputer_whitelist_enabled = 57 [(amino.dont_omitempty) = true];
+  repeated bool global_admin_whitelist_appended = 58 [(amino.dont_omitempty) = true];
+  repeated uint64 max_whitelist_input_array_length = 59 [(amino.dont_omitempty) = true];
 }
 
 message UpdateParamsRequest {
@@ -514,6 +546,122 @@ message AddToTopicCreatorWhitelistRequest {
 }
 
 message AddToTopicCreatorWhitelistResponse {}
+
+message AddToGlobalWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message AddToGlobalWorkerWhitelistResponse {}
+
+message RemoveFromGlobalWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message RemoveFromGlobalWorkerWhitelistResponse {}
+
+message AddToGlobalReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message AddToGlobalReputerWhitelistResponse {}
+
+message RemoveFromGlobalReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message RemoveFromGlobalReputerWhitelistResponse {}
+
+message AddToGlobalAdminWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message AddToGlobalAdminWhitelistResponse {}
+
+message RemoveFromGlobalAdminWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  string address = 2;
+}
+
+message RemoveFromGlobalAdminWhitelistResponse {}
+
+message BulkAddToGlobalWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+}
+
+message BulkAddToGlobalWorkerWhitelistResponse {}
+
+message BulkRemoveFromGlobalWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+}
+
+message BulkRemoveFromGlobalWorkerWhitelistResponse {}
+
+message BulkAddToGlobalReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+}
+
+message BulkAddToGlobalReputerWhitelistResponse {}
+
+message BulkRemoveFromGlobalReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+}
+
+message BulkRemoveFromGlobalReputerWhitelistResponse {}
+
+message BulkAddToTopicWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkAddToTopicWorkerWhitelistResponse {}
+
+message BulkRemoveFromTopicWorkerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkRemoveFromTopicWorkerWhitelistResponse {}
+
+message BulkAddToTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkAddToTopicReputerWhitelistResponse {}
+
+message BulkRemoveFromTopicReputerWhitelistRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  string sender = 1;
+  repeated string addresses = 2;
+  uint64 topic_id = 3;
+}
+
+message BulkRemoveFromTopicReputerWhitelistResponse {}
 
 message RemoveFromTopicCreatorWhitelistRequest {
   option (cosmos.msg.v1.signer) = "sender";

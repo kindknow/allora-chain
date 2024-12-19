@@ -2220,6 +2220,10 @@ func (s *RewardsTestSuite) SetParamsForTest() {
 		InferenceOutlierDetectionThreshold:  nil,
 		InferenceOutlierDetectionAlpha:      nil,
 		LambdaInitialScore:                  nil,
+		GlobalWorkerWhitelistEnabled:        nil,
+		GlobalReputerWhitelistEnabled:       nil,
+		GlobalAdminWhitelistAppended:        nil,
+		MaxWhitelistInputArrayLength:        nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

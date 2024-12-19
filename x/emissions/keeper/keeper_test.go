@@ -3987,6 +3987,10 @@ func mockUninitializedParams() types.Params {
 		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),
 		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),
 		LambdaInitialScore:                  alloraMath.MustNewDecFromString("2"),
+		GlobalWorkerWhitelistEnabled:        true,
+		GlobalReputerWhitelistEnabled:       true,
+		GlobalAdminWhitelistAppended:        true,
+		MaxWhitelistInputArrayLength:        uint64(10),
 	}
 }
 

@@ -94,4 +94,5 @@ var (
 	ErrNotPermittedToUpdateTopicReputerWhitelist = errors.Register(ModuleName, 89, "not permitted to update topic reputer whitelist")
 	ErrNotPermittedToAddStake                    = errors.Register(ModuleName, 90, "not permitted to add stake")
 	ErrNotPermittedToUpdateWhitelistAdmins       = errors.Register(ModuleName, 91, "not permitted to update whitelist admins")
+	ErrMaxWhitelistInputArrayLengthExceeded      = errors.Register(ModuleName, 92, "max whitelist input array length exceeded")
 )

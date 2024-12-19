@@ -21,8 +21,11 @@ message GenesisState {
   reserved 13, 14, 15;
   reserved "latestInfererScoresByWorker", "latestForecasterScoresByWorker", "latestReputerScoresByReputer";
 
-  // params defines all the parameters of the module.
+  /// PARAMS
   emissions.v7.Params params = 1 [(gogoproto.nullable) = false];
+
+  /// WHITELISTS
+  repeated string core_team_addresses = 2;
 
   /// TOPIC
   // the next topic id to be used, equal to the number of topics that have been
@@ -43,18 +46,14 @@ message GenesisState {
   repeated TopicIdAndBlockHeight topic_reward_nonce = 9;
 
   /// SCORES
+  // ALSO SEE 61, 62, 63 below
   // map of (topic, block_height, worker) -> score
   repeated TopicIdBlockHeightScores inferer_scores_by_block = 10;
   // map of (topic, block_height, worker) -> score
   repeated TopicIdBlockHeightScores forecaster_scores_by_block = 11;
   // map of (topic, block_height, reputer) -> score
   repeated TopicIdBlockHeightScores reputer_scores_by_block = 12;
-  // map of (topic, block_height, worker) -> score
-  repeated TopicIdActorIdScore inferer_score_emas = 60;
-  // map of (topic, block_height, worker) -> score
-  repeated TopicIdActorIdScore forecaster_score_emas = 61;
-  // map of (topic, block_height, reputer) -> score
-  repeated TopicIdActorIdScore reputer_score_emas = 62;
+  // SEE 13, 14, 15 reserved; see the top of GenesisState
   // map of (topic, reputer) -> listening coefficient
   repeated TopicIdActorIdListeningCoefficient reputer_listening_coefficient = 16;
   // map of (topic, reputer) -> previous reward (used for EMA)
@@ -65,18 +64,6 @@ message GenesisState {
   repeated TopicIdActorIdDec previous_forecast_reward_fraction = 19;
   // map of (topic, forecaster) -> ratio of forecaster score
   repeated TopicIdAndDec previous_forecaster_score_ratio = 20;
-
-  /// INITIAL SCORES
-
-  // current inferer ema scores to apply per topic
-  // map of topic -> inferer ema score
-  repeated TopicIdAndDec initial_inferer_ema_score = 86;
-  // current forecaster ema scores to apply per topic
-  // map of topic -> forecaster ema score
-  repeated TopicIdAndDec initial_forecaster_ema_score = 87;
-  // current reputer ema scores to apply per topic
-  // map of topic -> reputer ema score
-  repeated TopicIdAndDec initial_reputer_ema_score = 88;
 
   /// STAKING
 
@@ -153,14 +140,11 @@ message GenesisState {
 
   /// NONCES
 
-  // map of open worker nonce windows for topics on particular block heights
-  repeated BlockHeightAndTopicIds open_worker_windows = 55;
+  // SEE 55, 56 below
   // map of (topic) -> unfulfilled nonces
   repeated TopicIdAndNonces unfulfilled_worker_nonces = 43;
   // map of (topic) -> unfulfilled nonces
   repeated TopicIdAndReputerRequestNonces unfulfilled_reputer_nonces = 44;
-  // map of (topic) -> last dripped block
-  repeated TopicIdAndBlockHeight last_drip_block = 56;
 
   /// REGRETS
   // map of (topic, worker) -> regret of worker from comparing loss of worker
@@ -181,17 +165,30 @@ message GenesisState {
   repeated TopicIdActorIdActorIdTimeStampedValue latest_one_out_forecaster_inferer_network_regrets = 51;
   repeated TopicIdActorIdActorIdTimeStampedValue latest_one_out_forecaster_forecaster_network_regrets = 52;
 
-  /// WHITELISTS
-  repeated string core_team_addresses = 2;
-
   /// RECORD COMMITS
   repeated TopicIdTimestampedActorNonce topic_last_worker_commit = 53;
   repeated TopicIdTimestampedActorNonce topic_last_reputer_commit = 54;
+
+  /// WINDOW
+  // map of open worker nonce windows for topics on particular block heights
+  repeated BlockHeightAndTopicIds open_worker_windows = 55;
+
+  /// DRIPS
+  // map of (topic) -> last dripped block
+  repeated TopicIdAndBlockHeight last_drip_block = 56;
 
   // ACTIVE TOPIC
   repeated TopicIdAndBlockHeight topic_to_next_possible_churning_block = 57;
   repeated BlockHeightTopicIds block_to_active_topics = 58;
   repeated BlockHeightTopicIdWeightPair block_to_lowest_active_topic_weight = 59;
+
+  /// EMA SCORES
+  // map of (topic, block_height, worker) -> score
+  repeated TopicIdActorIdScore inferer_score_emas = 60;
+  // map of (topic, block_height, worker) -> score
+  repeated TopicIdActorIdScore forecaster_score_emas = 61;
+  // map of (topic, block_height, reputer) -> score
+  repeated TopicIdActorIdScore reputer_score_emas = 62;
 
   // EMA
   repeated TopicIdAndDec previous_topic_quantile_inferer_score_ema = 63;
@@ -231,7 +228,8 @@ message GenesisState {
     (amino.dont_omitempty) = true
   ];
 
-  // whitelists
+  /// WHITELISTS
+
   repeated string whitelist_admins = 77;
   repeated string global_whitelist = 78;
   repeated string topic_creator_whitelist = 79;
@@ -240,9 +238,28 @@ message GenesisState {
   repeated uint64 topic_worker_whitelist_enabled = 82;
   repeated uint64 topic_reputer_whitelist_enabled = 83;
 
-  // Outlier resistant inferences
+  /// OUTLIER RESISTANT INFERENCES
+
   repeated TopicIdAndDec last_median_inferences = 84;
   repeated TopicIdAndDec mad_inferences = 85;
+
+  /// INITIAL SCORES
+
+  // current inferer ema scores to apply per topic
+  // map of topic -> inferer ema score
+  repeated TopicIdAndDec initial_inferer_ema_score = 86;
+  // current forecaster ema scores to apply per topic
+  // map of topic -> forecaster ema score
+  repeated TopicIdAndDec initial_forecaster_ema_score = 87;
+  // current reputer ema scores to apply per topic
+  // map of topic -> reputer ema score
+  repeated TopicIdAndDec initial_reputer_ema_score = 88;
+
+  /// MORE WHITELISTS
+
+  repeated string global_worker_whitelist = 89;
+  repeated string global_reputer_whitelist = 90;
+  repeated string global_admin_whitelist = 91;
 }
 
 message TopicIdAndTopic {

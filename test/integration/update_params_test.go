@@ -92,6 +92,10 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			InferenceOutlierDetectionThreshold:  nil,
 			InferenceOutlierDetectionAlpha:      nil,
 			LambdaInitialScore:                  nil,
+			GlobalWorkerWhitelistEnabled:        nil,
+			GlobalReputerWhitelistEnabled:       nil,
+			GlobalAdminWhitelistAppended:        nil,
+			MaxWhitelistInputArrayLength:        nil,
 		},
 	}
 	txResp, err := m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)
@@ -154,6 +158,10 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			InferenceOutlierDetectionThreshold:  nil,
 			InferenceOutlierDetectionAlpha:      nil,
 			LambdaInitialScore:                  nil,
+			GlobalWorkerWhitelistEnabled:        nil,
+			GlobalReputerWhitelistEnabled:       nil,
+			GlobalAdminWhitelistAppended:        nil,
+			MaxWhitelistInputArrayLength:        nil,
 		},
 	}
 	_, err = m.Client.BroadcastTx(ctx, m.BobAcc, updateParamRequest)
@@ -220,6 +228,10 @@ func UpdateParamsChecks(m testCommon.TestConfig) {
 			InferenceOutlierDetectionThreshold:  nil,
 			InferenceOutlierDetectionAlpha:      nil,
 			LambdaInitialScore:                  nil,
+			GlobalWorkerWhitelistEnabled:        nil,
+			GlobalReputerWhitelistEnabled:       nil,
+			GlobalAdminWhitelistAppended:        nil,
+			MaxWhitelistInputArrayLength:        nil,
 		},
 	}
 	txResp, err = m.Client.BroadcastTx(ctx, m.AliceAcc, updateParamRequest)

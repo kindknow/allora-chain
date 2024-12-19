@@ -445,65 +445,114 @@ service QueryService {
     option (google.api.http).get = "/emissions/v7/active_inferers/{topic_id}";
   }
 
+  rpc IsWhitelistedGlobalWorker(IsWhitelistedGlobalWorkerRequest) returns (IsWhitelistedGlobalWorkerResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/is_whitelisted_global_worker/{address}";
+  }
+
+  rpc IsWhitelistedGlobalReputer(IsWhitelistedGlobalReputerRequest) returns (IsWhitelistedGlobalReputerResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/is_whitelisted_global_reputer/{address}";
+  }
+
+  rpc IsWhitelistedGlobalAdmin(IsWhitelistedGlobalAdminRequest) returns (IsWhitelistedGlobalAdminResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/is_whitelisted_global_admin/{address}";
+  }
+
   rpc IsTopicWorkerWhitelistEnabled(IsTopicWorkerWhitelistEnabledRequest) returns (IsTopicWorkerWhitelistEnabledResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/IsTopicWorkerWhitelistEnabled/{topic_id}";
+    option (google.api.http).get = "/emissions/v7/is_topic_worker_whitelist_enabled/{topic_id}";
   }
 
   rpc IsTopicReputerWhitelistEnabled(IsTopicReputerWhitelistEnabledRequest) returns (IsTopicReputerWhitelistEnabledResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/IsTopicReputerWhitelistEnabled/{topic_id}";
+    option (google.api.http).get = "/emissions/v7/is_topic_reputer_whitelist_enabled/{topic_id}";
   }
 
   rpc IsWhitelistedTopicCreator(IsWhitelistedTopicCreatorRequest) returns (IsWhitelistedTopicCreatorResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/IsWhitelistedTopicCreator/{address}";
+    option (google.api.http).get = "/emissions/v7/is_whitelisted_topic_creator/{address}";
   }
 
   rpc IsWhitelistedGlobalActor(IsWhitelistedGlobalActorRequest) returns (IsWhitelistedGlobalActorResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/IsWhitelistedGlobalActor/{address}";
+    option (google.api.http).get = "/emissions/v7/is_whitelisted_global_actor/{address}";
   }
 
   rpc IsWhitelistedTopicWorker(IsWhitelistedTopicWorkerRequest) returns (IsWhitelistedTopicWorkerResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/IsWhitelistedTopicWorker/{topic_id}/{address}";
+    option (google.api.http).get = "/emissions/v7/is_whitelisted_topic_worker/{topic_id}/{address}";
   }
 
   rpc IsWhitelistedTopicReputer(IsWhitelistedTopicReputerRequest) returns (IsWhitelistedTopicReputerResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/IsWhitelistedTopicReputer/{topic_id}/{address}";
+    option (google.api.http).get = "/emissions/v7/is_whitelisted_topic_reputer/{topic_id}/{address}";
   }
 
-  rpc CanUpdateGlobalWhitelists(CanUpdateGlobalWhitelistsRequest) returns (CanUpdateGlobalWhitelistsResponse) {
+  rpc CanUpdateAllGlobalWhitelists(CanUpdateAllGlobalWhitelistsRequest) returns (CanUpdateAllGlobalWhitelistsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/CanUpdateGlobalWhitelists/{address}";
+    option (google.api.http).get = "/emissions/v7/can_update_all_global_whitelists/{address}";
+  }
+
+  rpc CanUpdateGlobalWorkerWhitelist(CanUpdateGlobalWorkerWhitelistRequest) returns (CanUpdateGlobalWorkerWhitelistResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/can_update_global_worker_whitelist/{address}";
+  }
+
+  rpc CanUpdateGlobalReputerWhitelist(CanUpdateGlobalReputerWhitelistRequest) returns (CanUpdateGlobalReputerWhitelistResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/can_update_global_reputer_whitelist/{address}";
   }
 
   rpc CanUpdateParams(CanUpdateParamsRequest) returns (CanUpdateParamsResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/CanUpdateParams/{address}";
+    option (google.api.http).get = "/emissions/v7/can_update_params/{address}";
   }
 
   rpc CanUpdateTopicWhitelist(CanUpdateTopicWhitelistRequest) returns (CanUpdateTopicWhitelistResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/CanUpdateTopicWhitelist/{topic_id}/{address}";
+    option (google.api.http).get = "/emissions/v7/can_update_topic_whitelist/{topic_id}/{address}";
   }
 
   rpc CanCreateTopic(CanCreateTopicRequest) returns (CanCreateTopicResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/CanCreateTopic/{address}";
+    option (google.api.http).get = "/emissions/v7/can_create_topic/{address}";
   }
 
   rpc CanSubmitWorkerPayload(CanSubmitWorkerPayloadRequest) returns (CanSubmitWorkerPayloadResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/CanSubmitWorkerPayload/{topic_id}/{address}";
+    option (google.api.http).get = "/emissions/v7/can_submit_worker_payload/{topic_id}/{address}";
   }
 
   rpc CanSubmitReputerPayload(CanSubmitReputerPayloadRequest) returns (CanSubmitReputerPayloadResponse) {
     option (cosmos.query.v1.module_query_safe) = true;
-    option (google.api.http).get = "/emissions/v7/CanSubmitReputerPayload/{topic_id}/{address}";
+    option (google.api.http).get = "/emissions/v7/can_submit_reputer_payload/{topic_id}/{address}";
   }
+}
+
+message IsWhitelistedGlobalWorkerRequest {
+  string address = 1;
+}
+
+message IsWhitelistedGlobalWorkerResponse {
+  bool is_whitelisted_global_worker = 1 [(amino.dont_omitempty) = true];
+}
+
+message IsWhitelistedGlobalReputerRequest {
+  string address = 1;
+}
+
+message IsWhitelistedGlobalReputerResponse {
+  bool is_whitelisted_global_reputer = 1 [(amino.dont_omitempty) = true];
+}
+
+message IsWhitelistedGlobalAdminRequest {
+  string address = 1;
+}
+
+message IsWhitelistedGlobalAdminResponse {
+  bool is_whitelisted_global_admin = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsTopicWorkerWhitelistEnabledRequest {
@@ -556,12 +605,28 @@ message IsWhitelistedTopicReputerResponse {
   bool is_whitelisted_topic_reputer = 1 [(amino.dont_omitempty) = true];
 }
 
-message CanUpdateGlobalWhitelistsRequest {
+message CanUpdateAllGlobalWhitelistsRequest {
   string address = 1;
 }
 
-message CanUpdateGlobalWhitelistsResponse {
-  bool can_update_global_whitelists = 1 [(amino.dont_omitempty) = true];
+message CanUpdateAllGlobalWhitelistsResponse {
+  bool can_update_all_global_whitelists = 1 [(amino.dont_omitempty) = true];
+}
+
+message CanUpdateGlobalWorkerWhitelistRequest {
+  string address = 1;
+}
+
+message CanUpdateGlobalWorkerWhitelistResponse {
+  bool can_update_global_worker_whitelist = 1 [(amino.dont_omitempty) = true];
+}
+
+message CanUpdateGlobalReputerWhitelistRequest {
+  string address = 1;
+}
+
+message CanUpdateGlobalReputerWhitelistResponse {
+  bool can_update_global_reputer_whitelist = 1 [(amino.dont_omitempty) = true];
 }
 
 message CanUpdateParamsRequest {
@@ -939,7 +1004,7 @@ message IsWorkerNonceUnfulfilledRequest {
 }
 
 message IsWorkerNonceUnfulfilledResponse {
-  bool is_worker_nonce_unfulfilled = 1;
+  bool is_worker_nonce_unfulfilled = 1 [(amino.dont_omitempty) = true];
 }
 
 message GetUnfulfilledReputerNoncesRequest {
@@ -992,7 +1057,7 @@ message IsReputerNonceUnfulfilledRequest {
 }
 
 message IsReputerNonceUnfulfilledResponse {
-  bool is_reputer_nonce_unfulfilled = 1;
+  bool is_reputer_nonce_unfulfilled = 1 [(amino.dont_omitempty) = true];
 }
 
 message GetNetworkInferencesAtBlockResponse {
@@ -1085,7 +1150,7 @@ message IsWorkerRegisteredInTopicIdRequest {
 }
 
 message IsWorkerRegisteredInTopicIdResponse {
-  bool is_registered = 1;
+  bool is_registered = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsReputerRegisteredInTopicIdRequest {
@@ -1094,7 +1159,7 @@ message IsReputerRegisteredInTopicIdRequest {
 }
 
 message IsReputerRegisteredInTopicIdResponse {
-  bool is_registered = 1;
+  bool is_registered = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsWhitelistAdminRequest {
@@ -1102,7 +1167,7 @@ message IsWhitelistAdminRequest {
 }
 
 message IsWhitelistAdminResponse {
-  bool is_admin = 1;
+  bool is_admin = 1 [(amino.dont_omitempty) = true];
 }
 
 message GetStakeRemovalsUpUntilBlockRequest {
@@ -1252,7 +1317,7 @@ message GetPreviousTopicWeightResponse {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  bool not_found = 2;
+  bool not_found = 2 [(amino.dont_omitempty) = true];
 }
 
 message GetTotalSumPreviousTopicWeightsRequest {}
@@ -1269,7 +1334,7 @@ message TopicExistsRequest {
 }
 
 message TopicExistsResponse {
-  bool exists = 1;
+  bool exists = 1 [(amino.dont_omitempty) = true];
 }
 
 message IsTopicActiveRequest {
@@ -1277,7 +1342,7 @@ message IsTopicActiveRequest {
 }
 
 message IsTopicActiveResponse {
-  bool is_active = 1;
+  bool is_active = 1 [(amino.dont_omitempty) = true];
 }
 
 message GetTopicFeeRevenueRequest {
@@ -1441,7 +1506,7 @@ message GetPreviousReputerRewardFractionResponse {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  bool not_found = 2;
+  bool not_found = 2 [(amino.dont_omitempty) = true];
 }
 
 message GetPreviousInferenceRewardFractionRequest {
@@ -1454,7 +1519,7 @@ message GetPreviousInferenceRewardFractionResponse {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  bool not_found = 2;
+  bool not_found = 2 [(amino.dont_omitempty) = true];
 }
 
 message GetPreviousForecastRewardFractionRequest {
@@ -1467,7 +1532,7 @@ message GetPreviousForecastRewardFractionResponse {
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
     (gogoproto.nullable) = false
   ];
-  bool not_found = 2;
+  bool not_found = 2 [(amino.dont_omitempty) = true];
 }
 message GetPreviousPercentageRewardToStakedReputersRequest {}
 

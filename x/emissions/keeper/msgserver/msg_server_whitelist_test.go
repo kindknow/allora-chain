@@ -173,6 +173,616 @@ func (s *MsgServerTestSuite) TestRemoveFromGlobalWhitelistInvalidUnauthorized() 
 	require.ErrorIs(err, types.ErrNotPermittedToUpdateGlobalWhitelist, "Should fail due to unauthorized access")
 }
 
+func (s *MsgServerTestSuite) TestAddToGlobalWorkerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+
+	adminAddr := s.addrsStr[0]
+	targetAddr := s.addrsStr[1]
+
+	// Add targetAddr to global worker whitelist
+	msg := &types.AddToGlobalWorkerWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err := msgServer.AddToGlobalWorkerWhitelist(ctx, msg)
+	require.NoError(err, "Adding to global worker whitelist should succeed")
+
+	// Verify targetAddr is in global worker whitelist
+	isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalWorker(ctx, targetAddr)
+	require.NoError(err, "IsWhitelistedGlobalWorker check should not return an error")
+	require.True(isWhitelisted, "targetAddr should be in global worker whitelist")
+}
+
+func (s *MsgServerTestSuite) TestAddToGlobalWorkerWhitelistInvalidUnauthorized() {
+	ctx := s.ctx
+	require := s.Require()
+
+	nonAdminAddr := nonAdminAccounts[0]
+	targetAddr := s.addrsStr[1]
+
+	// Attempt to add targetAddr to global worker whitelist by nonAdminAddr
+	msg := &types.AddToGlobalWorkerWhitelistRequest{
+		Sender:  nonAdminAddr.String(),
+		Address: targetAddr,
+	}
+
+	_, err := s.msgServer.AddToGlobalWorkerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrNotPermittedToUpdateGlobalWhitelist, "Should fail due to unauthorized access")
+}
+
+func (s *MsgServerTestSuite) TestRemoveFromGlobalWorkerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+
+	adminAddr := s.addrsStr[0]
+	targetAddr := s.addrsStr[1]
+
+	// First add targetAddr to global worker whitelist
+	addMsg := &types.AddToGlobalWorkerWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err := msgServer.AddToGlobalWorkerWhitelist(ctx, addMsg)
+	require.NoError(err, "Adding to global worker whitelist should succeed")
+
+	// Remove targetAddr from global worker whitelist
+	removeMsg := &types.RemoveFromGlobalWorkerWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err = msgServer.RemoveFromGlobalWorkerWhitelist(ctx, removeMsg)
+	require.NoError(err, "Removing from global worker whitelist should succeed")
+
+	// Verify targetAddr is no longer in global worker whitelist
+	isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalWorker(ctx, targetAddr)
+	require.NoError(err, "IsWhitelistedGlobalWorker check should not return an error")
+	require.False(isWhitelisted, "targetAddr should not be in global worker whitelist")
+}
+
+func (s *MsgServerTestSuite) TestAddToGlobalReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+
+	adminAddr := s.addrsStr[0]
+	targetAddr := s.addrsStr[1]
+
+	// Add targetAddr to global reputer whitelist
+	msg := &types.AddToGlobalReputerWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err := msgServer.AddToGlobalReputerWhitelist(ctx, msg)
+	require.NoError(err, "Adding to global reputer whitelist should succeed")
+
+	// Verify targetAddr is in global reputer whitelist
+	isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalReputer(ctx, targetAddr)
+	require.NoError(err, "IsWhitelistedGlobalReputer check should not return an error")
+	require.True(isWhitelisted, "targetAddr should be in global reputer whitelist")
+}
+
+func (s *MsgServerTestSuite) TestRemoveFromGlobalReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+
+	adminAddr := s.addrsStr[0]
+	targetAddr := s.addrsStr[1]
+
+	// First add targetAddr to global reputer whitelist
+	addMsg := &types.AddToGlobalReputerWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err := msgServer.AddToGlobalReputerWhitelist(ctx, addMsg)
+	require.NoError(err, "Adding to global reputer whitelist should succeed")
+
+	// Remove targetAddr from global reputer whitelist
+	removeMsg := &types.RemoveFromGlobalReputerWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err = msgServer.RemoveFromGlobalReputerWhitelist(ctx, removeMsg)
+	require.NoError(err, "Removing from global reputer whitelist should succeed")
+
+	// Verify targetAddr is no longer in global reputer whitelist
+	isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalReputer(ctx, targetAddr)
+	require.NoError(err, "IsWhitelistedGlobalReputer check should not return an error")
+	require.False(isWhitelisted, "targetAddr should not be in global reputer whitelist")
+}
+
+func (s *MsgServerTestSuite) TestAddToGlobalAdminWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+
+	adminAddr := s.addrsStr[0]
+	targetAddr := s.addrsStr[1]
+
+	// Add targetAddr to global admin whitelist
+	msg := &types.AddToGlobalAdminWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err := msgServer.AddToGlobalAdminWhitelist(ctx, msg)
+	require.NoError(err, "Adding to global admin whitelist should succeed")
+
+	// Verify targetAddr is in global admin whitelist
+	canUpdate, err := s.emissionsKeeper.CanUpdateAllGlobalWhitelists(ctx, targetAddr)
+	require.NoError(err, "CanUpdateAllGlobalWhitelists check should not return an error")
+	require.True(canUpdate, "targetAddr should be in global admin whitelist")
+}
+
+func (s *MsgServerTestSuite) TestRemoveFromGlobalAdminWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+
+	adminAddr := s.addrsStr[0]
+	targetAddr := s.addrsStr[1]
+
+	// First add targetAddr to global admin whitelist
+	addMsg := &types.AddToGlobalAdminWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err := msgServer.AddToGlobalAdminWhitelist(ctx, addMsg)
+	require.NoError(err, "Adding to global admin whitelist should succeed")
+
+	// Verify targetAddr is in global admin whitelist before removal
+	isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalAdmin(ctx, targetAddr)
+	require.NoError(err, "IsWhitelistedGlobalAdmin check should not return an error")
+	require.True(isWhitelisted, "targetAddr should be in global admin whitelist before removal")
+
+	// Remove targetAddr from global admin whitelist
+	removeMsg := &types.RemoveFromGlobalAdminWhitelistRequest{
+		Sender:  adminAddr,
+		Address: targetAddr,
+	}
+	_, err = msgServer.RemoveFromGlobalAdminWhitelist(ctx, removeMsg)
+	require.NoError(err, "Removing from global admin whitelist should succeed")
+
+	// Verify targetAddr is no longer in global admin whitelist
+	isWhitelisted, err = s.emissionsKeeper.IsWhitelistedGlobalAdmin(ctx, targetAddr)
+	require.NoError(err, "IsWhitelistedGlobalAdmin check should not return an error")
+	require.False(isWhitelisted, "targetAddr should not be in global admin whitelist")
+}
+
+func (s *MsgServerTestSuite) TestBulkAddToGlobalWorkerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	// Add addresses to whitelist
+	msg := &types.BulkAddToGlobalWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+	}
+	_, err := msgServer.BulkAddToGlobalWorkerWhitelist(ctx, msg)
+	require.NoError(err, "Bulk adding to global worker whitelist should succeed")
+
+	// Verify all addresses were added
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalWorker(ctx, addr)
+		require.NoError(err)
+		require.True(isWhitelisted, "Address should be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg = &types.BulkAddToGlobalWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+	}
+	_, err = msgServer.BulkAddToGlobalWorkerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
+func (s *MsgServerTestSuite) TestBulkRemoveFromGlobalWorkerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	addMsg := &types.BulkAddToGlobalWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+	}
+	_, err := msgServer.BulkAddToGlobalWorkerWhitelist(ctx, addMsg)
+	require.NoError(err)
+
+	// Remove addresses
+	removeMsg := &types.BulkRemoveFromGlobalWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+	}
+	_, err = msgServer.BulkRemoveFromGlobalWorkerWhitelist(ctx, removeMsg)
+	require.NoError(err, "Bulk removing from global worker whitelist should succeed")
+
+	// Verify addresses were removed
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalWorker(ctx, addr)
+		require.NoError(err)
+		require.False(isWhitelisted, "Address should not be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg := &types.BulkAddToGlobalWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+	}
+	_, err = msgServer.BulkAddToGlobalWorkerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
+func (s *MsgServerTestSuite) TestBulkAddToGlobalReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	// Add addresses to whitelist
+	msg := &types.BulkAddToGlobalReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+	}
+	_, err := msgServer.BulkAddToGlobalReputerWhitelist(ctx, msg)
+	require.NoError(err, "Bulk adding to global reputer whitelist should succeed")
+
+	// Verify all addresses were added
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalReputer(ctx, addr)
+		require.NoError(err)
+		require.True(isWhitelisted, "Address should be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg = &types.BulkAddToGlobalReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+	}
+	_, err = msgServer.BulkAddToGlobalReputerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
+func (s *MsgServerTestSuite) TestBulkRemoveFromGlobalReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	addMsg := &types.BulkAddToGlobalReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+	}
+	_, err := msgServer.BulkAddToGlobalReputerWhitelist(ctx, addMsg)
+	require.NoError(err)
+
+	// Remove addresses
+	removeMsg := &types.BulkRemoveFromGlobalReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+	}
+	_, err = msgServer.BulkRemoveFromGlobalReputerWhitelist(ctx, removeMsg)
+	require.NoError(err, "Bulk removing from global reputer whitelist should succeed")
+
+	// Verify addresses were removed
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedGlobalReputer(ctx, addr)
+		require.NoError(err)
+		require.False(isWhitelisted, "Address should not be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg := &types.BulkAddToGlobalReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+	}
+	_, err = msgServer.BulkAddToGlobalReputerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
+func (s *MsgServerTestSuite) TestBulkAddToTopicWorkerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+	topicId := s.CreateOneTopic().Id
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	addMsg := &types.BulkAddToTopicWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+		TopicId:   topicId,
+	}
+	_, err := msgServer.BulkAddToTopicWorkerWhitelist(ctx, addMsg)
+	require.NoError(err)
+
+	// Verify addresses were added
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedTopicWorker(ctx, topicId, addr)
+		require.NoError(err)
+		require.True(isWhitelisted, "Address should be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg := &types.BulkAddToTopicWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+		TopicId:   topicId,
+	}
+	_, err = msgServer.BulkAddToTopicWorkerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
+func (s *MsgServerTestSuite) TestBulkRemoveFromTopicWorkerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+	topicId := s.CreateOneTopic().Id
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	addMsg := &types.BulkAddToTopicWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+		TopicId:   topicId,
+	}
+	_, err := msgServer.BulkAddToTopicWorkerWhitelist(ctx, addMsg)
+	require.NoError(err)
+
+	// Remove addresses
+	removeMsg := &types.BulkRemoveFromTopicWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+		TopicId:   topicId,
+	}
+	_, err = msgServer.BulkRemoveFromTopicWorkerWhitelist(ctx, removeMsg)
+	require.NoError(err, "Bulk removing from topic worker whitelist should succeed")
+
+	// Verify addresses were removed
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedTopicWorker(ctx, topicId, addr)
+		require.NoError(err)
+		require.False(isWhitelisted, "Address should not be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg := &types.BulkRemoveFromTopicWorkerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+		TopicId:   topicId,
+	}
+	_, err = msgServer.BulkRemoveFromTopicWorkerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
+func (s *MsgServerTestSuite) TestBulkAddToTopicReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+	topicId := s.CreateOneTopic().Id
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	addMsg := &types.BulkAddToTopicReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+		TopicId:   topicId,
+	}
+	_, err := msgServer.BulkAddToTopicReputerWhitelist(ctx, addMsg)
+	require.NoError(err)
+
+	// Verify addresses were added
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedTopicReputer(ctx, topicId, addr)
+		require.NoError(err)
+		require.True(isWhitelisted, "Address should be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg := &types.BulkAddToTopicReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+		TopicId:   topicId,
+	}
+	_, err = msgServer.BulkAddToTopicReputerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
+func (s *MsgServerTestSuite) TestBulkRemoveFromTopicReputerWhitelist() {
+	ctx := s.ctx
+	require := s.Require()
+	msgServer := s.msgServer
+	adminAddr := s.addrsStr[0]
+	topicId := s.CreateOneTopic().Id
+
+	// First add some addresses
+	addresses := []string{
+		nonAdminAccounts[0].String(),
+		nonAdminAccounts[1].String(),
+		nonAdminAccounts[2].String(),
+	}
+
+	addMsg := &types.BulkAddToTopicReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+		TopicId:   topicId,
+	}
+	_, err := msgServer.BulkAddToTopicReputerWhitelist(ctx, addMsg)
+	require.NoError(err)
+
+	// Remove addresses
+	removeMsg := &types.BulkRemoveFromTopicReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: addresses,
+		TopicId:   topicId,
+	}
+	_, err = msgServer.BulkRemoveFromTopicReputerWhitelist(ctx, removeMsg)
+	require.NoError(err, "Bulk removing from topic reputer whitelist should succeed")
+
+	// Verify addresses were removed
+	for _, addr := range addresses {
+		isWhitelisted, err := s.emissionsKeeper.IsWhitelistedTopicReputer(ctx, topicId, addr)
+		require.NoError(err)
+		require.False(isWhitelisted, "Address should not be whitelisted")
+	}
+
+	// Set max length parameter
+	params, err := s.emissionsKeeper.GetParams(ctx)
+	require.NoError(err)
+	params.MaxWhitelistInputArrayLength = 3
+	err = s.emissionsKeeper.SetParams(ctx, params)
+	require.NoError(err)
+
+	// Try adding more than max length
+	tooManyAddresses := make([]string, params.MaxWhitelistInputArrayLength+1)
+	for i := range tooManyAddresses {
+		tooManyAddresses[i] = nonAdminAccounts[i].String()
+	}
+
+	msg := &types.BulkRemoveFromTopicReputerWhitelistRequest{
+		Sender:    adminAddr,
+		Addresses: tooManyAddresses,
+		TopicId:   topicId,
+	}
+	_, err = msgServer.BulkRemoveFromTopicReputerWhitelist(ctx, msg)
+	require.ErrorIs(err, types.ErrMaxWhitelistInputArrayLengthExceeded)
+}
+
 func (s *MsgServerTestSuite) TestEnableTopicWorkerWhitelist() {
 	ctx := s.ctx
 	require := s.Require()

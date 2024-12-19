@@ -174,6 +174,18 @@ func (ms msgServer) UpdateParams(ctx context.Context, msg *types.UpdateParamsReq
 	if len(newParams.LambdaInitialScore) == 1 {
 		existingParams.LambdaInitialScore = newParams.LambdaInitialScore[0]
 	}
+	if len(newParams.GlobalWorkerWhitelistEnabled) == 1 {
+		existingParams.GlobalWorkerWhitelistEnabled = newParams.GlobalWorkerWhitelistEnabled[0]
+	}
+	if len(newParams.GlobalReputerWhitelistEnabled) == 1 {
+		existingParams.GlobalReputerWhitelistEnabled = newParams.GlobalReputerWhitelistEnabled[0]
+	}
+	if len(newParams.GlobalAdminWhitelistAppended) == 1 {
+		existingParams.GlobalAdminWhitelistAppended = newParams.GlobalAdminWhitelistAppended[0]
+	}
+	if len(newParams.MaxWhitelistInputArrayLength) == 1 {
+		existingParams.MaxWhitelistInputArrayLength = newParams.MaxWhitelistInputArrayLength[0]
+	}
 	err = existingParams.Validate()
 	if err != nil {
 		return nil, err

@@ -230,9 +230,18 @@ type Keeper struct {
 
 	/// WHITELISTS
 
-	whitelistAdmins       collections.KeySet[ActorId] // can change parameters and decide who can be included in any whitelist
-	globalWhitelist       collections.KeySet[ActorId] // actors who can create topics and participate in all topics
-	topicCreatorWhitelist collections.KeySet[ActorId] // whitelist of actors who can create topics
+	// can change parameters and decide who can be included in any whitelist
+	whitelistAdmins collections.KeySet[ActorId]
+	// actors who can create topics and participate in all topics as workers and reputers
+	globalWhitelist collections.KeySet[ActorId]
+	// global workers can participate in all topics as workers
+	globalWorkerWhitelist collections.KeySet[ActorId]
+	// global reputers can participate in all topics as reputers
+	globalReputerWhitelist collections.KeySet[ActorId]
+	// global admins can add global workers, global reputers, topic actors, topic reputers
+	globalAdminWhitelist collections.KeySet[ActorId]
+	// whitelist of actors who can create topics
+	topicCreatorWhitelist collections.KeySet[ActorId]
 	// map from topic id to whitelist of workers
 	topicWorkerWhitelist collections.KeySet[collections.Pair[TopicId, ActorId]]
 	// map from topic id to whitelist of reputers
@@ -313,6 +322,9 @@ func NewKeeper(
 		latestOneOutForecasterForecasterNetworkRegrets: collections.NewMap(sb, types.LatestOneOutForecasterForecasterNetworkRegretsKey, "latest_one_out_forecaster_forecaster_network_regrets", collections.TripleKeyCodec(collections.Uint64Key, collections.StringKey, collections.StringKey), codec.CollValue[types.TimestampedValue](cdc)),
 		whitelistAdmins:                           collections.NewKeySet(sb, types.WhitelistAdminsKey, "whitelist_admins", collections.StringKey),
 		globalWhitelist:                           collections.NewKeySet(sb, types.GlobalWhitelistKey, "global_whitelist", collections.StringKey),
+		globalWorkerWhitelist:                     collections.NewKeySet(sb, types.GlobalWorkerWhitelistKey, "global_worker_whitelist", collections.StringKey),
+		globalReputerWhitelist:                    collections.NewKeySet(sb, types.GlobalReputerWhitelistKey, "global_reputer_whitelist", collections.StringKey),
+		globalAdminWhitelist:                      collections.NewKeySet(sb, types.GlobalAdminWhitelistKey, "global_admin_whitelist", collections.StringKey),
 		topicCreatorWhitelist:                     collections.NewKeySet(sb, types.TopicCreatorWhitelistKey, "topic_creator_whitelist", collections.StringKey),
 		topicWorkerWhitelist:                      collections.NewKeySet(sb, types.TopicWorkerWhitelistKey, "topic_worker_whitelist", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey)),
 		topicReputerWhitelist:                     collections.NewKeySet(sb, types.TopicReputerWhitelistKey, "topic_reputer_whitelist", collections.PairKeyCodec(collections.Uint64Key, collections.StringKey)),
