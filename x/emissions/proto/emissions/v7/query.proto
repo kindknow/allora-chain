@@ -1619,7 +1619,8 @@ message GetTopicInitialInfererEmaScoreRequest {
 message GetTopicInitialInfererEmaScoreResponse {
   string score = 1 [
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -1630,7 +1631,8 @@ message GetTopicInitialForecasterEmaScoreRequest {
 message GetTopicInitialForecasterEmaScoreResponse {
   string score = 1 [
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
 
@@ -1641,6 +1643,7 @@ message GetTopicInitialReputerEmaScoreRequest {
 message GetTopicInitialReputerEmaScoreResponse {
   string score = 1 [
     (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
-    (gogoproto.nullable) = false
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
   ];
 }
