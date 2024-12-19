@@ -6,15 +6,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// MayPenaliseInferer penalises an inferer for missing previous epochs. It saves and returns the new EMA score.
+// ApplyLivenessPenaltyToInferer penalises an inferer for missing previous epochs. It saves and returns the new EMA score.
 // If the inferer didn't miss any epochs this is a no-op, the EMA score is returned as is.
-func (k *Keeper) MayPenaliseInferer(
+func (k *Keeper) ApplyLivenessPenaltyToInferer(
 	ctx sdk.Context,
 	topic types.Topic,
-	block types.BlockHeight,
+	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return MayPenaliseActor(
+	return ApplyLivenessPenaltyTo(
 		ctx,
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
@@ -24,20 +24,20 @@ func (k *Keeper) MayPenaliseInferer(
 			return k.SetInfererScoreEma(ctx, topicId, score.Address, score)
 		},
 		topic,
-		block,
+		nonceBlockHeight,
 		emaScore,
 	)
 }
 
-// MayPenaliseForecaster penalises a forecaster for missing previous epochs. It saves and returns the new EMA score.
+// ApplyLivenessPenaltyToForecaster penalises a forecaster for missing previous epochs. It saves and returns the new EMA score.
 // If the forecaster didn't miss any epochs this is a no-op, the EMA score is returned as is.
-func (k *Keeper) MayPenaliseForecaster(
+func (k *Keeper) ApplyLivenessPenaltyToForecaster(
 	ctx sdk.Context,
 	topic types.Topic,
-	block types.BlockHeight,
+	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return MayPenaliseActor(
+	return ApplyLivenessPenaltyTo(
 		ctx,
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
@@ -47,20 +47,20 @@ func (k *Keeper) MayPenaliseForecaster(
 			return k.SetForecasterScoreEma(ctx, topicId, score.Address, score)
 		},
 		topic,
-		block,
+		nonceBlockHeight,
 		emaScore,
 	)
 }
 
-// MayPenaliseReputer penalises a reputer for missing previous epochs. It saves and returns the new EMA score.
+// ApplyLivenessPenaltyToReputer penalises a reputer for missing previous epochs. It saves and returns the new EMA score.
 // If the reputer didn't miss any epochs this is a no-op, the EMA score is returned as is.
-func (k *Keeper) MayPenaliseReputer(
+func (k *Keeper) ApplyLivenessPenaltyToReputer(
 	ctx sdk.Context,
 	topic types.Topic,
-	block types.BlockHeight,
+	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return MayPenaliseActor(
+	return ApplyLivenessPenaltyTo(
 		ctx,
 		CountReputerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
@@ -70,18 +70,18 @@ func (k *Keeper) MayPenaliseReputer(
 			return k.SetReputerScoreEma(ctx, topicId, score.Address, score)
 		},
 		topic,
-		block,
+		nonceBlockHeight,
 		emaScore,
 	)
 }
 
-func MayPenaliseActor(
+func ApplyLivenessPenaltyTo(
 	ctx sdk.Context,
 	missedEpochsFn func(topic types.Topic, lastSubmittedNonce int64) int64,
-	getPenaltyFn func(topicId TopicId) (alloraMath.Dec, error),
+	getAsymptoteFn func(topicId TopicId) (alloraMath.Dec, error),
 	setScoreFn func(topicId TopicId, score types.Score) error,
 	topic types.Topic,
-	block types.BlockHeight,
+	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
 	missedEpochs := missedEpochsFn(topic, emaScore.BlockHeight)
@@ -90,11 +90,11 @@ func MayPenaliseActor(
 		return emaScore, nil
 	}
 
-	penalty, err := getPenaltyFn(topic.Id)
+	penalty, err := getAsymptoteFn(topic.Id)
 	if err != nil {
 		return types.Score{}, err
 	}
-	emaScore.BlockHeight = block
+	emaScore.BlockHeight = nonceBlockHeight
 
 	beforePenalty := emaScore
 	emaScore.Score, err = applyPenalty(topic, penalty, emaScore.Score, missedEpochs)
@@ -103,7 +103,7 @@ func MayPenaliseActor(
 	}
 
 	ctx.Logger().Debug("apply liveness penalty on actor",
-		"nonce", block,
+		"nonce", nonceBlockHeight,
 		"penalty", penalty,
 		"before", beforePenalty,
 		"after", emaScore,

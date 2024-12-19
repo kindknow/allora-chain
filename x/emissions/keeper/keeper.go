@@ -1293,7 +1293,7 @@ func (k *Keeper) AppendInference(
 	}
 
 	// Penalise the inferer if needed
-	previousEmaScore, err = k.MayPenaliseInferer(ctx, topic, nonceBlockHeight, previousEmaScore)
+	previousEmaScore, err = k.ApplyLivenessPenaltyToInferer(ctx, topic, nonceBlockHeight, previousEmaScore)
 	if err != nil {
 		return errorsmod.Wrap(err, "error trying to penalise inferer")
 	}
@@ -1465,7 +1465,7 @@ func (k *Keeper) AppendForecast(
 	}
 
 	// Penalise the forecaster if needed
-	previousEmaScore, err = k.MayPenaliseForecaster(ctx, topic, nonceBlockHeight, previousEmaScore)
+	previousEmaScore, err = k.ApplyLivenessPenaltyToForecaster(ctx, topic, nonceBlockHeight, previousEmaScore)
 	if err != nil {
 		return errorsmod.Wrap(err, "error trying to penalise forecaster")
 	}
@@ -1684,7 +1684,7 @@ func (k *Keeper) AppendReputerLoss(
 	}
 
 	// Penalise the reputer if needed
-	previousEmaScore, err = k.MayPenaliseReputer(ctx, topic, nonceBlockHeight, previousEmaScore)
+	previousEmaScore, err = k.ApplyLivenessPenaltyToReputer(ctx, topic, nonceBlockHeight, previousEmaScore)
 	if err != nil {
 		return errorsmod.Wrap(err, "error trying to penalise reputer")
 	}

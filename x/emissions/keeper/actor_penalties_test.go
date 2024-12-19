@@ -13,7 +13,7 @@ import (
 )
 
 // nolint: exhaustruct
-func (s *KeeperTestSuite) TestMayPenaliseInferer() {
+func (s *KeeperTestSuite) TestApplyLivenessPenaltyToInferer() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 
@@ -31,7 +31,7 @@ func (s *KeeperTestSuite) TestMayPenaliseInferer() {
 	}
 	s.Require().NoError(keeper.SetTopicInitialInfererEmaScore(ctx, givenTopic.Id, alloraMath.MustNewDecFromString("200")))
 
-	newScore, err := keeper.MayPenaliseInferer(ctx, givenTopic, 105, givenPreviousScore)
+	newScore, err := keeper.ApplyLivenessPenaltyToInferer(ctx, givenTopic, 105, givenPreviousScore)
 	s.Require().NoError(err)
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
@@ -46,7 +46,7 @@ func (s *KeeperTestSuite) TestMayPenaliseInferer() {
 }
 
 // nolint: exhaustruct
-func (s *KeeperTestSuite) TestMayPenaliseForecaster() {
+func (s *KeeperTestSuite) TestApplyLivenessPenaltyToForecaster() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 
@@ -64,7 +64,7 @@ func (s *KeeperTestSuite) TestMayPenaliseForecaster() {
 	}
 	s.Require().NoError(keeper.SetTopicInitialForecasterEmaScore(ctx, givenTopic.Id, alloraMath.MustNewDecFromString("200")))
 
-	newScore, err := keeper.MayPenaliseForecaster(ctx, givenTopic, 105, givenPreviousScore)
+	newScore, err := keeper.ApplyLivenessPenaltyToForecaster(ctx, givenTopic, 105, givenPreviousScore)
 	s.Require().NoError(err)
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
@@ -79,7 +79,7 @@ func (s *KeeperTestSuite) TestMayPenaliseForecaster() {
 }
 
 // nolint: exhaustruct
-func (s *KeeperTestSuite) TestMayPenaliseReputer() {
+func (s *KeeperTestSuite) TestApplyLivenessPenaltyToReputer() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 
@@ -98,7 +98,7 @@ func (s *KeeperTestSuite) TestMayPenaliseReputer() {
 	}
 	s.Require().NoError(keeper.SetTopicInitialReputerEmaScore(ctx, givenTopic.Id, alloraMath.MustNewDecFromString("200")))
 
-	newScore, err := keeper.MayPenaliseReputer(ctx, givenTopic, 105, givenPreviousScore)
+	newScore, err := keeper.ApplyLivenessPenaltyToReputer(ctx, givenTopic, 105, givenPreviousScore)
 	s.Require().NoError(err)
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
@@ -113,7 +113,7 @@ func (s *KeeperTestSuite) TestMayPenaliseReputer() {
 }
 
 // nolint: exhaustruct
-func TestMayPenaliseActor(t *testing.T) {
+func TestApplyLivenessPenaltyToActor(t *testing.T) {
 	ctx := testutil.DefaultContextWithDB(t, storetypes.NewKVStoreKey("emissions"), storetypes.NewTransientStoreKey("transient_test")).Ctx
 	givenTopic := types.Topic{
 		Id:                  uint64(1),
@@ -162,7 +162,7 @@ func TestMayPenaliseActor(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			newScore, err := keeper.MayPenaliseActor(
+			newScore, err := keeper.ApplyLivenessPenaltyTo(
 				ctx,
 				// Mock missed epochs calculation
 				func(topic types.Topic, _ int64) int64 {
