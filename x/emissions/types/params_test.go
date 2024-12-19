@@ -10,7 +10,7 @@ import (
 
 func TestDefaultParams(t *testing.T) {
 	expectedParams := Params{
-		Version:                             "v2",
+		Version:                             "v7",
 		MinTopicWeight:                      alloraMath.MustNewDecFromString("100"),
 		RequiredMinimumStake:                cosmosMath.NewInt(10000),
 		RemoveStakeDelayWindow:              int64((60 * 60 * 24 * 7 * 3) / 3),
@@ -58,6 +58,7 @@ func TestDefaultParams(t *testing.T) {
 		MinExperiencedWorkerRegrets:         uint64(10),
 		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),
 		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),
+		LambdaInitialScore:                  alloraMath.MustNewDecFromString("2"),
 	}
 
 	params := DefaultParams()

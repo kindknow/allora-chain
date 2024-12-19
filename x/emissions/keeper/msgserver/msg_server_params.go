@@ -171,6 +171,9 @@ func (ms msgServer) UpdateParams(ctx context.Context, msg *types.UpdateParamsReq
 	if len(newParams.InferenceOutlierDetectionAlpha) == 1 {
 		existingParams.InferenceOutlierDetectionAlpha = newParams.InferenceOutlierDetectionAlpha[0]
 	}
+	if len(newParams.LambdaInitialScore) == 1 {
+		existingParams.LambdaInitialScore = newParams.LambdaInitialScore[0]
+	}
 	err = existingParams.Validate()
 	if err != nil {
 		return nil, err

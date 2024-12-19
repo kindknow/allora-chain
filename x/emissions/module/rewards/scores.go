@@ -1,6 +1,8 @@
 package rewards
 
 import (
+	"context"
+
 	"cosmossdk.io/errors"
 	alloraMath "github.com/allora-network/allora-chain/math"
 	"github.com/allora-network/allora-chain/x/emissions/keeper"
@@ -164,6 +166,21 @@ func GenerateReputerScores(
 		return nil, err
 	}
 
+	// Just update the initial EMA score if there are more than 0 scores
+	if len(emaScores) > 0 {
+		// Calculate initial EMA score
+		initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error calculating initial EMA score")
+		}
+
+		// Store the initial EMA score
+		err = keeper.SetTopicInitialReputerEmaScore(ctx, topicId, initialEmaScore)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error setting initial reputer EMA score")
+		}
+	}
+
 	types.EmitNewReputerScoresSetEvent(ctx, instantScores)
 	types.EmitNewActorEMAScoresSetEvent(ctx, types.ActorType_ACTOR_TYPE_REPUTER, emaScores, activeArr)
 	types.EmitNewListeningCoefficientsSetEvent(ctx, types.ActorType_ACTOR_TYPE_REPUTER, topicId, block, reputers, newCoefficients)
@@ -224,6 +241,7 @@ func GenerateInferenceScores(
 		if err != nil {
 			return []types.Score{}, errors.Wrapf(err, "Error calculating and saving inferer score ema")
 		}
+
 		activeArr[oneOutLoss.Worker] = true
 		instantScores = append(instantScores, instantScore)
 		emaScores = append(emaScores, emaScore)
@@ -237,6 +255,21 @@ func GenerateInferenceScores(
 	err = keeper.SetPreviousTopicQuantileInfererScoreEma(ctx, topicId, topicInstantScoreQuantile)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error setting previous topic quantile inferer score ema")
+	}
+
+	// Just update the initial EMA score if there are more than 0 scores
+	if len(emaScores) > 0 {
+		// Calculate initial EMA score
+		initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error calculating initial EMA score")
+		}
+
+		// Store the initial EMA score
+		err = keeper.SetTopicInitialInfererEmaScore(ctx, topicId, initialEmaScore)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error setting initial inferer EMA score")
+		}
 	}
 
 	types.EmitNewInfererScoresSetEvent(ctx, instantScores)
@@ -337,6 +370,21 @@ func GenerateForecastScores(
 	err = keeper.SetPreviousTopicQuantileForecasterScoreEma(ctx, topicId, topicInstantScoreQuantile)
 	if err != nil {
 		return nil, err
+	}
+
+	// Just update the initial EMA score if there are more than 0 scores
+	if len(emaScores) > 0 {
+		// Calculate initial EMA score
+		initialEmaScore, err := CalculateTopicInitialEmaScore(ctx, keeper, emaScores)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error calculating initial EMA score")
+		}
+
+		// Store the initial EMA score
+		err = keeper.SetTopicInitialForecasterEmaScore(ctx, topicId, initialEmaScore)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error setting initial forecaster EMA score")
+		}
 	}
 
 	// Emit forecaster performance scores
@@ -482,4 +530,51 @@ func EnsureAllWorkersPresentWithheld(
 	}
 
 	return values
+}
+
+// CalculateTopicInitialEmaScore calculates the initial EMA score for new participants in the next epoch
+// using the current active set statistics. The initial score is set below the active set threshold
+// by using the formula: lowestEmaScore - lambda * standardDeviationOfEmaScores
+func CalculateTopicInitialEmaScore(
+	ctx context.Context,
+	keeper keeper.Keeper,
+	activeScores []types.Score,
+) (alloraMath.Dec, error) {
+	// If there are no scores, return zero
+	if len(activeScores) == 0 {
+		return alloraMath.ZeroDec(), nil
+	}
+
+	// Get lambda parameter from module params
+	params, err := keeper.GetParams(ctx)
+	if err != nil {
+		return alloraMath.Dec{}, errors.Wrapf(err, "error getting module params")
+	}
+	lambda := params.LambdaInitialScore
+
+	// Calculate standard deviation of EMA scores in active set
+	var emaScores []alloraMath.Dec
+	lowestScore := activeScores[0]
+	for _, score := range activeScores {
+		emaScores = append(emaScores, score.Score)
+		if score.Score.Lt(lowestScore.Score) {
+			lowestScore = score
+		}
+	}
+	stdDev, err := alloraMath.StdDev(emaScores)
+	if err != nil {
+		return alloraMath.Dec{}, errors.Wrapf(err, "error calculating standard deviation of EMA scores")
+	}
+
+	// Calculate initial score using formula: lowestEmaScore - lambda * standardDeviationOfEmaScores
+	lambdaStdDev, err := lambda.Mul(stdDev)
+	if err != nil {
+		return alloraMath.Dec{}, errors.Wrapf(err, "error multiplying lambda by standard deviation")
+	}
+	initialScore, err := lowestScore.Score.Sub(lambdaStdDev)
+	if err != nil {
+		return alloraMath.Dec{}, errors.Wrapf(err, "error calculating initial score")
+	}
+
+	return initialScore, nil
 }

@@ -12,7 +12,7 @@ import (
 // DefaultParams returns default module parameters.
 func DefaultParams() Params {
 	return Params{
-		Version:                             "v2",                                         // version of the protocol should be in lockstep with github release tag version
+		Version:                             "v7",                                         // version of the protocol should be in lockstep with github release tag version
 		MinTopicWeight:                      alloraMath.MustNewDecFromString("100"),       // total weight for a topic < this => don't run inference solicatation or loss update
 		RequiredMinimumStake:                cosmosMath.NewInt(10000),                     // minimum stake required to be a worker or reputer
 		RemoveStakeDelayWindow:              int64((60 * 60 * 24 * 7 * 3) / 3),            // ~approx 3 weeks assuming 3 second block time, number of blocks to wait before finalizing a stake withdrawal
@@ -60,6 +60,7 @@ func DefaultParams() Params {
 		MinExperiencedWorkerRegrets:         uint64(10),                                   // minimum number of experienced workers required to use their regrets for calculating the topic initial regret
 		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),        // threshold for inference outlier detection
 		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),       // alpha for inference outlier detection
+		LambdaInitialScore:                  alloraMath.MustNewDecFromString("2"),         // lambda for new participant score initialization
 	}
 }
 
@@ -202,6 +203,9 @@ func (p Params) Validate() error {
 	}
 	if err := validateInferenceOutlierDetectionAlpha(p.InferenceOutlierDetectionAlpha); err != nil {
 		return errorsmod.Wrap(err, "params validation failure: inference outlier detection alpha")
+	}
+	if err := validateLambdaInitialScore(p.LambdaInitialScore); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: lambda initial score")
 	}
 	return nil
 }
@@ -634,6 +638,15 @@ func validateInferenceOutlierDetectionAlpha(i alloraMath.Dec) error {
 		return err
 	} else if !isAlloraDecBetweenZeroAndOneInclusive(i) {
 		return ErrValidationMustBeBetweenZeroAndOne
+	}
+	return nil
+}
+
+func validateLambdaInitialScore(i alloraMath.Dec) error {
+	if err := ValidateDec(i); err != nil {
+		return err
+	} else if i.IsNegative() {
+		return ErrValidationMustBeGreaterthanZero
 	}
 	return nil
 }

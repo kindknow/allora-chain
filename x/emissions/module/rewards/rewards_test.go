@@ -2219,6 +2219,7 @@ func (s *RewardsTestSuite) SetParamsForTest() {
 		MinExperiencedWorkerRegrets:         nil,
 		InferenceOutlierDetectionThreshold:  nil,
 		InferenceOutlierDetectionAlpha:      nil,
+		LambdaInitialScore:                  nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

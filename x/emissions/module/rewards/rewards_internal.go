@@ -443,9 +443,7 @@ func GetAllReputersOutput(
 	oldCoefficients := make([]alloraMath.Dec, numReputers)
 	var i uint64 = 0
 	var maxGradient = alloraMath.OneDec()
-	// finalScores := make([]alloraMath.Dec, numReputers)
 	newScores := make([]alloraMath.Dec, numReputers)
-
 	for maxGradient.Gte(params.MaxGradientThreshold) && i < params.GradientDescentMaxIters {
 		copy(oldCoefficients, coefficients)
 		gradient := make([]alloraMath.Dec, numReputers)

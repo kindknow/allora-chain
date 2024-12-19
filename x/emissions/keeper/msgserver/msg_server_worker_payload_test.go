@@ -366,6 +366,7 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithFewTopElementsPerFore
 		MinExperiencedWorkerRegrets:         nil,
 		InferenceOutlierDetectionThreshold:  nil,
 		InferenceOutlierDetectionAlpha:      nil,
+		LambdaInitialScore:                  nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{
@@ -768,6 +769,7 @@ func (s *MsgServerTestSuite) TestMsgInsertWorkerPayloadWithLowScoreForecastsAreR
 		MinExperiencedWorkerRegrets:         nil,
 		InferenceOutlierDetectionThreshold:  nil,
 		InferenceOutlierDetectionAlpha:      nil,
+		LambdaInitialScore:                  nil,
 	}
 
 	updateMsg := &types.UpdateParamsRequest{

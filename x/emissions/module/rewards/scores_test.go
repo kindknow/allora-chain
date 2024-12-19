@@ -1804,3 +1804,112 @@ func (s *RewardsTestSuite) TestGenerateReputerScoresWithZeroListeningCoefficient
 	s.Require().NoError(err)
 	s.Require().True(coefficient.Coefficient.Equal(params.EpsilonReputer))
 }
+
+func (s *RewardsTestSuite) TestCalculateTopicInitialEmaScore() {
+	// Setup test scores
+	scores := []types.Score{
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[0].String(),
+			Score:       alloraMath.MustNewDecFromString("0.5"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[1].String(),
+			Score:       alloraMath.MustNewDecFromString("0.3"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[2].String(),
+			Score:       alloraMath.MustNewDecFromString("0.1"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[3].String(),
+			Score:       alloraMath.MustNewDecFromString("0.4"),
+		},
+		{
+			TopicId:     1,
+			BlockHeight: 1000,
+			Address:     s.addrs[4].String(),
+			Score:       alloraMath.MustNewDecFromString("0.2"),
+		},
+	}
+
+	// Calculate initial EMA score
+	initialScore, err := rewards.CalculateTopicInitialEmaScore(s.ctx, s.emissionsKeeper, scores)
+	s.Require().NoError(err)
+
+	// Get lambda from params
+	params, err := s.emissionsKeeper.GetParams(s.ctx)
+	s.Require().NoError(err)
+	lambda := params.LambdaInitialScore
+
+	// Calculate expected score manually
+	// Standard deviation ≈ 0.1581139
+	stdDev := alloraMath.MustNewDecFromString("0.1581139")
+	lambdaStdDev, err := lambda.Mul(stdDev)
+	s.Require().NoError(err)
+
+	// Lowest score is 0.1
+	lowestScore := alloraMath.MustNewDecFromString("0.1")
+	expectedScore, err := lowestScore.Sub(lambdaStdDev)
+	s.Require().NoError(err)
+
+	// Verify result matches expected
+	diff, err := initialScore.Sub(expectedScore)
+	s.Require().NoError(err)
+	absDiff, err := diff.Abs()
+	s.Require().NoError(err)
+	s.Require().True(absDiff.Lt(alloraMath.MustNewDecFromString("0.000001")))
+}
+
+func (s *RewardsTestSuite) TestCalculateTopicInitialEmaScoreEdgeCases() {
+	testCases := []struct {
+		name          string
+		scores        []types.Score
+		expectedError bool
+		expectedScore string
+	}{
+		{
+			name:          "empty scores",
+			scores:        []types.Score{},
+			expectedError: false,
+			expectedScore: "0", // Returns zero when no scores
+		},
+		{
+			name: "single score",
+			scores: []types.Score{
+				{Score: alloraMath.MustNewDecFromString("0.5")}, // nolint:exhaustruct
+			},
+			expectedError: false,
+			expectedScore: "0.5", // With single score, no std dev calculation possible, returns the score
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			initialScore, err := rewards.CalculateTopicInitialEmaScore(s.ctx, s.emissionsKeeper, tc.scores)
+
+			if tc.expectedError {
+				s.Require().Error(err)
+				return
+			}
+
+			s.Require().NoError(err)
+			expectedScore := alloraMath.MustNewDecFromString(tc.expectedScore)
+			diff, err := initialScore.Sub(expectedScore)
+			s.Require().NoError(err)
+			absDiff, err := diff.Abs()
+			s.Require().NoError(err)
+			s.Require().True(
+				absDiff.Lt(alloraMath.MustNewDecFromString("0.000001")),
+				"Expected %s but got %s", expectedScore, initialScore,
+			)
+		})
+	}
+}

@@ -3986,6 +3986,7 @@ func mockUninitializedParams() types.Params {
 		MinExperiencedWorkerRegrets:         uint64(10),
 		InferenceOutlierDetectionThreshold:  alloraMath.MustNewDecFromString("11"),
 		InferenceOutlierDetectionAlpha:      alloraMath.MustNewDecFromString("0.2"),
+		LambdaInitialScore:                  alloraMath.MustNewDecFromString("2"),
 	}
 }
 
@@ -5222,4 +5223,137 @@ func (s *KeeperTestSuite) TestFilterOutlierResistantInferences() {
 			}
 		})
 	}
+}
+
+func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendInference() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topicId := s.CreateOneTopic(10800)
+	worker := s.addrsStr[0]
+	blockHeight := int64(10)
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("95.5")
+	err := k.SetTopicInitialInfererEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err)
+
+	// Create and append a new inference
+	inference := &types.Inference{
+		TopicId:     topicId,
+		BlockHeight: blockHeight,
+		Value:       alloraMath.MustNewDecFromString("0.52"),
+		Inferer:     worker,
+		ExtraData:   nil,
+		Proof:       "",
+	}
+
+	topic, err := k.GetTopic(ctx, topicId)
+	s.Require().NoError(err)
+
+	// Append the inference
+	err = k.AppendInference(ctx, topic, blockHeight, inference, 4)
+	s.Require().NoError(err)
+
+	// Verify the worker received the initial EMA score
+	score, err := k.GetInfererScoreEma(ctx, topicId, worker)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, score.Score)
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(worker, score.Address)
+	s.Require().Equal(topicId, score.TopicId)
+}
+
+func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendForecast() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topicId := s.CreateOneTopic(10800)
+	worker := s.addrsStr[0]
+	blockHeight := int64(10)
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("92.5")
+	err := k.SetTopicInitialForecasterEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err)
+
+	// Create and append a new forecast
+	forecast := &types.Forecast{
+		TopicId:     topicId,
+		BlockHeight: blockHeight,
+		Forecaster:  worker,
+		ForecastElements: []*types.ForecastElement{
+			{
+				Inferer: s.addrsStr[1],
+				Value:   alloraMath.MustNewDecFromString("0.52"),
+			},
+		},
+		ExtraData: nil,
+	}
+
+	topic, err := k.GetTopic(ctx, topicId)
+	s.Require().NoError(err)
+
+	// Append the forecast
+	err = k.AppendForecast(ctx, topic, blockHeight, forecast, 4)
+	s.Require().NoError(err)
+
+	// Verify the worker received the initial EMA score
+	score, err := k.GetForecasterScoreEma(ctx, topicId, worker)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, score.Score)
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(worker, score.Address)
+	s.Require().Equal(topicId, score.TopicId)
+}
+
+func (s *KeeperTestSuite) TestInitialEmaScoreSettingInAppendReputer() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topicId := s.CreateOneTopic(10800)
+	reputer := s.addrsStr[0]
+	blockHeight := int64(10)
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("97.5")
+	err := k.SetTopicInitialReputerEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err)
+
+	// Create and append a new reputer value bundle
+	valueBundle := &types.ValueBundle{
+		TopicId: topicId,
+		ReputerRequestNonce: &types.ReputerRequestNonce{
+			ReputerNonce: &types.Nonce{BlockHeight: blockHeight},
+		},
+		Reputer:                       reputer,
+		ExtraData:                     nil,
+		CombinedValue:                 alloraMath.MustNewDecFromString("0.52"),
+		InfererValues:                 nil,
+		ForecasterValues:              nil,
+		NaiveValue:                    alloraMath.MustNewDecFromString("0.52"),
+		OneOutInfererValues:           nil,
+		OneOutForecasterValues:        nil,
+		OneInForecasterValues:         nil,
+		OneOutInfererForecasterValues: nil,
+	}
+	signature := s.signValueBundle(valueBundle, s.privKeys[0])
+	reputerValueBundle := &types.ReputerValueBundle{
+		ValueBundle: valueBundle,
+		Signature:   signature,
+		Pubkey:      s.pubKeyHexStr[0],
+	}
+
+	topic, err := k.GetTopic(ctx, topicId)
+	s.Require().NoError(err)
+
+	params := types.DefaultParams()
+	// Append the reputer value bundle
+	err = k.AppendReputerLoss(ctx, topic, params, blockHeight, reputerValueBundle)
+	s.Require().NoError(err)
+
+	// Verify the reputer received the initial EMA score
+	score, err := k.GetReputerScoreEma(ctx, topicId, reputer)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, score.Score)
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(reputer, score.Address)
+	s.Require().Equal(topicId, score.TopicId)
 }
