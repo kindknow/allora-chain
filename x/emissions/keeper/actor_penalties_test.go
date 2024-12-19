@@ -162,7 +162,7 @@ func TestApplyLivenessPenaltyToActor(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			newScore, err := keeper.ApplyLivenessPenaltyTo(
+			newScore, err := keeper.ApplyLivenessPenaltyToActor(
 				ctx,
 				// Mock missed epochs calculation
 				func(topic types.Topic, _ int64) int64 {

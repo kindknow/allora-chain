@@ -15,7 +15,7 @@ func (k *Keeper) ApplyLivenessPenaltyToInferer(
 	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return ApplyLivenessPenaltyTo(
+	return ApplyLivenessPenaltyToActor(
 		ctx,
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
@@ -38,7 +38,7 @@ func (k *Keeper) ApplyLivenessPenaltyToForecaster(
 	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return ApplyLivenessPenaltyTo(
+	return ApplyLivenessPenaltyToActor(
 		ctx,
 		CountWorkerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
@@ -61,7 +61,7 @@ func (k *Keeper) ApplyLivenessPenaltyToReputer(
 	nonceBlockHeight types.BlockHeight,
 	emaScore types.Score,
 ) (types.Score, error) {
-	return ApplyLivenessPenaltyTo(
+	return ApplyLivenessPenaltyToActor(
 		ctx,
 		CountReputerContiguousMissedEpochs,
 		func(topicId TopicId) (alloraMath.Dec, error) {
@@ -76,7 +76,7 @@ func (k *Keeper) ApplyLivenessPenaltyToReputer(
 	)
 }
 
-func ApplyLivenessPenaltyTo(
+func ApplyLivenessPenaltyToActor(
 	ctx sdk.Context,
 	missedEpochsFn func(topic types.Topic, lastSubmittedNonce int64) int64,
 	getAsymptoteFn func(topicId TopicId) (alloraMath.Dec, error),
@@ -135,6 +135,9 @@ func CountReputerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce in
 
 func countContiguousMissedEpochs(prevEpochStart, epochLength, lastSubmittedNonce int64) int64 {
 	lastSubmittedNonce = math.Max(lastSubmittedNonce, 0)
+	prevEpochStart = math.Max(prevEpochStart, 0)
+	epochLength = math.Max(epochLength, 0)
+
 	if lastSubmittedNonce >= prevEpochStart {
 		return 0
 	}
