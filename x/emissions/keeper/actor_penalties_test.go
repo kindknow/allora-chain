@@ -13,7 +13,7 @@ import (
 )
 
 // nolint: exhaustruct
-func (s *KeeperTestSuite) TestApplyLivenessPenaltyToInferer() {
+func (s *KeeperTestSuite) TestApplyLivenessPenaltyToInactiveInferer() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 
@@ -22,6 +22,7 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToInferer() {
 		MeritSortitionAlpha: alloraMath.MustNewDecFromString("0.1"),
 		EpochLastEnded:      100,
 		EpochLength:         10,
+		GroundTruthLag:      5,
 	}
 	givenPreviousScore := types.Score{
 		TopicId:     givenTopic.Id,
@@ -46,7 +47,42 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToInferer() {
 }
 
 // nolint: exhaustruct
-func (s *KeeperTestSuite) TestApplyLivenessPenaltyToForecaster() {
+func (s *KeeperTestSuite) TestApplyLivenessPenaltyToActiveInferer() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+
+	givenTopic := types.Topic{
+		Id:                  uint64(1),
+		MeritSortitionAlpha: alloraMath.MustNewDecFromString("0.1"),
+		EpochLastEnded:      105,
+		EpochLength:         10,
+		GroundTruthLag:      5,
+	}
+	givenPreviousScore := types.Score{
+		TopicId:     givenTopic.Id,
+		BlockHeight: int64(55),
+		Address:     "allo1l6nc88z4uqs00nnnaqkwjvlk4lxq3k4und7kzy",
+		Score:       alloraMath.MustNewDecFromString("300"),
+	}
+	s.Require().NoError(keeper.SetTopicInitialInfererEmaScore(ctx, givenTopic.Id, alloraMath.MustNewDecFromString("200")))
+	s.Require().NoError(keeper.AddActiveInferer(ctx, givenTopic.Id, givenPreviousScore.Address))
+
+	newScore, err := keeper.ApplyLivenessPenaltyToInferer(ctx, givenTopic, 105, givenPreviousScore)
+	s.Require().NoError(err)
+	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
+	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
+	s.Require().Equal(int64(105), newScore.BlockHeight)
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
+	s.Require().NoError(err)
+	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
+
+	scoreFromStore, err := keeper.GetInfererScoreEma(ctx, givenTopic.Id, givenPreviousScore.Address)
+	s.Require().NoError(err)
+	s.Require().Equal(newScore, scoreFromStore)
+}
+
+// nolint: exhaustruct
+func (s *KeeperTestSuite) TestApplyLivenessPenaltyToInactiveForecaster() {
 	ctx := s.ctx
 	keeper := s.emissionsKeeper
 
@@ -55,6 +91,7 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToForecaster() {
 		MeritSortitionAlpha: alloraMath.MustNewDecFromString("0.1"),
 		EpochLastEnded:      100,
 		EpochLength:         10,
+		GroundTruthLag:      5,
 	}
 	givenPreviousScore := types.Score{
 		TopicId:     givenTopic.Id,
@@ -63,6 +100,41 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToForecaster() {
 		Score:       alloraMath.MustNewDecFromString("300"),
 	}
 	s.Require().NoError(keeper.SetTopicInitialForecasterEmaScore(ctx, givenTopic.Id, alloraMath.MustNewDecFromString("200")))
+
+	newScore, err := keeper.ApplyLivenessPenaltyToForecaster(ctx, givenTopic, 105, givenPreviousScore)
+	s.Require().NoError(err)
+	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
+	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
+	s.Require().Equal(int64(105), newScore.BlockHeight)
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
+	s.Require().NoError(err)
+	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
+
+	scoreFromStore, err := keeper.GetForecasterScoreEma(ctx, givenTopic.Id, givenPreviousScore.Address)
+	s.Require().NoError(err)
+	s.Require().Equal(newScore, scoreFromStore)
+}
+
+// nolint: exhaustruct
+func (s *KeeperTestSuite) TestApplyLivenessPenaltyToActiveForecaster() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+
+	givenTopic := types.Topic{
+		Id:                  uint64(1),
+		MeritSortitionAlpha: alloraMath.MustNewDecFromString("0.1"),
+		EpochLastEnded:      105,
+		EpochLength:         10,
+		GroundTruthLag:      5,
+	}
+	givenPreviousScore := types.Score{
+		TopicId:     givenTopic.Id,
+		BlockHeight: int64(55),
+		Address:     "allo1l6nc88z4uqs00nnnaqkwjvlk4lxq3k4und7kzy",
+		Score:       alloraMath.MustNewDecFromString("300"),
+	}
+	s.Require().NoError(keeper.SetTopicInitialForecasterEmaScore(ctx, givenTopic.Id, alloraMath.MustNewDecFromString("200")))
+	s.Require().NoError(keeper.AddActiveForecaster(ctx, givenTopic.Id, givenPreviousScore.Address))
 
 	newScore, err := keeper.ApplyLivenessPenaltyToForecaster(ctx, givenTopic, 105, givenPreviousScore)
 	s.Require().NoError(err)
@@ -215,7 +287,7 @@ func TestApplyLivenessPenaltyToActor(t *testing.T) {
 }
 
 // nolint: exhaustruct
-func TestCountWorkerContiguousMissedEpochs(t *testing.T) {
+func TestCountInactiveWorkerContiguousMissedEpochs(t *testing.T) {
 	topic := types.Topic{
 		EpochLastEnded: 100,
 		EpochLength:    10,
@@ -260,7 +332,62 @@ func TestCountWorkerContiguousMissedEpochs(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			missedEpochs := keeper.CountWorkerContiguousMissedEpochs(topic, tc.lastSubmittedNonce)
+			missedEpochs := keeper.CountInactiveWorkerContiguousMissedEpochs(topic, tc.lastSubmittedNonce)
+			if missedEpochs != tc.expectedMissedEpochs {
+				require.Equal(t, tc.expectedMissedEpochs, missedEpochs, "expected %d, got %d", tc.expectedMissedEpochs, missedEpochs)
+			}
+		})
+	}
+}
+
+// nolint: exhaustruct
+func TestCountActiveWorkerContiguousMissedEpochs(t *testing.T) {
+	topic := types.Topic{
+		EpochLastEnded: 105,
+		EpochLength:    10,
+		GroundTruthLag: 5,
+	}
+
+	cases := []struct {
+		name                 string
+		lastSubmittedNonce   int64
+		expectedMissedEpochs int64
+	}{
+		{
+			name:                 "in last epoch",
+			lastSubmittedNonce:   95,
+			expectedMissedEpochs: 0,
+		},
+		{
+			name:                 "after last epoch",
+			lastSubmittedNonce:   105,
+			expectedMissedEpochs: 0,
+		},
+		{
+			name:                 "one missed epoch",
+			lastSubmittedNonce:   85,
+			expectedMissedEpochs: 1,
+		},
+		{
+			name:                 "four missed epoch",
+			lastSubmittedNonce:   55,
+			expectedMissedEpochs: 4,
+		},
+		{
+			name:                 "on the edge of last epoch",
+			lastSubmittedNonce:   90,
+			expectedMissedEpochs: 0,
+		},
+		{
+			name:                 "on the edge of an epoch",
+			lastSubmittedNonce:   60,
+			expectedMissedEpochs: 3,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			missedEpochs := keeper.CountActiveWorkerContiguousMissedEpochs(topic, tc.lastSubmittedNonce)
 			if missedEpochs != tc.expectedMissedEpochs {
 				require.Equal(t, tc.expectedMissedEpochs, missedEpochs, "expected %d, got %d", tc.expectedMissedEpochs, missedEpochs)
 			}
