@@ -350,3 +350,78 @@ func (s *QueryServerTestSuite) TestGetCurrentLowestReputerScore() {
 		response.Score,
 	)
 }
+
+func (s *QueryServerTestSuite) TestGetTopicInitialInfererEmaScore() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+	topicId := s.CreateOneTopic()
+	initialScore := alloraMath.MustNewDecFromString("95.5")
+
+	// Set initial score
+	err := keeper.SetTopicInitialInfererEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err, "Setting initial inferer score should not fail")
+
+	req := &types.GetTopicInitialInfererEmaScoreRequest{
+		TopicId: topicId,
+	}
+	response, err := s.queryServer.GetTopicInitialInfererEmaScore(ctx, req)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, response.Score, "Initial inferer score should match what was set")
+
+	// Test non-existent topic
+	req = &types.GetTopicInitialInfererEmaScoreRequest{
+		TopicId: 999,
+	}
+	_, err = s.queryServer.GetTopicInitialInfererEmaScore(ctx, req)
+	s.Require().Error(err, "Query for non-existent topic should fail")
+}
+
+func (s *QueryServerTestSuite) TestGetTopicInitialForecasterEmaScore() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+	topicId := s.CreateOneTopic()
+	initialScore := alloraMath.MustNewDecFromString("92.5")
+
+	// Set initial score
+	err := keeper.SetTopicInitialForecasterEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err, "Setting initial forecaster score should not fail")
+
+	req := &types.GetTopicInitialForecasterEmaScoreRequest{
+		TopicId: topicId,
+	}
+	response, err := s.queryServer.GetTopicInitialForecasterEmaScore(ctx, req)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, response.Score, "Initial forecaster score should match what was set")
+
+	// Test non-existent topic
+	req = &types.GetTopicInitialForecasterEmaScoreRequest{
+		TopicId: 999,
+	}
+	_, err = s.queryServer.GetTopicInitialForecasterEmaScore(ctx, req)
+	s.Require().Error(err, "Query for non-existent topic should fail")
+}
+
+func (s *QueryServerTestSuite) TestGetTopicInitialReputerEmaScore() {
+	ctx := s.ctx
+	keeper := s.emissionsKeeper
+	topicId := s.CreateOneTopic()
+	initialScore := alloraMath.MustNewDecFromString("93.5")
+
+	// Set initial score
+	err := keeper.SetTopicInitialReputerEmaScore(ctx, topicId, initialScore)
+	s.Require().NoError(err, "Setting initial reputer score should not fail")
+
+	req := &types.GetTopicInitialReputerEmaScoreRequest{
+		TopicId: topicId,
+	}
+	response, err := s.queryServer.GetTopicInitialReputerEmaScore(ctx, req)
+	s.Require().NoError(err)
+	s.Require().Equal(initialScore, response.Score, "Initial reputer score should match what was set")
+
+	// Test non-existent topic
+	req = &types.GetTopicInitialReputerEmaScoreRequest{
+		TopicId: 999,
+	}
+	_, err = s.queryServer.GetTopicInitialReputerEmaScore(ctx, req)
+	s.Require().Error(err, "Query for non-existent topic should fail")
+}

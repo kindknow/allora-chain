@@ -121,6 +121,9 @@ const (
 	QueryService_CanCreateTopic_FullMethodName                                      = "/emissions.v7.QueryService/CanCreateTopic"
 	QueryService_CanSubmitWorkerPayload_FullMethodName                              = "/emissions.v7.QueryService/CanSubmitWorkerPayload"
 	QueryService_CanSubmitReputerPayload_FullMethodName                             = "/emissions.v7.QueryService/CanSubmitReputerPayload"
+	QueryService_GetTopicInitialInfererEmaScore_FullMethodName                      = "/emissions.v7.QueryService/GetTopicInitialInfererEmaScore"
+	QueryService_GetTopicInitialForecasterEmaScore_FullMethodName                   = "/emissions.v7.QueryService/GetTopicInitialForecasterEmaScore"
+	QueryService_GetTopicInitialReputerEmaScore_FullMethodName                      = "/emissions.v7.QueryService/GetTopicInitialReputerEmaScore"
 )
 
 // QueryServiceClient is the client API for QueryService service.
@@ -232,6 +235,12 @@ type QueryServiceClient interface {
 	CanCreateTopic(ctx context.Context, in *CanCreateTopicRequest, opts ...grpc.CallOption) (*CanCreateTopicResponse, error)
 	CanSubmitWorkerPayload(ctx context.Context, in *CanSubmitWorkerPayloadRequest, opts ...grpc.CallOption) (*CanSubmitWorkerPayloadResponse, error)
 	CanSubmitReputerPayload(ctx context.Context, in *CanSubmitReputerPayloadRequest, opts ...grpc.CallOption) (*CanSubmitReputerPayloadResponse, error)
+	// GetTopicInitialInfererEmaScore returns the initial EMA score for inferers in a topic
+	GetTopicInitialInfererEmaScore(ctx context.Context, in *GetTopicInitialInfererEmaScoreRequest, opts ...grpc.CallOption) (*GetTopicInitialInfererEmaScoreResponse, error)
+	// GetTopicInitialForecasterEmaScore returns the initial EMA score for forecasters in a topic
+	GetTopicInitialForecasterEmaScore(ctx context.Context, in *GetTopicInitialForecasterEmaScoreRequest, opts ...grpc.CallOption) (*GetTopicInitialForecasterEmaScoreResponse, error)
+	// GetTopicInitialReputerEmaScore returns the initial EMA score for reputers in a topic
+	GetTopicInitialReputerEmaScore(ctx context.Context, in *GetTopicInitialReputerEmaScoreRequest, opts ...grpc.CallOption) (*GetTopicInitialReputerEmaScoreResponse, error)
 }
 
 type queryServiceClient struct {
@@ -1262,6 +1271,36 @@ func (c *queryServiceClient) CanSubmitReputerPayload(ctx context.Context, in *Ca
 	return out, nil
 }
 
+func (c *queryServiceClient) GetTopicInitialInfererEmaScore(ctx context.Context, in *GetTopicInitialInfererEmaScoreRequest, opts ...grpc.CallOption) (*GetTopicInitialInfererEmaScoreResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTopicInitialInfererEmaScoreResponse)
+	err := c.cc.Invoke(ctx, QueryService_GetTopicInitialInfererEmaScore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) GetTopicInitialForecasterEmaScore(ctx context.Context, in *GetTopicInitialForecasterEmaScoreRequest, opts ...grpc.CallOption) (*GetTopicInitialForecasterEmaScoreResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTopicInitialForecasterEmaScoreResponse)
+	err := c.cc.Invoke(ctx, QueryService_GetTopicInitialForecasterEmaScore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) GetTopicInitialReputerEmaScore(ctx context.Context, in *GetTopicInitialReputerEmaScoreRequest, opts ...grpc.CallOption) (*GetTopicInitialReputerEmaScoreResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTopicInitialReputerEmaScoreResponse)
+	err := c.cc.Invoke(ctx, QueryService_GetTopicInitialReputerEmaScore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServiceServer is the server API for QueryService service.
 // All implementations must embed UnimplementedQueryServiceServer
 // for forward compatibility.
@@ -1371,6 +1410,12 @@ type QueryServiceServer interface {
 	CanCreateTopic(context.Context, *CanCreateTopicRequest) (*CanCreateTopicResponse, error)
 	CanSubmitWorkerPayload(context.Context, *CanSubmitWorkerPayloadRequest) (*CanSubmitWorkerPayloadResponse, error)
 	CanSubmitReputerPayload(context.Context, *CanSubmitReputerPayloadRequest) (*CanSubmitReputerPayloadResponse, error)
+	// GetTopicInitialInfererEmaScore returns the initial EMA score for inferers in a topic
+	GetTopicInitialInfererEmaScore(context.Context, *GetTopicInitialInfererEmaScoreRequest) (*GetTopicInitialInfererEmaScoreResponse, error)
+	// GetTopicInitialForecasterEmaScore returns the initial EMA score for forecasters in a topic
+	GetTopicInitialForecasterEmaScore(context.Context, *GetTopicInitialForecasterEmaScoreRequest) (*GetTopicInitialForecasterEmaScoreResponse, error)
+	// GetTopicInitialReputerEmaScore returns the initial EMA score for reputers in a topic
+	GetTopicInitialReputerEmaScore(context.Context, *GetTopicInitialReputerEmaScoreRequest) (*GetTopicInitialReputerEmaScoreResponse, error)
 	mustEmbedUnimplementedQueryServiceServer()
 }
 
@@ -1686,6 +1731,15 @@ func (UnimplementedQueryServiceServer) CanSubmitWorkerPayload(context.Context, *
 }
 func (UnimplementedQueryServiceServer) CanSubmitReputerPayload(context.Context, *CanSubmitReputerPayloadRequest) (*CanSubmitReputerPayloadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CanSubmitReputerPayload not implemented")
+}
+func (UnimplementedQueryServiceServer) GetTopicInitialInfererEmaScore(context.Context, *GetTopicInitialInfererEmaScoreRequest) (*GetTopicInitialInfererEmaScoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTopicInitialInfererEmaScore not implemented")
+}
+func (UnimplementedQueryServiceServer) GetTopicInitialForecasterEmaScore(context.Context, *GetTopicInitialForecasterEmaScoreRequest) (*GetTopicInitialForecasterEmaScoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTopicInitialForecasterEmaScore not implemented")
+}
+func (UnimplementedQueryServiceServer) GetTopicInitialReputerEmaScore(context.Context, *GetTopicInitialReputerEmaScoreRequest) (*GetTopicInitialReputerEmaScoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTopicInitialReputerEmaScore not implemented")
 }
 func (UnimplementedQueryServiceServer) mustEmbedUnimplementedQueryServiceServer() {}
 func (UnimplementedQueryServiceServer) testEmbeddedByValue()                      {}
@@ -3544,6 +3598,60 @@ func _QueryService_CanSubmitReputerPayload_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QueryService_GetTopicInitialInfererEmaScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTopicInitialInfererEmaScoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).GetTopicInitialInfererEmaScore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_GetTopicInitialInfererEmaScore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).GetTopicInitialInfererEmaScore(ctx, req.(*GetTopicInitialInfererEmaScoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_GetTopicInitialForecasterEmaScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTopicInitialForecasterEmaScoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).GetTopicInitialForecasterEmaScore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_GetTopicInitialForecasterEmaScore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).GetTopicInitialForecasterEmaScore(ctx, req.(*GetTopicInitialForecasterEmaScoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_GetTopicInitialReputerEmaScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTopicInitialReputerEmaScoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).GetTopicInitialReputerEmaScore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryService_GetTopicInitialReputerEmaScore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).GetTopicInitialReputerEmaScore(ctx, req.(*GetTopicInitialReputerEmaScoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QueryService_ServiceDesc is the grpc.ServiceDesc for QueryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3958,6 +4066,18 @@ var QueryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CanSubmitReputerPayload",
 			Handler:    _QueryService_CanSubmitReputerPayload_Handler,
+		},
+		{
+			MethodName: "GetTopicInitialInfererEmaScore",
+			Handler:    _QueryService_GetTopicInitialInfererEmaScore_Handler,
+		},
+		{
+			MethodName: "GetTopicInitialForecasterEmaScore",
+			Handler:    _QueryService_GetTopicInitialForecasterEmaScore_Handler,
+		},
+		{
+			MethodName: "GetTopicInitialReputerEmaScore",
+			Handler:    _QueryService_GetTopicInitialReputerEmaScore_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
