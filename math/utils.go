@@ -54,17 +54,20 @@ func CalcEma(
 }
 
 // NCalcEma is a generalisation of calculating the EMA update n times.
+// This function computes = (1-α)^n * x + (1-(1-α)^n) * asymptote
+// As `n` approaches infinity, the function converges to the asymptote.
+// For smaller `n`, the function returns a value closer to `x`, as much as `alpha` affords.
 func NCalcEma(
 	alpha,
-	update,
-	score Dec,
+	asymptote,
+	x Dec,
 	n uint64,
 ) (Dec, error) {
-	if update.isNaN {
-		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma update EMA operand should not be NaN")
+	if asymptote.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma asymptote EMA operand should not be NaN")
 	}
-	if score.isNaN {
-		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma score EMA operand should not be NaN")
+	if x.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma x EMA operand should not be NaN")
 	}
 	if alpha.isNaN {
 		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma alpha EMA operand should not be NaN")
@@ -82,7 +85,7 @@ func NCalcEma(
 	if err != nil {
 		return ZeroDec(), err
 	}
-	oneMinusAlphaExpNTimesScore, err := oneMinusAlphaExpN.Mul(score)
+	oneMinusAlphaExpNTimesOldVal, err := oneMinusAlphaExpN.Mul(x)
 	if err != nil {
 		return ZeroDec(), err
 	}
@@ -91,12 +94,12 @@ func NCalcEma(
 	if err != nil {
 		return ZeroDec(), err
 	}
-	UpdateTimesOneMinusOneMinusAlphaExpN, err := update.Mul(oneMinusOneMinusAlphaExpN)
+	UpdateTimesOneMinusOneMinusAlphaExpN, err := asymptote.Mul(oneMinusOneMinusAlphaExpN)
 	if err != nil {
 		return ZeroDec(), err
 	}
 
-	ret, err := oneMinusAlphaExpNTimesScore.Add(UpdateTimesOneMinusOneMinusAlphaExpN)
+	ret, err := oneMinusAlphaExpNTimesOldVal.Add(UpdateTimesOneMinusOneMinusAlphaExpN)
 	if err != nil {
 		return ZeroDec(), err
 	}
@@ -541,7 +544,7 @@ func GetQuantileOfDecs(
 	decs []Dec,
 	quantile Dec,
 ) (Dec, error) {
-	// If there are no decs then the quantile of scores is 0.
+	// If there are no decs then the quantile of the `decs` is 0.
 	// This better ensures chain continuity without consequence because in this situation
 	// there is no meaningful quantile to calculate.
 	if len(decs) == 0 {
