@@ -8,7 +8,12 @@ import (
 // migrate the store from version 4 to version 5
 func MigrateStore(ctx sdk.Context, mintKeeper keeper.Keeper) error {
 	ctx.Logger().Info("MIGRATING MINT MODULE FROM VERSION 4 TO VERSION 5")
-	return migrateParams(ctx, mintKeeper)
+	if err := migrateParams(ctx, mintKeeper); err != nil {
+		ctx.Logger().Error("ERROR INVOKING MIGRATION HANDLER migrateParams() FROM VERSION 4 TO VERSION 5")
+		return err
+	}
+	ctx.Logger().Info("MIGRATING MINT MODULE FROM VERSION 4 TO VERSION 5 COMPLETE")
+	return nil
 }
 
 // We add an additional boolean param that controls
@@ -32,5 +37,6 @@ func migrateParams(ctx sdk.Context, mintKeeper keeper.Keeper) error {
 		return err
 	}
 
+	ctx.Logger().Info("MIGRATING MINT MODULE PARAMS FROM VERSION 4 TO VERSION 5 COMPLETE")
 	return nil
 }

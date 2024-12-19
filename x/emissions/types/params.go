@@ -211,6 +211,18 @@ func (p Params) Validate() error {
 	if err := validateLambdaInitialScore(p.LambdaInitialScore); err != nil {
 		return errorsmod.Wrap(err, "params validation failure: lambda initial score")
 	}
+	if err := validateGlobalWorkerWhitelistEnabled(p.GlobalWorkerWhitelistEnabled); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: global worker whitelist enabled")
+	}
+	if err := validateGlobalReputerWhitelistEnabled(p.GlobalReputerWhitelistEnabled); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: global reputer whitelist enabled")
+	}
+	if err := validateGlobalAdminWhitelistAppended(p.GlobalAdminWhitelistAppended); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: global admin whitelist appended")
+	}
+	if err := validateMaxWhitelistInputArrayLength(p.MaxWhitelistInputArrayLength); err != nil {
+		return errorsmod.Wrap(err, "params validation failure: max whitelist input array length")
+	}
 	return nil
 }
 
@@ -652,5 +664,21 @@ func validateLambdaInitialScore(i alloraMath.Dec) error {
 	} else if i.IsNegative() {
 		return ErrValidationMustBeGreaterthanZero
 	}
+	return nil
+}
+
+func validateGlobalWorkerWhitelistEnabled(_ bool) error {
+	return nil
+}
+
+func validateGlobalReputerWhitelistEnabled(_ bool) error {
+	return nil
+}
+
+func validateGlobalAdminWhitelistAppended(_ bool) error {
+	return nil
+}
+
+func validateMaxWhitelistInputArrayLength(_ uint64) error {
 	return nil
 }
