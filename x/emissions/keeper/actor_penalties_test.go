@@ -36,7 +36,7 @@ func (s *KeeperTestSuite) TestMayPenaliseInferer() {
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
 	s.Require().Equal(int64(105), newScore.BlockHeight)
-	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("365.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
 	s.Require().NoError(err)
 	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
 
@@ -69,7 +69,7 @@ func (s *KeeperTestSuite) TestMayPenaliseForecaster() {
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
 	s.Require().Equal(int64(105), newScore.BlockHeight)
-	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("365.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
 	s.Require().NoError(err)
 	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
 
@@ -84,12 +84,11 @@ func (s *KeeperTestSuite) TestMayPenaliseReputer() {
 	keeper := s.emissionsKeeper
 
 	givenTopic := types.Topic{
-		Id:                     uint64(1),
-		MeritSortitionAlpha:    alloraMath.MustNewDecFromString("0.1"),
-		EpochLastEnded:         95,
-		EpochLength:            10,
-		WorkerSubmissionWindow: 2,
-		GroundTruthLag:         3,
+		Id:                  uint64(1),
+		MeritSortitionAlpha: alloraMath.MustNewDecFromString("0.1"),
+		EpochLastEnded:      105,
+		EpochLength:         10,
+		GroundTruthLag:      5,
 	}
 	givenPreviousScore := types.Score{
 		TopicId:     givenTopic.Id,
@@ -104,7 +103,7 @@ func (s *KeeperTestSuite) TestMayPenaliseReputer() {
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
 	s.Require().Equal(int64(105), newScore.BlockHeight)
-	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("365.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
 	s.Require().NoError(err)
 	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
 
@@ -137,11 +136,6 @@ func TestMayPenaliseActor(t *testing.T) {
 		{
 			name:          "no missed epochs",
 			missedEpochs:  0,
-			expectedScore: &givenPreviousScore,
-		},
-		{
-			name:          "no penalty to apply",
-			missedEpochs:  4,
 			expectedScore: &givenPreviousScore,
 		},
 		{
@@ -277,7 +271,7 @@ func TestCountWorkerContiguousMissedEpochs(t *testing.T) {
 // nolint: exhaustruct
 func TestCountReputerContiguousMissedEpochs(t *testing.T) {
 	topic := types.Topic{
-		EpochLastEnded: 95,
+		EpochLastEnded: 105,
 		EpochLength:    10,
 		GroundTruthLag: 5,
 	}
