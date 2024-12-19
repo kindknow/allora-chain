@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [#703](https://github.com/allora-network/allora-chain/pull/703) Add outlier detection to inferences
 * [#714](https://github.com/allora-network/allora-chain/pull/714) Add initialization of actors' EMA scores
 * [#716](https://github.com/allora-network/allora-chain/pull/716) Add global workers, reputers, admins + bulk operations
+* [#712](https://github.com/allora-network/allora-chain/pull/712) Apply sortition penalties based on liveness
 
 ### Changed
 

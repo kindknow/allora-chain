@@ -552,7 +552,7 @@ func CalculateTopicInitialEmaScore(
 	}
 	lambda := params.LambdaInitialScore
 
-	// Calculate standard deviation of EMA scores in active set
+	// Calculate lowest and standard deviation of EMA scores in active set
 	var emaScores []alloraMath.Dec
 	lowestScore := activeScores[0]
 	for _, score := range activeScores {

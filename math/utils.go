@@ -53,6 +53,59 @@ func CalcEma(
 	return ret, nil
 }
 
+// NCalcEma is a generalisation of calculating the EMA update n times.
+// This function computes = (1-α)^n * x + (1-(1-α)^n) * asymptote
+// As `n` approaches infinity, the function converges to the asymptote.
+// For smaller `n`, the function returns a value closer to `x`, as much as `alpha` affords.
+func NCalcEma(
+	alpha,
+	asymptote,
+	x Dec,
+	n uint64,
+) (Dec, error) {
+	if asymptote.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma asymptote EMA operand should not be NaN")
+	}
+	if x.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma x EMA operand should not be NaN")
+	}
+	if alpha.isNaN {
+		return ZeroDec(), errorsmod.Wrap(ErrNaN, "NCalcEma alpha EMA operand should not be NaN")
+	}
+
+	nDec, err := NewDecFromUint64(n)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	oneMinusAlpha, err := OneDec().Sub(alpha)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	oneMinusAlphaExpN, err := Pow(oneMinusAlpha, nDec)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	oneMinusAlphaExpNTimesOldVal, err := oneMinusAlphaExpN.Mul(x)
+	if err != nil {
+		return ZeroDec(), err
+	}
+
+	oneMinusOneMinusAlphaExpN, err := OneDec().Sub(oneMinusAlphaExpN)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	UpdateTimesOneMinusOneMinusAlphaExpN, err := asymptote.Mul(oneMinusOneMinusAlphaExpN)
+	if err != nil {
+		return ZeroDec(), err
+	}
+
+	ret, err := oneMinusAlphaExpNTimesOldVal.Add(UpdateTimesOneMinusOneMinusAlphaExpN)
+	if err != nil {
+		return ZeroDec(), err
+	}
+	return ret, nil
+}
+
 // Generic function that sorts the keys of a map
 // Used for deterministic ranging of maps
 func GetSortedKeys[K cmp.Ordered, V any](m map[K]V) []K {
@@ -491,7 +544,7 @@ func GetQuantileOfDecs(
 	decs []Dec,
 	quantile Dec,
 ) (Dec, error) {
-	// If there are no decs then the quantile of scores is 0.
+	// If there are no decs then the quantile of the `decs` is 0.
 	// This better ensures chain continuity without consequence because in this situation
 	// there is no meaningful quantile to calculate.
 	if len(decs) == 0 {
