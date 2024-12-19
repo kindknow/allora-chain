@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"cosmossdk.io/math"
 	alloraMath "github.com/allora-network/allora-chain/math"
 	"github.com/allora-network/allora-chain/x/emissions/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -133,6 +134,7 @@ func CountReputerContiguousMissedEpochs(topic types.Topic, lastSubmittedNonce in
 }
 
 func countContiguousMissedEpochs(prevEpochStart, epochLength, lastSubmittedNonce int64) int64 {
+	lastSubmittedNonce = math.Max(lastSubmittedNonce, 0)
 	if lastSubmittedNonce >= prevEpochStart {
 		return 0
 	}
