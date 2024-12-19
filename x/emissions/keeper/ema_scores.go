@@ -14,7 +14,6 @@ import (
 func (k *Keeper) CalcAndSaveInfererScoreEmaForActiveSet(
 	ctx context.Context,
 	topic types.Topic,
-	block types.BlockHeight,
 	worker ActorId,
 	newScore types.Score,
 ) (types.Score, error) {
@@ -34,7 +33,7 @@ func (k *Keeper) CalcAndSaveInfererScoreEmaForActiveSet(
 	}
 	emaScore := types.Score{
 		TopicId:     topic.Id,
-		BlockHeight: block,
+		BlockHeight: previousScore.BlockHeight,
 		Address:     worker,
 		Score:       emaScoreDec,
 	}
@@ -50,7 +49,6 @@ func (k *Keeper) CalcAndSaveInfererScoreEmaForActiveSet(
 func (k *Keeper) CalcAndSaveForecasterScoreEmaForActiveSet(
 	ctx context.Context,
 	topic types.Topic,
-	block types.BlockHeight,
 	worker ActorId,
 	newScore types.Score,
 ) (types.Score, error) {
@@ -70,7 +68,7 @@ func (k *Keeper) CalcAndSaveForecasterScoreEmaForActiveSet(
 	}
 	emaScore := types.Score{
 		TopicId:     topic.Id,
-		BlockHeight: block,
+		BlockHeight: previousScore.BlockHeight,
 		Address:     worker,
 		Score:       emaScoreDec,
 	}
@@ -86,7 +84,6 @@ func (k *Keeper) CalcAndSaveForecasterScoreEmaForActiveSet(
 func (k *Keeper) CalcAndSaveReputerScoreEmaForActiveSet(
 	ctx context.Context,
 	topic types.Topic,
-	block types.BlockHeight,
 	reputer ActorId,
 	newScore types.Score,
 ) (types.Score, error) {
@@ -106,7 +103,7 @@ func (k *Keeper) CalcAndSaveReputerScoreEmaForActiveSet(
 	}
 	emaScore := types.Score{
 		TopicId:     topic.Id,
-		BlockHeight: block,
+		BlockHeight: previousScore.BlockHeight,
 		Address:     reputer,
 		Score:       emaScoreDec,
 	}

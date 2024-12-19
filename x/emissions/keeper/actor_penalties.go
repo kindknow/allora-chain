@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	"cosmossdk.io/math"
 	alloraMath "github.com/allora-network/allora-chain/math"
 	"github.com/allora-network/allora-chain/x/emissions/types"
@@ -80,7 +78,6 @@ func ApplyLivenessPenaltyToActor(
 	missedEpochs := missedEpochsFn(topic, emaScore.BlockHeight)
 	// No missed epochs == no penalty
 	if missedEpochs == 0 {
-		fmt.Println("--- NO PENALTY FOR ACTOR ---", nonceBlockHeight, emaScore)
 		ctx.Logger().Debug("no liveness penalty on actor",
 			"nonce", nonceBlockHeight,
 			"score", emaScore,
@@ -99,11 +96,6 @@ func ApplyLivenessPenaltyToActor(
 		return types.Score{}, err
 	}
 
-	fmt.Println("--- APPLY PENALTY TO ACTOR ---", "nonce", nonceBlockHeight,
-		"missed", missedEpochs,
-		"penalty", penalty,
-		"before", beforePenalty,
-		"after", emaScore)
 	ctx.Logger().Debug("apply liveness penalty on actor",
 		"nonce", nonceBlockHeight,
 		"missed", missedEpochs,
