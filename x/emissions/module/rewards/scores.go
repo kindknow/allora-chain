@@ -179,6 +179,8 @@ func GenerateReputerScores(
 		if err != nil {
 			return nil, errors.Wrapf(err, "Error setting initial reputer EMA score")
 		}
+
+		types.EmitNewTopicInitialEmaScoreSetEvent(ctx, types.ActorType_ACTOR_TYPE_REPUTER, topicId, block, initialEmaScore)
 	}
 
 	types.EmitNewReputerScoresSetEvent(ctx, instantScores)
@@ -270,6 +272,8 @@ func GenerateInferenceScores(
 		if err != nil {
 			return nil, errors.Wrapf(err, "Error setting initial inferer EMA score")
 		}
+
+		types.EmitNewTopicInitialEmaScoreSetEvent(ctx, types.ActorType_ACTOR_TYPE_INFERER_UNSPECIFIED, topicId, block, initialEmaScore)
 	}
 
 	types.EmitNewInfererScoresSetEvent(ctx, instantScores)
@@ -385,6 +389,8 @@ func GenerateForecastScores(
 		if err != nil {
 			return nil, errors.Wrapf(err, "Error setting initial forecaster EMA score")
 		}
+
+		types.EmitNewTopicInitialEmaScoreSetEvent(ctx, types.ActorType_ACTOR_TYPE_FORECASTER, topicId, block, initialEmaScore)
 	}
 
 	// Emit forecaster performance scores

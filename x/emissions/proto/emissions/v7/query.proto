@@ -529,6 +529,24 @@ service QueryService {
     option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http).get = "/emissions/v7/can_submit_reputer_payload/{topic_id}/{address}";
   }
+
+  // GetTopicInitialInfererEmaScore returns the initial EMA score for inferers in a topic
+  rpc GetTopicInitialInfererEmaScore(GetTopicInitialInfererEmaScoreRequest) returns (GetTopicInitialInfererEmaScoreResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/initial_inferer_ema_score/{topic_id}";
+  }
+
+  // GetTopicInitialForecasterEmaScore returns the initial EMA score for forecasters in a topic
+  rpc GetTopicInitialForecasterEmaScore(GetTopicInitialForecasterEmaScoreRequest) returns (GetTopicInitialForecasterEmaScoreResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/initial_forecaster_ema_score/{topic_id}";
+  }
+
+  // GetTopicInitialReputerEmaScore returns the initial EMA score for reputers in a topic
+  rpc GetTopicInitialReputerEmaScore(GetTopicInitialReputerEmaScoreRequest) returns (GetTopicInitialReputerEmaScoreResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
+    option (google.api.http).get = "/emissions/v7/initial_reputer_ema_score/{topic_id}";
+  }
 }
 
 message IsWhitelistedGlobalWorkerRequest {
@@ -1534,6 +1552,7 @@ message GetPreviousForecastRewardFractionResponse {
   ];
   bool not_found = 2 [(amino.dont_omitempty) = true];
 }
+
 message GetPreviousPercentageRewardToStakedReputersRequest {}
 
 message GetPreviousPercentageRewardToStakedReputersResponse {
@@ -1591,4 +1610,40 @@ message GetActiveInferersForTopicRequest {
 
 message GetActiveInferersForTopicResponse {
   repeated string inferers = 1;
+}
+
+message GetTopicInitialInfererEmaScoreRequest {
+  uint64 topic_id = 1;
+}
+
+message GetTopicInitialInfererEmaScoreResponse {
+  string score = 1 [
+    (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+message GetTopicInitialForecasterEmaScoreRequest {
+  uint64 topic_id = 1;
+}
+
+message GetTopicInitialForecasterEmaScoreResponse {
+  string score = 1 [
+    (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+message GetTopicInitialReputerEmaScoreRequest {
+  uint64 topic_id = 1;
+}
+
+message GetTopicInitialReputerEmaScoreResponse {
+  string score = 1 [
+    (gogoproto.customtype) = "github.com/allora-network/allora-chain/math.Dec",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
 }

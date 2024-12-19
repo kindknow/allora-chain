@@ -881,6 +881,30 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						{ProtoField: "address"},
 					},
 				},
+				{
+					RpcMethod: "GetTopicInitialInfererEmaScore",
+					Use:       "initial-inferer-ema-score [topic_id]",
+					Short:     "Get the initial EMA score for inferers in a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "GetTopicInitialForecasterEmaScore",
+					Use:       "initial-forecaster-ema-score [topic_id]",
+					Short:     "Get the initial EMA score for forecasters in a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
+				{
+					RpcMethod: "GetTopicInitialReputerEmaScore",
+					Use:       "initial-reputer-ema-score [topic_id]",
+					Short:     "Get the initial EMA score for reputers in a topic",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "topic_id"},
+					},
+				},
 			},
 			SubCommands:          nil,
 			EnhanceCustomCommand: false,

@@ -7,6 +7,8 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"github.com/allora-network/allora-chain/x/emissions/metrics"
 	"github.com/allora-network/allora-chain/x/emissions/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (qs queryServer) GetInfererScoreEma(ctx context.Context, req *types.GetInfererScoreEmaRequest) (_ *types.GetInfererScoreEmaResponse, err error) {
@@ -170,4 +172,58 @@ func (qs queryServer) GetListeningCoefficient(ctx context.Context, req *types.Ge
 	}
 
 	return &types.GetListeningCoefficientResponse{ListeningCoefficient: &listeningCoefficient}, nil
+}
+
+func (qs queryServer) GetTopicInitialInfererEmaScore(ctx context.Context, req *types.GetTopicInitialInfererEmaScoreRequest) (_ *types.GetTopicInitialInfererEmaScoreResponse, err error) {
+	defer metrics.RecordMetrics("GetTopicInitialInfererEmaScore", time.Now(), &err)
+
+	topicExists, err := qs.k.TopicExists(ctx, req.TopicId)
+	if !topicExists {
+		return nil, status.Errorf(codes.NotFound, "topic %v not found", req.TopicId)
+	} else if err != nil {
+		return nil, err
+	}
+
+	score, err := qs.k.GetTopicInitialInfererEmaScore(ctx, req.TopicId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.GetTopicInitialInfererEmaScoreResponse{Score: score}, nil
+}
+
+func (qs queryServer) GetTopicInitialForecasterEmaScore(ctx context.Context, req *types.GetTopicInitialForecasterEmaScoreRequest) (_ *types.GetTopicInitialForecasterEmaScoreResponse, err error) {
+	defer metrics.RecordMetrics("GetTopicInitialForecasterEmaScore", time.Now(), &err)
+
+	topicExists, err := qs.k.TopicExists(ctx, req.TopicId)
+	if !topicExists {
+		return nil, status.Errorf(codes.NotFound, "topic %v not found", req.TopicId)
+	} else if err != nil {
+		return nil, err
+	}
+
+	score, err := qs.k.GetTopicInitialForecasterEmaScore(ctx, req.TopicId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.GetTopicInitialForecasterEmaScoreResponse{Score: score}, nil
+}
+
+func (qs queryServer) GetTopicInitialReputerEmaScore(ctx context.Context, req *types.GetTopicInitialReputerEmaScoreRequest) (_ *types.GetTopicInitialReputerEmaScoreResponse, err error) {
+	defer metrics.RecordMetrics("GetTopicInitialReputerEmaScore", time.Now(), &err)
+
+	topicExists, err := qs.k.TopicExists(ctx, req.TopicId)
+	if !topicExists {
+		return nil, status.Errorf(codes.NotFound, "topic %v not found", req.TopicId)
+	} else if err != nil {
+		return nil, err
+	}
+
+	score, err := qs.k.GetTopicInitialReputerEmaScore(ctx, req.TopicId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.GetTopicInitialReputerEmaScoreResponse{Score: score}, nil
 }
