@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	storetypes "cosmossdk.io/store/types"
@@ -35,14 +34,10 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToInferer() {
 	s.Require().NoError(err)
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
-	s.Require().Equal(int64(105), newScore.BlockHeight)
+	s.Require().Equal(int64(55), newScore.BlockHeight)
 	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
 	s.Require().NoError(err)
 	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
-
-	scoreFromStore, err := keeper.GetInfererScoreEma(ctx, givenTopic.Id, givenPreviousScore.Address)
-	s.Require().NoError(err)
-	s.Require().Equal(newScore, scoreFromStore)
 }
 
 // nolint: exhaustruct
@@ -68,14 +63,10 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToForecaster() {
 	s.Require().NoError(err)
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
-	s.Require().Equal(int64(105), newScore.BlockHeight)
+	s.Require().Equal(int64(55), newScore.BlockHeight)
 	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
 	s.Require().NoError(err)
 	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
-
-	scoreFromStore, err := keeper.GetForecasterScoreEma(ctx, givenTopic.Id, givenPreviousScore.Address)
-	s.Require().NoError(err)
-	s.Require().Equal(newScore, scoreFromStore)
 }
 
 // nolint: exhaustruct
@@ -86,9 +77,9 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToReputer() {
 	givenTopic := types.Topic{
 		Id:                  uint64(1),
 		MeritSortitionAlpha: alloraMath.MustNewDecFromString("0.1"),
-		EpochLastEnded:      105,
+		EpochLastEnded:      110,
 		EpochLength:         10,
-		GroundTruthLag:      5,
+		GroundTruthLag:      10,
 	}
 	givenPreviousScore := types.Score{
 		TopicId:     givenTopic.Id,
@@ -102,14 +93,10 @@ func (s *KeeperTestSuite) TestApplyLivenessPenaltyToReputer() {
 	s.Require().NoError(err)
 	s.Require().Equal(givenPreviousScore.TopicId, newScore.TopicId)
 	s.Require().Equal(givenPreviousScore.Address, newScore.Address)
-	s.Require().Equal(int64(105), newScore.BlockHeight)
+	s.Require().Equal(int64(55), newScore.BlockHeight)
 	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("265.61"), newScore.Score, alloraMath.MustNewDecFromString("0.0001"))
 	s.Require().NoError(err)
 	s.Require().True(inDelta, "expected %s, got %s", alloraMath.MustNewDecFromString("265.61"), newScore.Score)
-
-	scoreFromStore, err := keeper.GetReputerScoreEma(ctx, givenTopic.Id, givenPreviousScore.Address)
-	s.Require().NoError(err)
-	s.Require().Equal(newScore, scoreFromStore)
 }
 
 // nolint: exhaustruct
@@ -143,20 +130,10 @@ func TestApplyLivenessPenaltyToActor(t *testing.T) {
 			missedEpochs: 4,
 			expectedScore: &types.Score{
 				TopicId:     givenPreviousScore.TopicId,
-				BlockHeight: int64(200),
+				BlockHeight: givenPreviousScore.BlockHeight, // Only applying score penalty, not updating block height
 				Address:     givenPreviousScore.Address,
 				Score:       alloraMath.MustNewDecFromString("265.61"),
 			},
-		},
-		{
-			name:              "get penalty error",
-			missedEpochs:      2,
-			withGetPenaltyErr: fmt.Errorf("oups"),
-		},
-		{
-			name:            "set score error",
-			missedEpochs:    2,
-			withSetScoreErr: fmt.Errorf("oups"),
 		},
 	}
 
@@ -177,21 +154,6 @@ func TestApplyLivenessPenaltyToActor(t *testing.T) {
 					}
 					return alloraMath.MustNewDecFromString("200"), nil
 				},
-				// Mock new EMA score setter
-				func(topicId keeper.TopicId, score types.Score) error {
-					require.Equal(t, givenTopic.Id, topicId)
-					if tc.withSetScoreErr != nil {
-						return tc.withSetScoreErr
-					}
-
-					require.Equal(t, tc.expectedScore.TopicId, score.TopicId, "expected %d, got %d", tc.expectedScore.TopicId, score.TopicId)
-					require.Equal(t, tc.expectedScore.Address, score.Address, "expected %s, got %s", tc.expectedScore.Address, score.Address)
-					require.Equal(t, tc.expectedScore.BlockHeight, score.BlockHeight, "expected %d, got %d", tc.expectedScore.BlockHeight, score.BlockHeight)
-					inDelta, err := alloraMath.InDelta(tc.expectedScore.Score, score.Score, alloraMath.MustNewDecFromString("0.0001"))
-					require.NoError(t, err)
-					require.True(t, inDelta, "expected %s, got %s", tc.expectedScore.Score.String(), score.Score.String())
-					return nil
-				},
 				givenTopic,
 				200,
 				givenPreviousScore,
@@ -199,8 +161,6 @@ func TestApplyLivenessPenaltyToActor(t *testing.T) {
 
 			if tc.withGetPenaltyErr != nil {
 				require.ErrorIs(t, tc.withGetPenaltyErr, err)
-			} else if tc.withSetScoreErr != nil {
-				require.ErrorIs(t, tc.withSetScoreErr, err)
 			} else {
 				require.NoError(t, err)
 				require.Equal(t, tc.expectedScore.TopicId, newScore.TopicId, "expected %d, got %d", tc.expectedScore.TopicId, newScore.TopicId)
@@ -271,50 +231,93 @@ func TestCountWorkerContiguousMissedEpochs(t *testing.T) {
 // nolint: exhaustruct
 func TestCountReputerContiguousMissedEpochs(t *testing.T) {
 	topic := types.Topic{
-		EpochLastEnded: 105,
+		EpochLastEnded: 110,
 		EpochLength:    10,
-		GroundTruthLag: 5,
 	}
 
 	cases := []struct {
 		name                 string
+		groundTruthLag       int64
 		lastSubmittedNonce   int64
 		expectedMissedEpochs int64
 	}{
 		{
 			name:                 "in last epoch",
+			groundTruthLag:       10,
 			lastSubmittedNonce:   95,
 			expectedMissedEpochs: 0,
 		},
 		{
+			name:                 "in last epoch (big gt-lag)",
+			groundTruthLag:       30,
+			lastSubmittedNonce:   75,
+			expectedMissedEpochs: 0,
+		},
+		{
 			name:                 "after last epoch",
-			lastSubmittedNonce:   105,
+			groundTruthLag:       10,
+			lastSubmittedNonce:   95,
+			expectedMissedEpochs: 0,
+		},
+		{
+			name:                 "after last epoch (big gt-lag)",
+			groundTruthLag:       30,
+			lastSubmittedNonce:   75,
 			expectedMissedEpochs: 0,
 		},
 		{
 			name:                 "one missed epoch",
+			groundTruthLag:       10,
 			lastSubmittedNonce:   85,
 			expectedMissedEpochs: 1,
 		},
 		{
+			name:                 "one missed epoch (big gt-lag)",
+			groundTruthLag:       30,
+			lastSubmittedNonce:   65,
+			expectedMissedEpochs: 1,
+		},
+		{
 			name:                 "four missed epoch",
+			groundTruthLag:       10,
 			lastSubmittedNonce:   55,
 			expectedMissedEpochs: 4,
 		},
 		{
+			name:                 "four missed epoch (big gt-lag)",
+			groundTruthLag:       30,
+			lastSubmittedNonce:   35,
+			expectedMissedEpochs: 4,
+		},
+		{
 			name:                 "on the edge of last epoch",
+			groundTruthLag:       10,
 			lastSubmittedNonce:   90,
 			expectedMissedEpochs: 0,
 		},
 		{
+			name:                 "on the edge of last epoch (big gt-lag)",
+			groundTruthLag:       30,
+			lastSubmittedNonce:   70,
+			expectedMissedEpochs: 0,
+		},
+		{
 			name:                 "on the edge of an epoch",
+			groundTruthLag:       10,
 			lastSubmittedNonce:   60,
+			expectedMissedEpochs: 3,
+		},
+		{
+			name:                 "on the edge of an epoch (big gt-lag)",
+			groundTruthLag:       30,
+			lastSubmittedNonce:   40,
 			expectedMissedEpochs: 3,
 		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
+			topic.GroundTruthLag = tc.groundTruthLag
 			missedEpochs := keeper.CountReputerContiguousMissedEpochs(topic, tc.lastSubmittedNonce)
 			if missedEpochs != tc.expectedMissedEpochs {
 				require.Equal(t, tc.expectedMissedEpochs, missedEpochs, "expected %d, got %d", tc.expectedMissedEpochs, missedEpochs)

@@ -146,7 +146,7 @@ func GenerateReputerScores(
 			return []types.Score{}, errors.Wrapf(err, "Error inserting reputer score")
 		}
 
-		emaScore, err := keeper.CalcAndSaveReputerScoreEmaForActiveSet(ctx, topic, block, reputer, instantScore)
+		emaScore, err := keeper.CalcAndSaveReputerScoreEmaForActiveSet(ctx, topic, reputer, instantScore)
 		if err != nil {
 			return []types.Score{}, errors.Wrapf(err, "Error calculating and saving reputer score ema")
 		}
@@ -239,7 +239,7 @@ func GenerateInferenceScores(
 			return []types.Score{}, errors.Wrapf(err, "Error inserting worker inference score")
 		}
 
-		emaScore, err := keeper.CalcAndSaveInfererScoreEmaForActiveSet(ctx, topic, block, oneOutLoss.Worker, instantScore)
+		emaScore, err := keeper.CalcAndSaveInfererScoreEmaForActiveSet(ctx, topic, oneOutLoss.Worker, instantScore)
 		if err != nil {
 			return []types.Score{}, errors.Wrapf(err, "Error calculating and saving inferer score ema")
 		}
@@ -356,7 +356,7 @@ func GenerateForecastScores(
 			return []types.Score{}, errors.Wrapf(err, "Error inserting worker forecast score")
 		}
 
-		emaScore, err := keeper.CalcAndSaveForecasterScoreEmaForActiveSet(ctx, topic, block, oneInNaiveLoss.Worker, instantScore)
+		emaScore, err := keeper.CalcAndSaveForecasterScoreEmaForActiveSet(ctx, topic, oneInNaiveLoss.Worker, instantScore)
 		if err != nil {
 			return []types.Score{}, errors.Wrapf(err, "Error calculating and saving forecaster score ema")
 		}
