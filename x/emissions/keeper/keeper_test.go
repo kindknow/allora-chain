@@ -5420,3 +5420,173 @@ func (s *KeeperTestSuite) TestFirstSubmissionDoesNotUpdateEMAUsingQuantile() {
 	s.Require().NoError(err)
 	s.Require().Equal(initialScore, score.Score)
 }
+
+func (s *KeeperTestSuite) TestLivenessPenaltyAppliedInAppendInference() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topic := s.mockTopic()
+	topic.EpochLastEnded = 10000
+	topic.EpochLength = 1000
+	topic.GroundTruthLag = 1000
+	s.Require().NoError(s.emissionsKeeper.SetTopic(ctx, topic.Id, topic))
+	worker := s.addrsStr[0]
+	blockHeight := int64(10000)
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("50")
+	s.Require().NoError(k.SetTopicInitialInfererEmaScore(ctx, topic.Id, initialScore))
+
+	s.Require().NoError(k.SetInfererScoreEma(ctx, topic.Id, worker, types.Score{
+		TopicId:     topic.Id,
+		BlockHeight: 5000,
+		Address:     worker,
+		Score:       alloraMath.MustNewDecFromString("100"),
+	}))
+
+	// Create and append a new inference
+	inference := &types.Inference{
+		TopicId:     topic.Id,
+		BlockHeight: blockHeight,
+		Value:       alloraMath.MustNewDecFromString("0.52"),
+		Inferer:     worker,
+		ExtraData:   nil,
+		Proof:       "",
+	}
+
+	topic, err := k.GetTopic(ctx, topic.Id)
+	s.Require().NoError(err)
+
+	// Append the inference
+	err = k.AppendInference(ctx, topic, blockHeight, inference, 4)
+	s.Require().NoError(err)
+
+	// Verify the worker received the initial EMA score
+	score, err := k.GetInfererScoreEma(ctx, topic.Id, worker)
+	s.Require().NoError(err)
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("82.805"), score.Score, alloraMath.MustNewDecFromString("0.0001"))
+	s.Require().NoError(err)
+	s.Require().True(inDelta, "expected %s, got %s", "82.805", score.Score.String())
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(worker, score.Address)
+	s.Require().Equal(topic.Id, score.TopicId)
+}
+
+func (s *KeeperTestSuite) TestLivenessPenaltyAppliedInAppendForecast() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topic := s.mockTopic()
+	topic.EpochLastEnded = 10000
+	topic.EpochLength = 1000
+	topic.GroundTruthLag = 1000
+	s.Require().NoError(s.emissionsKeeper.SetTopic(ctx, topic.Id, topic))
+	worker := s.addrsStr[0]
+	blockHeight := int64(10000)
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("50")
+	s.Require().NoError(k.SetTopicInitialForecasterEmaScore(ctx, topic.Id, initialScore))
+
+	s.Require().NoError(k.SetForecasterScoreEma(ctx, topic.Id, worker, types.Score{
+		TopicId:     topic.Id,
+		BlockHeight: 5000,
+		Address:     worker,
+		Score:       alloraMath.MustNewDecFromString("100"),
+	}))
+
+	// Create and append a new forecast
+	forecast := &types.Forecast{
+		TopicId:     topic.Id,
+		BlockHeight: 10000,
+		Forecaster:  worker,
+		ForecastElements: []*types.ForecastElement{
+			{
+				Inferer: worker,
+				Value:   alloraMath.MustNewDecFromString("0.52"),
+			},
+		},
+		ExtraData: nil,
+	}
+
+	topic, err := k.GetTopic(ctx, topic.Id)
+	s.Require().NoError(err)
+
+	// Append the forecast
+	err = k.AppendForecast(ctx, topic, blockHeight, forecast, 4)
+	s.Require().NoError(err)
+	s.Require().NoError(err)
+
+	// Verify the worker received the initial EMA score
+	score, err := k.GetForecasterScoreEma(ctx, topic.Id, worker)
+	s.Require().NoError(err)
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("82.805"), score.Score, alloraMath.MustNewDecFromString("0.0001"))
+	s.Require().NoError(err)
+	s.Require().True(inDelta, "expected %s, got %s", "82.805", score.Score.String())
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(worker, score.Address)
+	s.Require().Equal(topic.Id, score.TopicId)
+}
+
+func (s *KeeperTestSuite) TestLivenessPenaltyAppliedInAppendReputerLoss() {
+	ctx := s.ctx
+	k := s.emissionsKeeper
+	topic := s.mockTopic()
+	topic.EpochLastEnded = 10000
+	topic.EpochLength = 1000
+	topic.GroundTruthLag = 1000
+	s.Require().NoError(s.emissionsKeeper.SetTopic(ctx, topic.Id, topic))
+	reputer := s.addrsStr[0]
+	blockHeight := int64(10000)
+	reputerRequestNonce := &types.ReputerRequestNonce{
+		ReputerNonce: &types.Nonce{BlockHeight: blockHeight},
+	}
+
+	// Set initial EMA score for the topic
+	initialScore := alloraMath.MustNewDecFromString("50")
+	s.Require().NoError(k.SetTopicInitialReputerEmaScore(ctx, topic.Id, initialScore))
+
+	s.Require().NoError(k.SetReputerScoreEma(ctx, topic.Id, reputer, types.Score{
+		TopicId:     topic.Id,
+		BlockHeight: 5000,
+		Address:     reputer,
+		Score:       alloraMath.MustNewDecFromString("100"),
+	}))
+
+	// Create and append a new reputer loss
+	valueBundleReputer := types.ValueBundle{
+		Reputer:                       reputer,
+		CombinedValue:                 alloraMath.MustNewDecFromString(".0000256948644008351"),
+		ReputerRequestNonce:           reputerRequestNonce,
+		TopicId:                       topic.Id,
+		ExtraData:                     nil,
+		InfererValues:                 nil,
+		ForecasterValues:              nil,
+		NaiveValue:                    alloraMath.MustNewDecFromString("0.0"),
+		OneOutInfererValues:           nil,
+		OneOutForecasterValues:        nil,
+		OneInForecasterValues:         nil,
+		OneOutInfererForecasterValues: nil,
+	}
+	signature := s.signValueBundle(&valueBundleReputer, s.privKeys[0])
+	reputerValueBundle := types.ReputerValueBundle{
+		ValueBundle: &valueBundleReputer,
+		Signature:   signature,
+		Pubkey:      s.pubKeyHexStr[0],
+	}
+
+	topic, err := k.GetTopic(ctx, topic.Id)
+	s.Require().NoError(err)
+
+	// Append the reputer loss
+	err = k.AppendReputerLoss(ctx, topic, types.DefaultParams(), blockHeight, &reputerValueBundle)
+	s.Require().NoError(err)
+
+	// Verify the worker received the initial EMA score
+	score, err := k.GetReputerScoreEma(ctx, topic.Id, reputer)
+	s.Require().NoError(err)
+	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("86.450"), score.Score, alloraMath.MustNewDecFromString("0.0001"))
+	s.Require().NoError(err)
+	s.Require().True(inDelta, "expected %s, got %s", "86.450", score.Score.String())
+	s.Require().Equal(blockHeight, score.BlockHeight)
+	s.Require().Equal(reputer, score.Address)
+	s.Require().Equal(topic.Id, score.TopicId)
+}
