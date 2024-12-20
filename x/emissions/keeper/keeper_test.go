@@ -5460,7 +5460,8 @@ func (s *KeeperTestSuite) TestLivenessPenaltyAppliedInAppendInference() {
 	err = k.AppendInference(ctx, topic, blockHeight, inference, 4)
 	s.Require().NoError(err)
 
-	// Verify the worker received the initial EMA score
+	// Verify the worker's EMA score trended toward the topic initial score especially when there is a lapse in their
+	// liveness
 	score, err := k.GetInfererScoreEma(ctx, topic.Id, worker)
 	s.Require().NoError(err)
 	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("82.805"), score.Score, alloraMath.MustNewDecFromString("0.0001"))
@@ -5515,7 +5516,8 @@ func (s *KeeperTestSuite) TestLivenessPenaltyAppliedInAppendForecast() {
 	s.Require().NoError(err)
 	s.Require().NoError(err)
 
-	// Verify the worker received the initial EMA score
+	// Verify the worker's EMA score trended toward the topic initial score especially when there is a lapse in their
+	// liveness
 	score, err := k.GetForecasterScoreEma(ctx, topic.Id, worker)
 	s.Require().NoError(err)
 	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("82.805"), score.Score, alloraMath.MustNewDecFromString("0.0001"))
@@ -5580,7 +5582,8 @@ func (s *KeeperTestSuite) TestLivenessPenaltyAppliedInAppendReputerLoss() {
 	err = k.AppendReputerLoss(ctx, topic, types.DefaultParams(), blockHeight, &reputerValueBundle)
 	s.Require().NoError(err)
 
-	// Verify the worker received the initial EMA score
+	// Verify the reputer's EMA score trended toward the topic initial score especially when there is a lapse in their
+	// liveness
 	score, err := k.GetReputerScoreEma(ctx, topic.Id, reputer)
 	s.Require().NoError(err)
 	inDelta, err := alloraMath.InDelta(alloraMath.MustNewDecFromString("86.450"), score.Score, alloraMath.MustNewDecFromString("0.0001"))
